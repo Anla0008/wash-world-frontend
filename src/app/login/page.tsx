@@ -29,12 +29,14 @@ export default function Login() {
           placeholder="email"
           onChange={(e) => setParams({ ...params, username: e.target.value })}
         />
+
         <input
           type="password"
           placeholder="password"
           onChange={(e) => setParams({ ...params, password: e.target.value })}
         />
-        <button type="submit">Log in</button>
+
+        <button type="submit">Login</button>
       </form>
     </div>
   );

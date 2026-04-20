@@ -21,28 +21,23 @@ export function useAuth() {
     if (!response.ok) {
       throw new Error("Failed to signup");
     }
-
-    return response.json();
   }, []);
 
   // ===========================================================
   //                          LOGIN
   // ===========================================================
-  const login = useCallback(async (username: string, password: string) => {
+  const login = useCallback(async (params: User) => {
     const response = await fetch(baseUrl + "/api/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      // Vi sender kun nødvendig data videre og ikke hele params
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify(params),
     });
 
     if (!response.ok) {
       throw new Error("Failed to login");
     }
-
-    return response.json();
   }, []);
 
   return { signup, login };

@@ -2,19 +2,21 @@
 
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { User } from "@/types/user";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
+
+  // Vi henter User (email, password osv. hentes én gang)
+  const [params, setParams] = useState<User>({} as User);
 
   const { login } = useAuth();
 
   const handleSubmitLogin = async (e: any) => {
     e.preventDefault();
 
-    console.log(email, password);
-
-    const response = await login(email, password);
+    const response = await login(params);
 
     console.log(response);
   };
@@ -25,12 +27,12 @@ export default function Login() {
         <input
           type="text"
           placeholder="email"
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => setParams({ ...params, username: e.target.value })}
         />
         <input
           type="password"
           placeholder="password"
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => setParams({ ...params, password: e.target.value })}
         />
         <button type="submit">Log in</button>
       </form>

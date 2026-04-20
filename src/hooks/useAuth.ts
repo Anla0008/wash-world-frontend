@@ -9,8 +9,6 @@ export function useAuth() {
   // ===========================================================
   //                          SIGNUP
   // ===========================================================
-
-  // Vi bruger User fra types, hvor alt er sat til string
   const signup = useCallback(async (params: User) => {
     const response = await fetch(baseUrl + "/api/signup", {
       method: "POST",
@@ -30,21 +28,22 @@ export function useAuth() {
   // ===========================================================
   //                          LOGIN
   // ===========================================================
-  const login = useCallback(async (params: User) => {
+  const login = useCallback(async (username: string, password: string) => {
     const response = await fetch(baseUrl + "/api/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(params),
+      // Vi sender kun nødvendig data videre og ikke hele params
+      body: JSON.stringify({ username, password }),
     });
 
     if (!response.ok) {
-      throw new Error("Failed to signup");
+      throw new Error("Failed to login");
     }
 
     return response.json();
   }, []);
 
-  return { signup };
+  return { signup, login };
 }

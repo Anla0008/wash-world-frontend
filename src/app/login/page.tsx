@@ -22,8 +22,16 @@ export default function Login() {
   return (
     <div>
       <form onSubmit={handleSubmitLogin}>
-        <input type="text" placeholder="email" onChange={(e) => setEmail(e.target.value)} />
-        <input type="password" placeholder="password" onChange={(e) => setPassword(e.target.value)} />
+        <input
+          type="text"
+          placeholder="email"
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="password"
+          onChange={(e) => setPassword(e.target.value)}
+        />
         <button type="submit">Log in</button>
       </form>
     </div>

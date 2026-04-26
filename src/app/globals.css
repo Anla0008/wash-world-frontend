@@ -1,26 +1,159 @@
 @import "tailwindcss";
 
+
+@font-face {
+  font-family: "Gilroy-ExtraBold";
+  src: url("/fonts/Gilroy-ExtraBold.eot");
+  src: url("/fonts/Gilroy-ExtraBold.eot?#iefix") format("embedded-opentype"),
+    url("/fonts/Gilroy-ExtraBold.woff2") format("woff2"),
+    url("/fonts/ExtraBold.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Gilroy";
+  src: url("/fonts/Gilroy-Medium.eot");
+  src: url("/fonts/Gilroy-Medium.eot?#iefix") format("embedded-opentype"),
+    url("/fonts/Gilroy-Medium.woff2") format("woff2"),
+    url("/fonts/Gilroy-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #000;
+  --brand-green: #06C167;
+  --splash: #FF6B06;
+  --80-percent-gray: #333333;
+  --60-percent-gray: #666666;
+  --10-percent-gray: #E5E5E5;
+  --5-percent-gray: #F7F7F7;
+  --error-red: #F00D0D;
+  --blue-selected: #005990;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #000;
+    --foreground: #fff;
+    --brand-green: #0CE578;
+    --splash: #FF6B06;
+    --80-percent-gray: #333333;
+    --60-percent-gray: #666666;
+    --10-percent-gray: #E5E5E5;
+    --5-percent-gray: #F7F7F7;
+    --error-red: #F00D0D;
+    --blue-selected: #005990;
   }
 }
 
 body {
+  font-family: "Gilroy";
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+  padding-inline: 1rem;
+  .extra-bold {
+    font-family: Gilroy-ExtraBold;
+  }
+  .light {
+    font-weight: 400;
+  }
+}
+
+h1{
+  font-size: 3rem;
+  .extra-bold {
+    font-family: Gilroy-ExtraBold;
+  }
+  .light {
+    font-family: Gilroy-light;
+    font-weight: 400;
+  }
+}
+
+h2{
+  font-size: 2rem;
+  .extra-bold {
+    font-family: Gilroy-ExtraBold;
+  }
+  .light {
+    font-family: Gilroy;
+    font-weight: 400;
+  }
+}
+
+h3{
+  font-size: 1.5rem;
+  .extra-bold {
+    font-family: Gilroy-ExtraBold;
+  }
+  .light {
+    font-family: Gilroy;
+    font-weight: 400;
+  }
+}
+
+/*       HERUNDER ER STYLING, SÅ MARGIN ER 0 VED HEADERS EFTER HINANDEN      */
+
+h1 + h1,
+h2 + h2,
+h3 + h3,
+h1 + h2 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.green{
+  color: var(--brand-green);
+}
+
+.splash{
+  color: var(--splash);
+}
+
+.gray-80{
+  color: var(--80-percent-gray);
+}
+
+.gray-60{
+  color: var(--60-percent-gray);
+}
+
+.gray-10{
+  color: var(--10-percent-gray);
+}
+
+.gray-5{
+  color: var(--5-percent-gray);
+}
+
+.error-red{
+  color: var(--error-red);
+}
+
+.blue-selected{
+  color: var(--blue-selected);
+}
+
+.width-container {
+  width: 100%;
+  max-width: 430px;   /* mobilbredde */
+  margin-inline: auto;
+  padding-inline: 16px;
+}
+
+@media (min-width: 768px) {
+  .width-container {
+    max-width: 600px; /* tablet */
+  }
 }

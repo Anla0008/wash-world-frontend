@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -12,9 +13,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="min-h-full flex flex-col">
-        <main>{children}</main>
+    <html lang="da">
+      <body className="">
+        <main className="flex flex-col items-center justify-center">
+          {children}
+        </main>
       </body>
     </html>
   );

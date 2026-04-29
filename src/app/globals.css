@@ -2,25 +2,27 @@
 
 
 @font-face {
-  font-family: "Gilroy-ExtraBold";
-  src: url("/fonts/Gilroy-ExtraBold.eot");
-  src: url("/fonts/Gilroy-ExtraBold.eot?#iefix") format("embedded-opentype"),
-    url("/fonts/Gilroy-ExtraBold.woff2") format("woff2"),
-    url("/fonts/ExtraBold.woff") format("woff");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
+    font-family: Gilroy;
+    src: local("Gilroy Light"),local("Gilroy-Light"),url(/fonts/Gilroy-Light.woff2) format("woff2"),url(/fonts/Gilroy-Light.woff) format("woff");
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap
 }
 
 @font-face {
-  font-family: "Gilroy";
-  src: url("/fonts/Gilroy-Medium.eot");
-  src: url("/fonts/Gilroy-Medium.eot?#iefix") format("embedded-opentype"),
-    url("/fonts/Gilroy-Medium.woff2") format("woff2"),
-    url("/fonts/Gilroy-Medium.woff") format("woff");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
+    font-family: Gilroy;
+    src: local("Gilroy Medium"),local("Gilroy-Medium"),url(/fonts/Gilroy-Medium.woff2) format("woff2"),url(/fonts/Gilroy-Medium.woff) format("woff");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap
+}
+
+@font-face {
+    font-family: Gilroy;
+    src: local("Gilroy ExtraBold"),local("Gilroy-ExtraBold"),url(/fonts/Gilroy-ExtraBold.woff2) format("woff2"),url(/fonts/Gilroy-ExtraBold.woff) format("woff");
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap
 }
 
 :root {
@@ -62,45 +64,54 @@ body {
   color: var(--foreground);
   font-size: 1rem;
   padding-inline: 1rem;
-  .extra-bold {
-    font-family: Gilroy-ExtraBold;
-  }
-  .light {
-    font-weight: 400;
-  }
+.extra-bold {
+  font-family: "Gilroy";
+  font-weight: 800;
+}
+
+.light {
+  font-family: "Gilroy";
+  font-weight: 300;
+}
 }
 
 h1{
   font-size: 3rem;
-  .extra-bold {
-    font-family: Gilroy-ExtraBold;
-  }
-  .light {
-    font-family: Gilroy-light;
-    font-weight: 400;
-  }
+.extra-bold {
+  font-family: "Gilroy";
+  font-weight: 800;
+}
+
+.light {
+  font-family: "Gilroy";
+  font-weight: 300;
+}
 }
 
 h2{
   font-size: 2rem;
-  .extra-bold {
-    font-family: Gilroy-ExtraBold;
-  }
-  .light {
-    font-family: Gilroy;
-    font-weight: 400;
-  }
+.extra-bold {
+  font-family: "Gilroy";
+  font-weight: 800;
+}
+
+.light {
+  font-family: "Gilroy";
+  font-weight: 300;
+}
 }
 
 h3{
   font-size: 1.5rem;
-  .extra-bold {
-    font-family: Gilroy-ExtraBold;
-  }
-  .light {
-    font-family: Gilroy;
-    font-weight: 400;
-  }
+.extra-bold {
+  font-family: "Gilroy";
+  font-weight: 800;
+}
+
+.light {
+  font-family: "Gilroy";
+  font-weight: 300;
+}
 }
 
 /*       HERUNDER ER STYLING, SÅ MARGIN ER 0 VED HEADERS EFTER HINANDEN      */
@@ -112,6 +123,8 @@ h1 + h2 {
   margin-top: 0;
   margin-bottom: 0;
 }
+
+/*       OVERWRITES TIL FARVER      */
 
 .green{
   color: var(--brand-green);
@@ -144,6 +157,8 @@ h1 + h2 {
 .blue-selected{
   color: var(--blue-selected);
 }
+
+/*       WIDTH CONTAINER TIL AT SIMULERE MOBILSTØRRELSE      */
 
 .width-container {
   width: 100%;

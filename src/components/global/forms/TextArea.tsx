@@ -3,11 +3,11 @@ import Validated from "../icons/Validated";
 import Error from "../icons/Error";
 import { useState } from "react";
 
-const TextArea = ({ label, helper, error, validated, placeholder }) => {
+const TextArea = ({ label, error, validated, placeholder }) => {
     const maxLength = 200;
-    const minLength = 10;
 
     const [charCount, setCharCount] = useState(0);
+
     return ( 
         <div className="relative w-screen px-15 mt-10">
 
@@ -18,8 +18,8 @@ const TextArea = ({ label, helper, error, validated, placeholder }) => {
             />
 
             <div className="flex justify-between items-start px-7">
-                <p className={`${error || charCount < minLength || charCount > maxLength ? "text-(--error-red)" : validated && charCount >= minLength && charCount <= maxLength ? "text-(--brand-green)" : ""} light`}>{charCount < minLength ? `Message must include between ${minLength} and ${maxLength} characters` : helper}</p>
-                <span className={`text-xs shrink-0 ml-4 ${charCount < minLength || charCount > maxLength ? "text-(--error-red)" : "text-(--brand-green)"}`}>{charCount}/{maxLength}</span>
+                <p className={`${error || charCount > maxLength ? "text-(--error-red)" : validated ? "text-(--brand-green)" : ""} light`}>{charCount > maxLength ? `Message must include no more than ${maxLength} characters` : ""}</p>
+                <span className={`text-xs shrink-0 ml-4 ${charCount > maxLength ? "text-(--error-red)" : "text-(--brand-green)"}`}>{charCount}/{maxLength}</span>
             </div>
 
                         {/* // styling for at give input 60 graders snit */}
@@ -34,8 +34,8 @@ const TextArea = ({ label, helper, error, validated, placeholder }) => {
         </div>
 
         <div className="absolute top-2.5 right-18">
-            {validated && charCount >= minLength && charCount <= maxLength ? (<Validated />) : null}
-            {error || charCount < minLength || charCount > maxLength ? (<Error/>) : null}
+            {validated && charCount <= maxLength ? (<Validated />) : null}
+            {error || charCount > maxLength ? (<Error/>) : null}
         </div>
 
     </div>

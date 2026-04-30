@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Input from "@/components/global/forms/Input";
 import TextArea from "@/components/global/forms/TextArea";
+import PrimaryButton from "@/components/global/buttons/PrimaryButton";
 
 export default function Home() {
   const [inputError, setInputError] = useState(true);
@@ -10,9 +11,9 @@ export default function Home() {
   const [textAreaError, setTextAreaError] = useState(false);
   const [textAreaValidated, setTextAreaValidated] = useState(true);
 
-  return <div>
-    <Input label="Label" helper="helper-text" error={inputError} validated={inputValidated} placeholder="placeholder" type="password" />
-    <TextArea label="Label" helper="helper-text" error={textAreaError} validated={textAreaValidated} placeholder="placeholder"/>
-
+  return <div className="flex flex-col align-center">
+    <Input label="Label" error={inputError} validated={inputValidated} placeholder="placeholder" type="password" />
+    <TextArea label="Label" error={textAreaError} validated={textAreaValidated} placeholder="placeholder"/>
+    <PrimaryButton>Log ind</PrimaryButton>
   </div>;
 }

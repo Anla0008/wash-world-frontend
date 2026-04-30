@@ -1,5 +1,5 @@
 const Validated = () => {
-    return ( <div></div> );
+    return ( <img src="/icons/validatedicon.svg" alt="validated icon" /> );
 }
  
 export default Validated;

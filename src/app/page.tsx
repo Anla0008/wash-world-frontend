@@ -1,19 +1,18 @@
+"use client";
+import { useState } from "react";
+import Input from "@/components/global/forms/Input";
+import TextArea from "@/components/global/forms/TextArea";
+
 export default function Home() {
+  const [inputError, setInputError] = useState(true);
+  const [inputValidated, setInputValidated] = useState(false);
+
+  const [textAreaError, setTextAreaError] = useState(false);
+  const [textAreaValidated, setTextAreaValidated] = useState(true);
+
   return <div>
-    <h1 className="extra-bold green">Wash World</h1>
-    <h1>Wash World</h1>
-    <h1 className="light">Wash world</h1>
+    <Input label="Label" helper="helper-text" error={inputError} validated={inputValidated} placeholder="placeholder" type="password" />
+    <TextArea label="Label" helper="helper-text" error={textAreaError} validated={textAreaValidated} placeholder="placeholder"/>
 
-    <h2 className="extra-bold">Wash World</h2>
-    <h2 className="green">Wash World</h2>
-    <h2 className="light">Wash world</h2>
-
-    <h3 className="extra-bold splash">Wash World</h3>
-    <h3>Wash World</h3>
-    <h3 className="light">wash world</h3>
-
-    <p className="extra-bold">Lorem ipsum</p>
-    <p>Lorem ipsum</p>
-    <p className="light">wash world</p>
   </div>;
 }

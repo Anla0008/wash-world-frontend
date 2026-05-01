@@ -2,8 +2,16 @@
 import Validated from "../icons/Validated";
 import Error from "../icons/Error";
 import { useState } from "react";
+import type { ReactNode } from "react";
 
-const TextArea = ({ label, error, validated, placeholder }) => {
+type TextAreaProps = {
+    label: ReactNode;
+    error?: boolean;
+    validated?: boolean;
+    placeholder: string;
+};
+
+const TextArea = ({ label, error, validated, placeholder }: TextAreaProps) => {
     const maxLength = 200;
 
     const [charCount, setCharCount] = useState(0);
@@ -19,7 +27,7 @@ const TextArea = ({ label, error, validated, placeholder }) => {
 
             <div className="flex justify-between items-start px-7">
                 <p className={`${error || charCount > maxLength ? "text-(--error-red)" : validated ? "text-(--brand-green)" : ""} light`}>{charCount > maxLength ? `Message must include no more than ${maxLength} characters` : ""}</p>
-                <span className={`text-xs shrink-0 ml-4 ${charCount > maxLength ? "text-(--error-red)" : "text-(--brand-green)"}`}>{charCount}/{maxLength}</span>
+                <span className={`text-xs shrink-0 ml-4 ${charCount > maxLength ? "text-(--error-red)" : charCount > 0 ? "text-(--brand-green)" : "text-slate-500"}`}>{charCount}/{maxLength}</span>
             </div>
 
                         {/* // styling for at give input 60 graders snit */}
@@ -32,7 +40,7 @@ const TextArea = ({ label, error, validated, placeholder }) => {
                 
             <p className="light">{label}</p>
         </div>
-
+                {/* #TODO: gør så error og validated først kommer frem hvis charArt er over 0 */}
         <div className="absolute top-2.5 right-18">
             {validated && charCount <= maxLength ? (<Validated />) : null}
             {error || charCount > maxLength ? (<Error/>) : null}

@@ -19,7 +19,7 @@ size={40}
                     color={
                         pathname === "/"
                             ? "var(--brand-green-reverse)"
-                            : "var(--background)/50"
+                            : "var(--background)"
                     }
                 />
             ),
@@ -91,7 +91,11 @@ size={40}
                     style={{ transform: "translate(-50%, -35%)" }}
                 >
                     <a href="/vask" aria-label="vask">
-                        <Wash size={50} color="var(--background)" />
+                        <Wash size={50}  color={
+                        pathname === "/vask"
+                            ? "var(--brand-green-reverse)"
+                            : "var(--background)"
+                    } />
                     </a>
                 </li>
             </ul>

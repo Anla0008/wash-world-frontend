@@ -1,5 +1,5 @@
-import Validated from "../icons/Validated";
-import Error from "../icons/Error";
+import Validated from "../icons/validation/Validated";
+import Error from "../icons/validation/Error";
 
 import { useState, type ReactNode } from "react";
 

@@ -2,7 +2,7 @@
 
 import { ReactNode, useRef } from "react";
 import { motion, useMotionValue, animate, useTransform } from "framer-motion";
-import ArrowRight from "../../icons/ArrowRight";
+import ArrowRight from "../../icons/navigation/ArrowRight";
 import { useState } from "react";
 
 type SwipeProps = {

@@ -49,10 +49,10 @@
     --foreground: #fff;
     --brand-green: #0CE578;
     --splash: #FF6B06;
-    --80-percent-gray: #333333;
-    --60-percent-gray: #666666;
-    --10-percent-gray: #E5E5E5;
-    --5-percent-gray: #F7F7F7;
+    --gray-80: #333333;
+    --gray-60: #666666;
+    --gray-10: #E5E5E5;
+    --gray-5: #F7F7F7;
     --error-red: #F00D0D;
     --blue-selected: #005990;
   }

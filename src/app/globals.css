@@ -29,6 +29,7 @@
   --background: #ffffff;
   --foreground: #000;
   --brand-green: #06C167;
+  --brand-green-reverse: #0CE578;
   --splash: #FF6B06;
   --80-percent-gray: #333333;
   --60-percent-gray: #666666;
@@ -45,9 +46,10 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #000;
+    --background: #121212;
     --foreground: #fff;
     --brand-green: #0CE578;
+    --brand-green-reverse: #06C167;
     --splash: #FF6B06;
     --gray-80: #333333;
     --gray-60: #666666;

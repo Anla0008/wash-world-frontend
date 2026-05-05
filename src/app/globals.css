@@ -1,41 +1,57 @@
 @import "tailwindcss";
 
-
 @font-face {
-    font-family: Gilroy;
-    src: local("Gilroy Light"),local("Gilroy-Light"),url(/fonts/Gilroy-Light.woff2) format("woff2"),url(/fonts/Gilroy-Light.woff) format("woff");
-    font-weight: 300;
-    font-style: normal;
-    font-display: swap
+  font-family: Gilroy;
+  src:
+    local("Gilroy Light"),
+    local("Gilroy-Light"),
+    url(/fonts/Gilroy-Light.woff2) format("woff2"),
+    url(/fonts/Gilroy-Light.woff) format("woff");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: Gilroy;
-    src: local("Gilroy Medium"),local("Gilroy-Medium"),url(/fonts/Gilroy-Medium.woff2) format("woff2"),url(/fonts/Gilroy-Medium.woff) format("woff");
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap
+  font-family: Gilroy;
+  src:
+    local("Gilroy Medium"),
+    local("Gilroy-Medium"),
+    url(/fonts/Gilroy-Medium.woff2) format("woff2"),
+    url(/fonts/Gilroy-Medium.woff) format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: Gilroy;
-    src: local("Gilroy ExtraBold"),local("Gilroy-ExtraBold"),url(/fonts/Gilroy-ExtraBold.woff2) format("woff2"),url(/fonts/Gilroy-ExtraBold.woff) format("woff");
-    font-weight: 800;
-    font-style: normal;
-    font-display: swap
+  font-family: Gilroy;
+  src:
+    local("Gilroy ExtraBold"),
+    local("Gilroy-ExtraBold"),
+    url(/fonts/Gilroy-ExtraBold.woff2) format("woff2"),
+    url(/fonts/Gilroy-ExtraBold.woff) format("woff");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
 }
 
 :root {
+  /* Defination af default farver (light mode) */
   --background: #ffffff;
-  --foreground: #000;
-  --brand-green: #06C167;
-  --brand-green-reverse: #0CE578;
-  --splash: #FF6B06;
-  --80-percent-gray: #333333;
-  --60-percent-gray: #666666;
-  --10-percent-gray: #E5E5E5;
-  --5-percent-gray: #F7F7F7;
-  --error-red: #F00D0D;
+  --foreground: #121212;
+  --foreground-reverse: #ffffff; /* bruges når teksten skal være omvendt pga. mørkere card */
+
+  --brand-green: #06c167;
+  --brand-green-reverse: #0ce578;
+  --splash: #ff6b06;
+
+  --gray-80: #f7f7f7;
+  --gray-60: #e5e5e5;
+  --gray-10: #666666;
+  --gray-5: #333333;
+
+  --error-red: #f00d0d;
   --blue-selected: #005990;
 }
 
@@ -46,17 +62,15 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
+    /* Defination af farver til dark mode – som er anderledes ind tidligere defineret */
     --background: #121212;
     --foreground: #fff;
-    --brand-green: #0CE578;
-    --brand-green-reverse: #06C167;
-    --splash: #FF6B06;
+    --foreground-reverse: #121212; /* bruges når teksten skal være omvendt pga. lysere card */
+
     --gray-80: #333333;
     --gray-60: #666666;
-    --gray-10: #E5E5E5;
-    --gray-5: #F7F7F7;
-    --error-red: #F00D0D;
-    --blue-selected: #005990;
+    --gray-10: #e5e5e5;
+    --gray-5: #f7f7f7;
   }
 }
 
@@ -66,53 +80,53 @@ body {
   color: var(--foreground);
   font-size: 1rem;
   padding-inline: 1rem;
-.extra-bold {
-  font-family: "Gilroy";
-  font-weight: 800;
-}
-.light {
-  font-family: "Gilroy";
-  font-weight: 300;
-}
+  .extra-bold {
+    font-family: "Gilroy";
+    font-weight: 800;
+  }
+  .light {
+    font-family: "Gilroy";
+    font-weight: 300;
+  }
 }
 
-h1{
+h1 {
   font-size: 3rem;
-.extra-bold {
-  font-family: "Gilroy";
-  font-weight: 800;
+  .extra-bold {
+    font-family: "Gilroy";
+    font-weight: 800;
+  }
+
+  .light {
+    font-family: "Gilroy";
+    font-weight: 300;
+  }
 }
 
-.light {
-  font-family: "Gilroy";
-  font-weight: 300;
-}
-}
-
-h2{
+h2 {
   font-size: 2rem;
-.extra-bold {
-  font-family: "Gilroy";
-  font-weight: 800;
+  .extra-bold {
+    font-family: "Gilroy";
+    font-weight: 800;
+  }
+
+  .light {
+    font-family: "Gilroy";
+    font-weight: 300;
+  }
 }
 
-.light {
-  font-family: "Gilroy";
-  font-weight: 300;
-}
-}
-
-h3{
+h3 {
   font-size: 1.5rem;
-.extra-bold {
-  font-family: "Gilroy";
-  font-weight: 800;
-}
+  .extra-bold {
+    font-family: "Gilroy";
+    font-weight: 800;
+  }
 
-.light {
-  font-family: "Gilroy";
-  font-weight: 300;
-}
+  .light {
+    font-family: "Gilroy";
+    font-weight: 300;
+  }
 }
 
 /*       HERUNDER ER STYLING, SÅ MARGIN ER 0 VED HEADERS EFTER HINANDEN      */
@@ -127,35 +141,35 @@ h1 + h2 {
 
 /*       OVERWRITES TIL FARVER      */
 
-.green{
+.green {
   color: var(--brand-green);
 }
 
-.splash{
+.splash {
   color: var(--splash);
 }
 
-.gray-80{
+.gray-80 {
   color: var(--80-percent-gray);
 }
 
-.gray-60{
+.gray-60 {
   color: var(--60-percent-gray);
 }
 
-.gray-10{
+.gray-10 {
   color: var(--10-percent-gray);
 }
 
-.gray-5{
+.gray-5 {
   color: var(--5-percent-gray);
 }
 
-.error-red{
+.error-red {
   color: var(--error-red);
 }
 
-.blue-selected{
+.blue-selected {
   color: var(--blue-selected);
 }
 
@@ -163,7 +177,7 @@ h1 + h2 {
 
 .width-container {
   width: 100%;
-  max-width: 430px;   /* mobilbredde */
+  max-width: 430px; /* mobilbredde */
   margin-inline: auto;
   padding-inline: 16px;
 }

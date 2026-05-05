@@ -1,6 +1,6 @@
 "use client";
-import Validated from "../icons/Validated";
-import Error from "../icons/Error";
+import Validated from "../icons/validation/Validated";
+import Error from "../icons/validation/Error";
 import { useState } from "react";
 import type { ReactNode } from "react";
 
@@ -12,6 +12,7 @@ type TextAreaProps = {
 };
 
 const TextArea = ({ label, error, validated, placeholder }: TextAreaProps) => {
+    // TODO: opdater denne senere til regex fra backend
     const maxLength = 200;
 
     const [charCount, setCharCount] = useState(0);
@@ -40,7 +41,7 @@ const TextArea = ({ label, error, validated, placeholder }: TextAreaProps) => {
                 
             <p className="light">{label}</p>
         </div>
-                {/* #TODO: gør så error og validated først kommer frem hvis charArt er over 0 */}
+                {/* #TODO: gør så error og validated først kommer frem hvis charArt er over 0 - dette tages fra backenden */}
         <div className="absolute top-2.5 right-18">
             {validated && charCount <= maxLength ? (<Validated />) : null}
             {error || charCount > maxLength ? (<Error/>) : null}

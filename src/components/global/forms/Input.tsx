@@ -1,7 +1,7 @@
-import Validated from "../icons/Validated";
-import Error from "../icons/Error";
+import Validated from "../icons/validation/Validated";
+import Error from "../icons/validation/Error";
 
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 type InputProps = {
     label: ReactNode;
@@ -11,11 +11,12 @@ type InputProps = {
     type: string;
 };
 const Input = ({ label, error, validated, type, placeholder }:InputProps) => {
-
+  const [charCount, setCharCount] = useState(0);
+  
     return ( 
         <div className="relative w-screen px-15 mt-10">
 
-            <input className="border-3 border-foreground w-full py-2 px-6" type={type} placeholder={placeholder}/>
+            <input className={`border-3 border-foreground w-full py-2 px-6 ${error ? "border-(--error-red)" : validated ? "border-(--brand-green)" : ""}`} type={type} placeholder={placeholder} onChange={(e) => setCharCount(e.target.value.length)} />
 
             <p className={`${error ? "text-(--error-red)" : validated ? "text-(--brand-green)" : ""} px-7 light`}></p>
 
@@ -29,7 +30,7 @@ const Input = ({ label, error, validated, type, placeholder }:InputProps) => {
                 
             <p className="light">{label}</p>
         </div>
-                {/* #TODO: gør så error og validated først kommer frem hvis charArt er over 0 */}
+                {/* #TODO: gør så error og validated først kommer frem hvis charArt er over 0 - dette tages fra backenden */}
         <div className="absolute top-2.5 right-18">
             {validated ? (<Validated />) : null}
             {error ? (<Error/>) : null}

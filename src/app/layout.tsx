@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Image from "next/image";
+import NavBar from "@/components/global/navigation/NavBar";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -14,9 +14,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="da">
-      <body className="">
+      <head>
+        <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png" />
+        <link rel="manifest" href="favicon/site.webmanifest" />
+        <link rel="shortcut icon" href="favicon/favicon.ico" />
+      </head>
+      <body>
         <main className="flex flex-col items-center justify-center">
           {children}
+          <NavBar />
         </main>
       </body>
     </html>

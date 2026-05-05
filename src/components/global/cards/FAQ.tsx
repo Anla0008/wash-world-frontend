@@ -22,7 +22,7 @@ const items: FAQItem[] = [
     content: (
       <p>
         Vi tilbyder tre forskellige abonnementer med ubegrænset vask. Læs mere om vores{" "}
-        <a href="/profil" target="_blank" className="underline text-(--blue-selected)">
+        <a href="/profil" className="underline text-(--blue-selected)">
           abonnementer her
         </a>
         .
@@ -64,7 +64,7 @@ export default function FAQ() {
               </button>
 
               {/* CONTENT */}
-              <div className={`px-4 pb-4 transition-all duration-300 light ${isOpen ? "max-h-45 opacity-100" : "max-h-0 opacity-0 overflow-hidden"}`}>{item.content}</div>
+              <div className={`px-4 pb-4 transition-all duration-300 light ${isOpen ? "max-h-auto opacity-100" : "max-h-0 opacity-0 overflow-hidden"}`}>{item.content}</div>
             </div>
           );
         })}

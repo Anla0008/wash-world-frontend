@@ -52,7 +52,7 @@
   --gray-5: #333333;
 
   --error-red: #f00d0d;
-  --blue-selected: #005990;
+  --blue-selected: #158cd5;
 }
 
 @theme inline {
@@ -71,6 +71,8 @@
     --gray-60: #666666;
     --gray-10: #e5e5e5;
     --gray-5: #f7f7f7;
+
+    --blue-selected: #005990;
   }
 }
 
@@ -186,4 +188,15 @@ h1 + h2 {
   .width-container {
     max-width: 600px; /* tablet */
   }
+}
+
+/*       SCROLLBAR STYLING      */
+
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE og Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
 }

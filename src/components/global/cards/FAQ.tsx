@@ -9,9 +9,9 @@ const items: FAQItem[] = [
     title: "Hvor har Wash World vask selv henne?",
     content: (
       <p>
-        Vi tilbyder kun Vask Selv på udvalgte lokationer, men vi åbner hele tiden flere. Du kan finde en oversigt over vores{" "}
+        Vi tilbyder kun Vask Selv på udvalgte lokationer, men vi åbner hele tiden flere. Du kan finde en oversigt over vores Vask Selv stationer{" "}
         <a href="https://washworld.dk/vask-selv" target="_blank" className="underline text-(--blue-selected)">
-          Vask Selv stationer her
+          her
         </a>
         .
       </p>
@@ -21,9 +21,9 @@ const items: FAQItem[] = [
     title: "Hvad koster et abonemment med ubegrænset vask?",
     content: (
       <p>
-        Vi tilbyder tre forskellige abonnementer med ubegrænset vask. Læs mere om vores{" "}
+        Vi tilbyder tre forskellige abonnementer med ubegrænset vask. Læs mere om vores abonnementer{" "}
         <a href="/profil" className="underline text-(--blue-selected)">
-          abonnementer her
+          her
         </a>
         .
       </p>

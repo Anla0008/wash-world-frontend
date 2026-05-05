@@ -1,6 +1,6 @@
 import { useState } from "react";
 import OpenAndClose from "../icons/navigation/OpenAndClose";
-import { FAQItem } from "../../../types/faqItem";
+import { FAQItem } from "@/types/FAQItem";
 
 // Definerer typen for hvert accordion item
 

@@ -47,7 +47,7 @@ export default function FAQ() {
 
   return (
     <section className="bg-(--gray-60) p-6 rounded-md">
-      <h2 className="gray-5">FAQ</h2>
+      <h2 className="gray-5 extra-bold">FAQ</h2>
 
       <div className="space-y-3 max-w-lg w-full">
         {/* Map igennem FAQ items og render dem */}

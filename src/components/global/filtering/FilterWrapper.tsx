@@ -6,6 +6,10 @@ import FilterCard from "./FilterCard";
 const FilterWrapper = () => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
+    const [washHallRange, setWashHallRange] = useState({
+        min: 1, //opdater senere til backenden fra singleview
+        max: 5,
+    });
 
     useEffect(() => {
         if (!isOpen) return;
@@ -26,16 +30,18 @@ const FilterWrapper = () => {
             document.removeEventListener("click", handleOutsideClick);
         };
 
-    }, [isOpen]); // useEffect afhænger af isOpen, så den kører hver gang isOpen ændres
+    }, [isOpen]);
     
     const [chosen, setChosen] = useState<string[]>([]);
-    const hasFiltered = chosen.length > 0;
+    // bestemmer om nulstil knappen skal vises altefter om der er filtreret eller progressbaren er anvendt
+    const hasFiltered = chosen.length > 0 || washHallRange.min !== 1 || washHallRange.max !== 5; // opdater senere til backenden fra singleview 
 
+    // toggleOption håndterer tilføjelse og fjernelse af filtermuligheder i chosen-arrayet
     const toggleOption = (option: string) => {
         setChosen((prev) =>
-            prev.includes(option)
-                ? prev.filter((item) => item !== option)
-                : [...prev, option]
+            prev.includes(option) 
+                ? prev.filter((item) => item !== option) // fjerner option ved at filtrere det ud af arrayet
+                : [...prev, option] // tilføjer option ved at oprette et nyt array med den nye option inkluderet
         );
     };
 
@@ -57,7 +63,13 @@ const FilterWrapper = () => {
                 ) : null}
             </div>
 
-            {isOpen ? <FilterCard chosen={chosen} onToggle={toggleOption} setIsOpen={setIsOpen} /> : null}
+            {isOpen ?<FilterCard
+            chosen={chosen}
+            onToggle={toggleOption}
+            setIsOpen={setIsOpen}
+            washHallRange={washHallRange}
+            setWashHallRange={setWashHallRange}
+        /> : null}
         </div>
       );
 }

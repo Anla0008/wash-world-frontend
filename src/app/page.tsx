@@ -7,6 +7,7 @@ import Swipe from "@/components/global/buttons/onClick/Swipe";
 import SearchBar from "@/components/global/filtering/SearchBar";
 import FilterWrapper from "@/components/global/filtering/FilterWrapper";
 import FilterProgressBar from "@/components/global/filtering/FilterProgressBar";
+import ProgressBar from "@/components/global/grafik/ProgressBar";
 
 export default function Home() {
   const [inputError, setInputError] = useState(true);
@@ -19,6 +20,7 @@ export default function Home() {
     <Input label="Label" error={inputError} validated={inputValidated} placeholder="placeholder" type="password" />
     <TextArea label="Label" error={textAreaError} validated={textAreaValidated} placeholder="placeholder"/>
     <Swipe disabled={true}>Betal noget</Swipe>
-    <FilterProgressBar/>
+    <FilterWrapper/>
+    <ProgressBar activeIndex={2}/>
   </div>;
 }

@@ -2,45 +2,84 @@
 
 import * as Slider from "@radix-ui/react-slider";
 import { motion } from "framer-motion";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-const FilterProgressBar = () => {
-    // Dynamiske steps
-    const numbers = [1, 2, 3, 4, 5];
+type FilterProgressBarProps = {
+    numbers?: number[];
+    initialMinStep?: number;
+    initialMaxStep?: number;
+    onRangeChange?: (range: { min: number; max: number }) => void;
+};
 
-    const minStep = numbers[0];
-    const maxStep = numbers[numbers.length - 1];
+const FilterProgressBar = ({
+    numbers = [1, 2, 3, 4, 5], //TODO: skal opdateres til at bruge dataen fra backenden m. singleviews indhold
+    initialMinStep,
+    initialMaxStep,
+    onRangeChange,
+}: FilterProgressBarProps) => {
+    
+    const sortedNumbers = useMemo(() => [...numbers].sort((a, b) => a - b), [numbers]); // sorterer tallene i stigende rækkefølge - fallback
 
-    // Starter altid på højeste værdi
-    const [activeStep, setActiveStep] = useState<number>(maxStep);
+    const minStep = sortedNumbers[0];
+    const maxStep = sortedNumbers[sortedNumbers.length - 1];
 
-    // Progress omkonverteret til procent
-    const progressPercent = useMemo(() => {
-        return (
-            ((activeStep - minStep) / (maxStep - minStep)) * 100
-        );
-    }, [activeStep, minStep, maxStep]);
+    // sikrer af minStep ikke er højere end maxStep og omvendt, og at de begge er inden for det tilladte interval
+    const initialRange = useMemo<[number, number]>(() => {
+        const startMin = Math.min(Math.max(initialMinStep ?? minStep, minStep), maxStep);
+        const startMax = Math.min(Math.max(initialMaxStep ?? maxStep, minStep), maxStep);
+
+        return [Math.min(startMin, startMax), Math.max(startMin, startMax)];
+    }, [initialMinStep, initialMaxStep, minStep, maxStep]);
+
+
+    // activeRange er den valgte rækkevidde, som opdateres, når brugeren interagerer med slideren
+    const [activeRange, setActiveRange] = useState<[number, number]>(initialRange);
+
+    useEffect(() => {
+        setActiveRange(initialRange);
+    }, [initialRange]);
+
+    useEffect(() => {
+        onRangeChange?.({ min: activeRange[0], max: activeRange[1] });
+    }, [activeRange, onRangeChange]);
+
+    const [activeStepMin, activeStepMax] = activeRange;
+
+    // beregner startpositionen og bredden af det aktive område på slideren i procent, baseret på den valgte rækkevidde og det samlede interval
+    const { rangeStartPercent, rangeWidthPercent } = useMemo(() => {
+        if (maxStep === minStep) {
+            return { rangeStartPercent: 0, rangeWidthPercent: 100 };
+        }
+
+        // konverterer en værdi til en procentdel af det samlede interval
+        const toPercent = (value: number) => ((value - minStep) / (maxStep - minStep)) * 100;
+        const start = toPercent(activeStepMin);
+        const end = toPercent(activeStepMax);
+        // returnering af startpositionen og bredden af det aktive område i procent
+        return {
+            rangeStartPercent: start,
+            rangeWidthPercent: Math.max(end - start, 0), // sikrer at bredden ikke bliver negativ, hvis max er mindre end min
+        };
+    }, [activeStepMin, activeStepMax, minStep, maxStep]);
 
     return (
         <div className="w-full m-auto max-w-xl px-4 py-10">
             <Slider.Root
-                value={[activeStep]}
+                value={activeRange}
                 min={minStep}
                 max={maxStep}
                 step={1}
                 onValueChange={(value) => {
-                    setActiveStep(value[0]);
+                    setActiveRange([value[0], value[1]]);
                 }}
-                className="relative px-1.5 flex w-full touch-none select-none items-center"
+                className="relative flex w-full touch-none select-none items-center px-1.5"
             >
-                {/* Track */}
                 <Slider.Track className="relative h-1.5 w-full rounded-full bg-white/20">
-                    
-                    {/* Animated progress */}
                     <motion.div
-                        className="absolute left-0 top-0 h-full rounded-full bg-white"
+                        className="absolute top-0 h-full rounded-full bg-white"
                         animate={{
-                            width: `${progressPercent}%`,
+                            left: `${rangeStartPercent}%`,
+                            width: `${rangeWidthPercent}%`,
                         }}
                         transition={{
                             type: "spring",
@@ -48,20 +87,38 @@ const FilterProgressBar = () => {
                             damping: 20,
                         }}
                     />
-
-                    {/* Step circles */}
-                    {numbers.map((number, index) => {
+                    {/* generer knapper ved at mappe over de sortede tal */}
+                    {sortedNumbers.map((number, index) => {
                         const position =
-                            (index / (numbers.length - 1)) * 100;
+                            sortedNumbers.length === 1
+                                ? 0
+                                : (index / (sortedNumbers.length - 1)) * 100;
 
-                        const isActive = number <= activeStep;
-                        const isCurrent = number === activeStep;
+                        const isActiveMin = number === activeStepMin;
+                        const isActiveMax = number === activeStepMax;
+                        const isInRange = number > activeStepMin && number < activeStepMax;
 
                         return (
                             <button
                                 key={number}
                                 type="button"
-                                onClick={() => setActiveStep(number)}
+                                // on mousedown så brugeren også kan slide
+                             onMouseDown={() => {
+                                    const distanceToMin = Math.abs(number - activeStepMin);
+                                    const distanceToMax = Math.abs(number - activeStepMax);
+                                    // hvis det klikkede tal er tættere på det nuværende minimum, opdateres minimum, ellers opdateres maksimum
+                                    if (distanceToMin <= distanceToMax) {
+                                        setActiveRange([
+                                            Math.min(number, activeStepMax),
+                                            Math.max(number, activeStepMax),
+                                        ]);
+                                        return;
+                                    }
+                                    setActiveRange([
+                                        Math.min(activeStepMin, number),
+                                        Math.max(activeStepMin, number),
+                                    ]);
+                                }}
                                 className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2"
                                 style={{
                                     left: `${position}%`,
@@ -69,7 +126,7 @@ const FilterProgressBar = () => {
                             >
                                 <motion.div
                                     animate={{
-                                        scale: isCurrent ? 1.15 : 1,
+                                        scale: isActiveMin || isActiveMax ? 1.15 : 1,
                                     }}
                                     transition={{
                                         type: "spring",
@@ -80,9 +137,11 @@ const FilterProgressBar = () => {
                                         flex h-14 w-14 items-center justify-center rounded-full
                                         text-2xl font-bold transition-colors duration-300
                                         ${
-                                            isCurrent
+                                            isActiveMin || isActiveMax
                                                 ? "bg-(--brand-green) text-foreground"
-                                                : "bg-foreground"
+                                                : isInRange
+                                                  ? "bg-foreground text-background"
+                                                  : "bg-foreground"
                                         }
                                     `}
                                 >
@@ -91,19 +150,15 @@ const FilterProgressBar = () => {
                             </button>
                         );
                     })}
-                <div className="flex justify-between">
-                    <h3>{minStep}</h3>
-                    <h3>{maxStep}</h3>
-                </div>
                 </Slider.Track>
-
-                {/* Hidden thumb (required by Radix) */}
-                <Slider.Thumb className="h-0 w-0 opacity-0" />
+                
+                <Slider.Thumb className="h-0 w-0 opacity-0" aria-label="Minimum" />
+                <Slider.Thumb className="h-0 w-0 opacity-0" aria-label="Maksimum" />
             </Slider.Root>
 
-            <div className="py-10 flex justify-between m-auto">
-                <h3>{minStep}</h3>
-                <h3>{maxStep}</h3>
+            <div className="m-auto flex justify-between py-10 light">
+                <p>MIN: {activeStepMin}</p>
+                <p>MAX: {activeStepMax}</p>
             </div>
         </div>
     );

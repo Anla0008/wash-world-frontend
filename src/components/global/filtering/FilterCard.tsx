@@ -1,8 +1,27 @@
 "use client";
 import OpenAndClose from "../icons/navigation/OpenAndClose";
 import FilterButton from "../buttons/onClick/FilterButton";
+import FilterProgressBar from "./FilterProgressBar";
 
-const FilterCard = ({ chosen, onToggle, setIsOpen }: { chosen: string[]; onToggle: (option: string) => void; setIsOpen: React.Dispatch<React.SetStateAction<boolean>> }) => {
+type FilterCardProps = {
+    chosen: string[];
+    onToggle: (option: string) => void;
+    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+
+    washHallRange: {
+        min: number;
+        max: number;
+    };
+
+    setWashHallRange: React.Dispatch<
+        React.SetStateAction<{
+            min: number;
+            max: number;
+        }>
+    >;
+};
+
+const FilterCard = ({ chosen, onToggle, setIsOpen, washHallRange, setWashHallRange }: FilterCardProps) => {
 
     // opdateres til at bruge dataen fra backenden m. singleviews indhold
     const options = [
@@ -21,7 +40,7 @@ const FilterCard = ({ chosen, onToggle, setIsOpen }: { chosen: string[]; onToggl
                         setIsOpen(false);
                     }}
                 >
-                    <OpenAndClose size={30}/>
+                    <OpenAndClose isOpen={true} size={30}/>
                 </div>
 
             <div className="flex flex-col gap-5">
@@ -43,16 +62,17 @@ const FilterCard = ({ chosen, onToggle, setIsOpen }: { chosen: string[]; onToggl
                 </div>
 
             </div>
-
+                    <div>
                 <div className="flex flex-col gap-5">
                     <p className="extra-bold">Antal vaskehaller</p>
-                    {/* // TODO: indsæt komponent */}
+                    <FilterProgressBar onRangeChange={setWashHallRange} />
                 </div>
 
                     <div className="flex flex-col gap-5">
                     <p className="extra-bold">Antal vask selv</p>
-                    {/* TODO: indsæt komponent */}
+                    <FilterProgressBar onRangeChange={setWashHallRange} />
                 </div>
+                    </div>
 
         </div>
      );

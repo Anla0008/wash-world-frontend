@@ -1,12 +1,7 @@
 import { MdOutlineArrowRightAlt } from "react-icons/md";
+import { IconProps } from "@/types/icons";
 
-
-interface NavArrowRightProps {
-    color?: string;
-    size?: string | number;
-}
-
-const NavArrowRight = ({color, size}: NavArrowRightProps) => {
+const NavArrowRight = ({color, size}: IconProps) => {
     return ( <MdOutlineArrowRightAlt color={color} size={size} /> );
 }
  

@@ -1,10 +1,7 @@
 import { IoPersonOutline } from "react-icons/io5";
-type PersonProps = {
-    color?: string;
-    size?: number;
-};
+import { IconProps } from "@/types/icons";
 
-const Person = ({ color, size }: PersonProps) => {
+const Person = ({ color, size }: IconProps) => {
     return ( <IoPersonOutline color={color} size={size} /> );
 }
  

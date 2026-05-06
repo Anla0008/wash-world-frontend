@@ -1,11 +1,7 @@
 import { MdLocalCarWash } from "react-icons/md";
+import { IconProps } from "@/types/icons";
 
-type WashProps = {
-    color?: string;
-    size?: number;
-};
-
-const Wash = ({ color, size }: WashProps) => {
+const Wash = ({ color, size }: IconProps) => {
     return ( <MdLocalCarWash color={color} size={size} /> );
 }
  

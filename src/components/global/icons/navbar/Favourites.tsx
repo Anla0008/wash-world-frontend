@@ -1,13 +1,9 @@
 "use client"
 
 import { IoIosHeart } from "react-icons/io";
+import { IconProps } from "@/types/icons";
 
-interface FavouritesProps {
-    color?: string;
-    size?: string | number;
-}
-
-const Favourites = ({ color, size }: FavouritesProps) => {
+const Favourites = ({ color, size }: IconProps) => {
 
     return (
         <IoIosHeart color={color} size={size} />

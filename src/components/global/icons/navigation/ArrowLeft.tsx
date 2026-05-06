@@ -1,11 +1,7 @@
 import { IoIosArrowBack } from "react-icons/io";
+import { IconProps } from "@/types/icons";
 
-interface ArrowLeftProps {
-    color?: string;
-    size?: string | number;
-}
-
-const ArrowLeft = ({color, size}: ArrowLeftProps) => {
+const ArrowLeft = ({color, size}: IconProps) => {
     return ( <IoIosArrowBack color={color} size={size} />
  );
 }

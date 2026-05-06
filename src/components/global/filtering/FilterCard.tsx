@@ -2,24 +2,7 @@
 import OpenAndClose from "../icons/navigation/OpenAndClose";
 import FilterButton from "../buttons/onClick/FilterButton";
 import FilterProgressBar from "./FilterProgressBar";
-
-type FilterCardProps = {
-    chosen: string[];
-    onToggle: (option: string) => void;
-    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-
-    washHallRange: {
-        min: number;
-        max: number;
-    };
-
-    setWashHallRange: React.Dispatch<
-        React.SetStateAction<{
-            min: number;
-            max: number;
-        }>
-    >;
-};
+import { FilterCardProps } from "@/types/filtering";
 
 const FilterCard = ({ chosen, onToggle, setIsOpen, washHallRange, setWashHallRange }: FilterCardProps) => {
 

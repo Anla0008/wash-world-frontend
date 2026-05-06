@@ -1,10 +1,7 @@
 import { IoMailOutline } from "react-icons/io5";
-type MailProps = {
-    color?: string;
-    size?: number;
-};
+import { IconProps } from "@/types/icons";
 
-const Mail = ({ color, size }: MailProps) => {
+const Mail = ({ color, size }: IconProps) => {
     return ( <IoMailOutline color={color} size={size} /> );
 }
  

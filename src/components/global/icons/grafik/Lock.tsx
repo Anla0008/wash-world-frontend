@@ -1,11 +1,7 @@
 import { CiLock } from "react-icons/ci";
+import { IconProps } from "@/types/icons";
 
-type LockProps = {
-    color?: string;
-    size?: number;
-};  
-
-const Lock = ({ color, size }: LockProps) => {
+const Lock = ({ color, size }: IconProps) => {
     return ( <CiLock color={color} size={size} /> );
 }
  

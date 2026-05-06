@@ -1,11 +1,7 @@
 import { CiClock2 } from "react-icons/ci";
+import { IconProps } from "@/types/icons";
 
-interface ClockProps {
-    color?: string;
-    size?: string | number;
-}
-
-const Clock = ({color, size}: ClockProps) => {
+const Clock = ({color, size}: IconProps) => {
     return ( <CiClock2 color={color} size={size} /> );
 }
  

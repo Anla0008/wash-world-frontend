@@ -1,11 +1,7 @@
 import { IoCardOutline } from "react-icons/io5";
+import { IconProps } from "@/types/icons";
 
-type CardProps = {
-    color?: string;
-    size?: number;
-};
-
-const Card = ({ color, size }: CardProps) => {
+const Card = ({ color, size }: IconProps) => {
     return ( <IoCardOutline color={color} size={size} /> );
 }
  

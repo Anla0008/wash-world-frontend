@@ -3,7 +3,10 @@ import Timer from "@/components/vask/Timer";
 
 const Dashboard = () => {
     return ( 
-        <ProgressBar activeIndex={1} />
+        <>
+            <ProgressBar activeIndex={1} />
+            <Timer totalTime={120} />
+        </>
      );
 }
  

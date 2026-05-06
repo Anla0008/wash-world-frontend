@@ -2,14 +2,14 @@
 import { IoEyeOutline } from "react-icons/io5";
 import { IoEyeOffOutline } from "react-icons/io5";
 import { useState } from "react";
+import { IconProps } from "@/types/icons";
 
-type EyeProps = {
-    color?: string;
-    size?: number;
-    isVisible: boolean;
-};
+interface EyeProps extends IconProps {
+    isVisible?: boolean;
+}
 
-const Eye = ({ color, size, isVisible }: EyeProps) => {
+
+const Eye = ({ color, size, isVisible }: IconProps) => {
     const [visible, setVisible] = useState(isVisible);
 
     const toggleVisibility = () => {

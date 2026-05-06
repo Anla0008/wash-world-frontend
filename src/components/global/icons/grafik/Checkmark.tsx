@@ -1,11 +1,7 @@
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
+import { IconProps } from "@/types/icons";
 
-interface CheckmarkProps {
-    color?: string;
-    size?: number;
-}
-
-const Checkmark = ({ color, size }: CheckmarkProps) => {
+const Checkmark = ({ color, size }: IconProps) => {
     return ( <IoMdCheckmarkCircleOutline color={color} size={size} />
  );
 }

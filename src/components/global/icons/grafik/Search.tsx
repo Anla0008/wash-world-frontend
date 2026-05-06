@@ -1,11 +1,7 @@
 import { IoSearchSharp } from "react-icons/io5";
+import { IconProps } from "@/types/icons";
 
-type SearchProps = {
-    color?: string;
-    size?: number;
-};
-
-const Search = ({ color, size }: SearchProps) => {
+const Search = ({ color, size }: IconProps) => {
     return ( <IoSearchSharp color={color} size={size} /> );
 }
  

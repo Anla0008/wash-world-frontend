@@ -1,11 +1,7 @@
 import { IoLocationOutline } from "react-icons/io5";
+import { IconProps } from "@/types/icons";
 
-interface LocationProps {
-    color?: string;
-    size?: string | number;
-}
-
-const Location = ({color, size}: LocationProps) => {
+const Location = ({color, size}: IconProps) => {
     return ( <IoLocationOutline color={color} size={size} /> );
 }
 export default Location;

@@ -1,11 +1,7 @@
 import { IoPersonSharp } from "react-icons/io5";
+import { IconProps } from "@/types/icons";
 
-type ProfileProps = {
-    color?: string;
-    size?: number;
-};
-
-const Profile = ({ color, size }: ProfileProps) => {
+const Profile = ({ color, size }: IconProps) => {
     return ( 
         <IoPersonSharp color={color} size={size} />
      );

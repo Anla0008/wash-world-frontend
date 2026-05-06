@@ -3,13 +3,7 @@
 import * as Slider from "@radix-ui/react-slider";
 import { motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
-
-type FilterProgressBarProps = {
-    numbers?: number[];
-    initialMinStep?: number;
-    initialMaxStep?: number;
-    onRangeChange?: (range: { min: number; max: number }) => void;
-};
+import { FilterProgressBarProps } from "@/types/filtering";
 
 const FilterProgressBar = ({
     numbers = [1, 2, 3, 4, 5], //TODO: skal opdateres til at bruge dataen fra backenden m. singleviews indhold

@@ -1,6 +1,10 @@
+import Timer from "@/components/vask/Timer";
+
 export default function Dashboard() {
     return (  
-        <div></div>
+        <div>
+            <Timer></Timer>
+        </div>
     );
 }
  

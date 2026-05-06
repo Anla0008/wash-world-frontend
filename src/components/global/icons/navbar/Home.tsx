@@ -1,10 +1,7 @@
 import { IoHomeSharp } from "react-icons/io5";
-type HomeProps = {
-    color?: string;
-    size?: number;
-};
+import { IconProps } from "@/types/icons";
 
-const Home = ({ color, size }: HomeProps) => {
+const Home = ({ color, size }: IconProps) => {
     return ( <IoHomeSharp color={color} size={size} /> );
 }
  

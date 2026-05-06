@@ -3,16 +3,7 @@ import { HiOutlineArrowLongUp } from "react-icons/hi2";
 import { HiOutlineArrowNarrowDown } from "react-icons/hi";
 
 import { useState } from "react";
-
-export type SortDirection = "asc" | "desc";
-
-type SortingProps = {
-    label?: string;
-    direction?: SortDirection;
-    defaultDirection?: SortDirection;
-    onDirectionChange?: (direction: SortDirection) => void;
-    className?: string;
-};
+import { SortDirection, SortingProps } from "@/types/filtering";
 
 const Sorting = ({
     label = "Sortér",

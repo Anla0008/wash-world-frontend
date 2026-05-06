@@ -1,10 +1,7 @@
 import { IoIosArrowDown } from "react-icons/io";
-interface ArrowDownProps {
-    color?: string;
-    size?: string | number;
-}
+import { IconProps } from "@/types/icons";
 
-const ArrowDown = ({color, size}: ArrowDownProps) => {
+const ArrowDown = ({color, size}: IconProps) => {
     return ( <IoIosArrowDown color={color} size={size} />
  );
 }

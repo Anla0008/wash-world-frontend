@@ -1,11 +1,7 @@
 import { IoFilter } from "react-icons/io5";
+import { IconProps } from "@/types/icons";
 
-type FilterProps = {
-    color?: string;
-    size?: number;
-};
-
-const Filter = ({ color, size }: FilterProps) => {
+const Filter = ({ color, size }: IconProps) => {
     return ( <IoFilter color={color} size={size} /> );
 }
  

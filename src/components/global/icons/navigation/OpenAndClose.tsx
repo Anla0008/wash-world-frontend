@@ -2,14 +2,13 @@
 
 import { motion } from "framer-motion";
 import { IoMdClose } from "react-icons/io";
+import { IconProps } from "@/types/icons";
 
-interface OpenAndCloseProps {
-  color?: string;
-  size?: string | number;
+interface OpenAndCloseProps extends IconProps {
   isOpen?: boolean;
 }
 
-const OpenAndClose = ({ color, size, isOpen }: OpenAndCloseProps) => {
+const OpenAndClose = ({ color, size, isOpen }: IconProps) => {
   return (
     <motion.div
       animate={{

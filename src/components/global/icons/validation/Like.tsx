@@ -3,12 +3,9 @@ import { IoIosHeartEmpty } from "react-icons/io";
 import { IoIosHeart } from "react-icons/io";
 
 import { useState } from "react";
-interface LikeProps {
-    color?: string;
-    size?: string | number;
-}
+import { IconProps } from "@/types/icons";
 
-const Like = ({ color, size }: LikeProps) => {
+const Like = ({ color, size }: IconProps) => {
     const [liked, setLiked] = useState(false);
 
     const toggleLike = () => {

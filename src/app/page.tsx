@@ -1,32 +1,46 @@
 "use client";
-import { useState } from "react";
-import Input from "@/components/global/forms/Input";
-import TextArea from "@/components/global/forms/TextArea";
-import TertriaryButton from "@/components/global/buttons/onClick/TertriaryButton";
-import Swipe from "@/components/global/buttons/onClick/Swipe";
 
-import Sorting, { SortDirection } from "@/components/global/filtering/Sorting";
+import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { User } from "@/types/user";
+
 
 export default function Home() {
-  const [inputError, setInputError] = useState(true);
-  const [inputValidated, setInputValidated] = useState(false);
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
 
-  const [textAreaError, setTextAreaError] = useState(false);
-  const [textAreaValidated, setTextAreaValidated] = useState(true);
-  const [waitTimes, setWaitTimes] = useState([5, 10, 3, 8, 2]);
+  // Vi henter User (email, password osv. hentes én gang)
+  const [params, setParams] = useState<User>({} as User);
 
-  const handleSortDirectionChange = (direction: SortDirection) => {
-    const sorted = [...waitTimes].sort((a, b) =>
-      direction === "asc" ? a - b : b - a,
-    );
-    setWaitTimes(sorted);
+  const { login } = useAuth();
+
+  const handleSubmitLogin = async (e: any) => {
+    e.preventDefault();
+
+    const response = await login(params);
+
+    console.log(response);
   };
 
-  return <div className="flex flex-col align-center gap-10">
-    <Input label="Label" error={inputError} validated={inputValidated} placeholder="placeholder" type="password" />
-    <TextArea label="Label" error={textAreaError} validated={textAreaValidated} placeholder="placeholder"/>
-    <Swipe disabled={true}>Betal noget</Swipe>
-    <Sorting label="Ventetid" onDirectionChange={handleSortDirectionChange} />
-    <p>{waitTimes.join(", ")}</p>
-  </div>;
+
+  return (
+    <div>
+      <form onSubmit={handleSubmitLogin}>
+        <input
+          type="text"
+          placeholder="email"
+          onChange={(e) => setParams({ ...params, username: e.target.value })}
+        />
+
+        <input
+          type="password"
+          placeholder="password"
+          onChange={(e) => setParams({ ...params, password: e.target.value })}
+        />
+
+        <button type="submit">Login</button>
+      </form>
+    </div>
+    )
+  ;
 }

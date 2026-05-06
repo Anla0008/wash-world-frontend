@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { User } from "@/types/user";
+import PrimaryButton from "@/components/global/buttons/onClick/PrimaryButton";
 
 // Vi henter User (email, password osv. hentes én gang)
 const [params, setParams] = useState<User>({} as User);
@@ -40,7 +41,7 @@ export default function Signup() {
           placeholder="password"
           onChange={(e) => setParams({ ...params, password: e.target.value })}
         />
-        <button type="submit">Signup</button>
+        <PrimaryButton>Signup</PrimaryButton>
       </form>
     </div>
   );

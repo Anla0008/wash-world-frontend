@@ -12,12 +12,12 @@ const NavBar = () => {
     const li = [
         {
             name: "dashboard",
-            link: "/",
+            link: "/dashboard",
             icon: (
                 <Home
 size={40}
                     color={
-                        pathname === "/"
+                        pathname === "/dashboard"
                             ? "var(--brand-green-reverse)"
                             : "var(--background)"
                     }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import NavBar from "@/components/global/navigation/NavBar";
+import Header from "@/components/global/navigation/Header";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -22,7 +23,11 @@ export default function RootLayout({
         <link rel="shortcut icon" href="favicon/favicon.ico" />
       </head>
       <body>
-        <main className="flex flex-col items-center justify-center">
+        <div className="mb-20">
+          {/* opdateres senere til at passe med usewash systemet */}
+        <Header points={155} /> 
+        </div>
+        <main className="flex flex-col items-center justify-center mb-20">
           {children}
           <NavBar />
         </main>

@@ -3,7 +3,7 @@ import Timer from "@/components/vask/Timer";
 import Smileys from "@/components/global/icons/grafik/Smileys";
 import KundeserviceCard from "@/components/global/cards/KundeserviceCard";
 import TravlhedGraf from "@/components/singleview/TravlhedGraf";
-
+import ProfilOplysningerWrapper from "@/components/profil/ProfilOplysningerWrapper";
 const Dashboard = () => {
     return ( 
         <>
@@ -12,6 +12,7 @@ const Dashboard = () => {
             <Smileys />
             <KundeserviceCard />
             <TravlhedGraf status="travl" />
+            <ProfilOplysningerWrapper />
         </>
      );
 }

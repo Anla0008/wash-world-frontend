@@ -1,7 +1,6 @@
 import Link from "next/link";
-import ArrowRight from "../icons/navigation/ArrowRight";
-import PointBadge from "../grafik/PointBadge";
-
+import PointBadge from "../global/grafik/PointBadge";
+import ArrowRight from "../global/icons/navigation/ArrowRight";
 // Værdierne her skal hentes dynamisk ind fra wash_history db tabel
 
 const HistorikCard = ({ location, date, description, price, points, href }: HistorikCardProps) => {

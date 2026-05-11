@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-  ],
+, "src/mockupData", "src/mockupData.ts/editmode.js"  ],
   "exclude": ["node_modules"]
 }

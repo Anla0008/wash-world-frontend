@@ -1,3 +1,4 @@
+// user oplysninger
 export type User = {
   user_email: string;
   user_first_name: string;
@@ -6,3 +7,14 @@ export type User = {
   user_repeat_hashed_password: string;
   license_plate: string;
 };
+
+// redigering af brugeroplysninger i wrapper
+export type FieldKey = 
+    | "firstName"
+    | "lastName"
+    | "email"
+    | "licensePlate"
+    | "cardNumber"
+    | "cardholderName"
+    | "expiryDate"
+    | "cvc";

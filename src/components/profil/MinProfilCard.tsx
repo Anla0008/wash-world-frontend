@@ -1,4 +1,4 @@
-import NavArrowRight from "../icons/navigation/NavArrowRight";
+import NavArrowRight from "../global/icons/navigation/NavArrowRight";
 
 const MinProfilCard = () => {
     return (

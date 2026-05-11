@@ -27,11 +27,31 @@ export default function Home() {
         <ProgressBar activeIndex={1} />
 
         <form onSubmit={handleSubmitLogin}>
-          <Input label="E-mail*" error={false} validated={false} type="email" placeholder="navn@eksempel.com" onChange={(e) => setParams({ ...params, user_email: e.target.value })} />
+          <Input
+            label="E-mail*"
+            error={false}
+            validated={false}
+            type="email"
+            placeholder="navn@eksempel.com"
+            onChange={(e) =>
+              setParams({ ...params, user_email: e.target.value })
+            }
+          />
 
-          <Input label="Kode*" error={false} validated={false} type="password" placeholder="123456" onChange={(e) => setParams({ ...params, user_hashed_password: e.target.value })} />
+          <Input
+            label="Kode*"
+            error={false}
+            validated={false}
+            type="password"
+            placeholder="123456"
+            onChange={(e) =>
+              setParams({ ...params, user_hashed_password: e.target.value })
+            }
+          />
 
-          <PrimaryButtonAnchorTag href="/dashboard">Login</PrimaryButtonAnchorTag>
+          <PrimaryButtonAnchorTag href="/dashboard">
+            Login
+          </PrimaryButtonAnchorTag>
         </form>
       </section>
     </div>

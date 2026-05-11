@@ -16,21 +16,35 @@ export default function RootLayout({
   return (
     <html lang="da">
       <head>
-        <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png" />
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="favicon/apple-touch-icon.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="favicon/favicon-32x32.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="favicon/favicon-16x16.png"
+        />
         <link rel="manifest" href="favicon/site.webmanifest" />
         <link rel="shortcut icon" href="favicon/favicon.ico" />
       </head>
       <body>
-        <div className="mb-20">
-          {/* opdateres senere til at passe med usewash systemet */}
-        <Header points={155} /> 
-        </div>
-        <main className="flex flex-col items-center justify-center mb-20">
-          {children}
+        <div id="app-shell">
+          <div className="mb-20">
+            {/* opdateres senere til at passe med usewash systemet */}
+            <Header points={155} />
+          </div>
+          <main className="flex flex-col mb-20 px-8">{children}</main>
           <NavBar />
-        </main>
+        </div>
       </body>
     </html>
   );

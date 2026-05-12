@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import { User } from "@/types/user";
 
 export function useAuth() {
-  const baseUrl = "http://localhost:8080";
+  const baseUrl = "http://127.0.0.1";
 
   // ===========================================================
   //                          SIGNUP
@@ -40,6 +40,20 @@ export function useAuth() {
     }
   }, []);
 
+  // ===========================================================
+  //                          LOCATIONS
+  // ===========================================================
+  const getLocations = useCallback(async () => {
+    const response = await fetch(baseUrl + "/locations");
+
+    if (!response.ok) {
+      throw new Error("Failed to get locations");
+    }
+
+    const data = await response.json();
+    return data.locations;
+  }, []);
+
   // Herunder returnerer vi ALLE routes, som vi ønsker at kunne bruge i vores komponenter
-  return { signup, login };
+  return { signup, login, getLocations };
 }

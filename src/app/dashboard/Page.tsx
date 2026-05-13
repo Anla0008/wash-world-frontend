@@ -15,6 +15,7 @@ const Dashboard = () => {
       <TravlhedGraf status="travl" />
       <ProfilOplysningerWrapper />
       <FilterProgressBar />
+      {/* hej */}
     </>
   );
 };

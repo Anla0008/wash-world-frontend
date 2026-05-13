@@ -137,7 +137,7 @@ export default function Signup() {
                 label="CVC*"
                 error={false}
                 validated={false}
-                type="password"
+                type="text"
                 placeholder="1234"
                 onChange={(e) =>
                   setParams({ ...params, user_hashed_password: e.target.value })

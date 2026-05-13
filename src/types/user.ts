@@ -9,12 +9,12 @@ export type User = {
 };
 
 // redigering af brugeroplysninger i wrapper
-export type FieldKey = 
-    | "firstName"
-    | "lastName"
-    | "email"
-    | "licensePlate"
-    | "cardNumber"
-    | "cardholderName"
-    | "expiryDate"
-    | "cvc";
+export type FieldKey =
+  | "firstName"
+  | "lastName"
+  | "email"
+  | "licensePlate"
+  | "cardNumber"
+  | "cardholderName"
+  | "expiryDate"
+  | "cvc";

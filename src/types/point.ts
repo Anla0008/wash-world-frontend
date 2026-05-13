@@ -1,3 +1,3 @@
 export type PointProps = {
-    points: number;
+  points: number;
 };

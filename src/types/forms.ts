@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 
 export type FormProps = {
   label: ReactNode; // react node for at kunne bruge både tekst og ikoner som label
-  error?: boolean; 
+  error?: boolean;
   validated?: boolean;
   placeholder: string;
   type: string;

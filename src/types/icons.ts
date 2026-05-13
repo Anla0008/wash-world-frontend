@@ -1,7 +1,7 @@
 export type IconProps = {
-    color?: string;
-    size?: number;
+  color?: string;
+  size?: number;
 
-    isVisible?: boolean;
-    isOpen?: boolean;
+  isVisible?: boolean;
+  isOpen?: boolean;
 };

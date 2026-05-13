@@ -23,7 +23,15 @@ export default function FindVaskehal() {
       <h1>Vaskehaller i nærheden</h1>
 
       {locations.map((location) => (
-        <VaskehalCard key={location.location_pk} city={location.location_name} address={`${location.location_address}, ${location.location_city}`} openingHours="07-22" status="Kort ventetid" image="/image/washworld.jpg" href={`/locations/${location.location_pk}`} />
+        <VaskehalCard
+          key={location.location_pk}
+          city={location.location_name}
+          address={`${location.location_address}, ${location.location_city}`}
+          openingHours="07-22"
+          status="Kort ventetid"
+          image="/image/washworld.jpg"
+          href={`/locations/${location.location_pk}`}
+        />
       ))}
     </section>
   );

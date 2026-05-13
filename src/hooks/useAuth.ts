@@ -14,6 +14,8 @@ export function useAuth() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Cache-Control": "no-store",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify(params),
     });
@@ -31,6 +33,8 @@ export function useAuth() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Cache-Control": "no-store",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify(params),
     });

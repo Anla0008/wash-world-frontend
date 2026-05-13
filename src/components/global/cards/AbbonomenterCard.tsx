@@ -32,17 +32,19 @@ const AbbonomenterCard = () => {
           }`}
         >
           {plan.popular && (
-            <div className="absolute -top-6 right-1 bg-(--splash) px-2 py-1 z-10">Populær!</div>
+            <div className="absolute -top-6 right-1 bg-(--splash) px-2 py-1 z-10">
+              Populær!
+            </div>
           )}
           <p className="extra-bold mt-2">{plan.name}</p>
           <div className="flex items-center gap-2">
             <h1 className="extra-bold">{plan.price}</h1>
             <p>kr./md.</p>
-        </div>
-        <p className="pb-2">{plan.description}</p>
-        <PrimaryButtonAnchorTag href="/">Læs mere</PrimaryButtonAnchorTag>
-      </article>))}
-
+          </div>
+          <p className="pb-2">{plan.description}</p>
+          <PrimaryButtonAnchorTag href="/">Læs mere</PrimaryButtonAnchorTag>
+        </article>
+      ))}
     </section>
   );
 };

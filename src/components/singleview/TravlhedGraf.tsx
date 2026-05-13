@@ -32,11 +32,11 @@ const TravlhedGraf = ({ status }: { status: string }) => {
       ? `color-mix(in srgb, ${color} 70%, black)`
       : "var(--gray-60)";
 
-      // TODO: vis det aktuelle tidspunkt ud fra localeDateTime + en math.random af både status og højde
+  // TODO: vis det aktuelle tidspunkt ud fra localeDateTime + en math.random af både status og højde
   const bars = [
     { height: 10, time: "08:00" },
     { height: 70, time: "09:00" },
-    { height: 100, status, time: "Nu"}, // den aktuelle time får en status og en "Nu" label
+    { height: 100, status, time: "Nu" }, // den aktuelle time får en status og en "Nu" label
     { height: 30, time: "10:00" },
     { height: 50, time: "11:00" },
     { height: 80, time: "12:00" },
@@ -63,7 +63,6 @@ const TravlhedGraf = ({ status }: { status: string }) => {
 
   return (
     <div className="flex items-center border-b-2 border-(--gray-60) gap-4 w-full">
-      
       {/* VENSTRE */}
       <button onClick={() => emblaApi?.scrollPrev()}>
         <ArrowLeft size={30} color={"var(--gray-60)"} />
@@ -72,7 +71,6 @@ const TravlhedGraf = ({ status }: { status: string }) => {
       {/* KARRUSEL */}
       <div className="overflow-hidden flex-1" ref={emblaRef}>
         <div className="flex items-end gap-2 px-10">
-
           {bars.map((bar, index) => {
             const isStatusBar = !!bar.status;
 
@@ -82,11 +80,13 @@ const TravlhedGraf = ({ status }: { status: string }) => {
                 className="flex-[0_0_auto] flex flex-col items-center justify-end"
               >
                 {isStatusBar && (
-                <div className="flex gap-1 pb-1 items-center">
-                    <span style={{ color }}>
-                        {bar.status}
-                    </span>
-                        {bar.status === "travl" ? <Error /> : bar.status === "rolig" ? <Validated /> : null}
+                  <div className="flex gap-1 pb-1 items-center">
+                    <span style={{ color }}>{bar.status}</span>
+                    {bar.status === "travl" ? (
+                      <Error />
+                    ) : bar.status === "rolig" ? (
+                      <Validated />
+                    ) : null}
                   </div>
                 )}
 
@@ -94,19 +94,14 @@ const TravlhedGraf = ({ status }: { status: string }) => {
                   className="w-10 border-t-5 border-l-5 border-r-5"
                   style={{
                     minHeight: `${bar.height}px`,
-                    backgroundColor: isStatusBar
-                      ? color
-                      : "transparent",
-                    borderColor: isStatusBar
-                      ? borderColor
-                      : "var(--gray-60)",
+                    backgroundColor: isStatusBar ? color : "transparent",
+                    borderColor: isStatusBar ? borderColor : "var(--gray-60)",
                   }}
                 />
                 <span className="text-sm py-2">{bar.time}</span>
               </div>
             );
           })}
-
         </div>
       </div>
 
@@ -114,7 +109,6 @@ const TravlhedGraf = ({ status }: { status: string }) => {
       <button onClick={() => emblaApi?.scrollNext()}>
         <ArrowRight size={30} color={"var(--gray-60)"} />
       </button>
-
     </div>
   );
 };

@@ -21,9 +21,9 @@ const ProgressBar = ({ activeIndex, isWashProcess }: ProgressBarProps) => {
 
             return (
               <li key={`icon-${number}`} className="flex h-5 justify-center">
-                {stepNumber < activeIndex ? (
+                {stepNumber === 1 ? (
                   <Card color="foreground" size={20} />
-                ) : stepNumber === activeIndex ? (
+                ) : stepNumber === 2 ? (
                   <Wash color="foreground" size={20} />
                 ) : (
                   <Checkmark color="foreground" size={20} />

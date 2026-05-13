@@ -6,6 +6,7 @@ export type User = {
   user_hashed_password: string;
   user_repeat_hashed_password: string;
   license_plate: string;
+  has_sub?: boolean;
 };
 
 // redigering af brugeroplysninger i wrapper

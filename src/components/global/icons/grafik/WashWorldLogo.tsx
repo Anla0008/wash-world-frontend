@@ -7,7 +7,9 @@ const WashWorldLogo = () => {
         src="/brand/logo_white.svg"
         alt="WashWorld logo"
         width={200}
-        height={200}
+        height={100}
+        style={{ width: 200, height: 100 }}
+        loading="eager"
       />
     </div>
   );

@@ -1,6 +1,5 @@
 "use client";
-
-import { useSingleWash } from "@/hooks/useSingleWash";
+import { useSingleWash } from "@/hooks/useWash";
 import PrimaryButtonAnchorTag from "../global/buttons/anchortag/PrimaryButtonAnchorTag";
 
 export default function SingleWash() {

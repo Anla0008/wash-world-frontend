@@ -1,37 +1,13 @@
 "use client";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
 import { TimerProps } from "@/types/timer";
+import { useWashProgress } from "@/hooks/useWash";
 
-const Timer = ({ totalTime }: TimerProps) => {
-  // simuleret nuværende tid
-  const [currentTime, setCurrentTime] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime((prev) => {
-        // reset når den rammer slutningen
-        if (prev >= totalTime) {
-          return 0;
-        }
-
-        return prev + 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  // progress i procent
-  const progress = (currentTime / totalTime) * 100;
-
-  // formatter tid til mm:ss
-  const minutes = Math.floor((totalTime - currentTime) / 60);
-  const seconds = (totalTime - currentTime) % 60;
-
-  const formattedTime = `${String(minutes).padStart(2, "0")}.${String(
-    seconds,
-  ).padStart(2, "0")}`;
+const Timer = ({ totalTime, progress, formattedTime }: TimerProps) => {
+  const hasExternalProgress = progress !== undefined && formattedTime !== undefined;
+  const washProgress = useWashProgress(hasExternalProgress ? 0 : totalTime);
+  const resolvedProgress = progress ?? washProgress.progress;
+  const resolvedFormattedTime = formattedTime ?? washProgress.formattedTime;
 
   return (
     <div className="relative flex items-center justify-center">
@@ -42,8 +18,8 @@ const Timer = ({ totalTime }: TimerProps) => {
           className="absolute -inset-1 rounded-full"
           animate={{
             background: `conic-gradient(
-                            #06C167 ${progress}%,
-                            transparent ${progress}%
+                            #06C167 ${resolvedProgress}%,
+                            transparent ${resolvedProgress}%
                         )`,
           }}
           transition={{
@@ -67,7 +43,7 @@ const Timer = ({ totalTime }: TimerProps) => {
             }}
           >
             <h2 className="extra-bold absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-              {formattedTime}
+              {resolvedFormattedTime}
             </h2>
             <p className="absolute top-35 left-1/2 -translate-x-1/2 -translate-y-2/2">
               Tilbage

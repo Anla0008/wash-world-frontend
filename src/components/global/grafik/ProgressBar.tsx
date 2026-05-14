@@ -5,12 +5,14 @@ import Card from "../icons/grafik/Card";
 import Wash from "../icons/navbar/Wash";
 import Checkmark from "../icons/grafik/Checkmark";
 import { ProgressBarProps } from "@/types/progressbar";
+import { resolveProgressSteps } from "@/lib/wash/resolvers";
 
-const ProgressBar = ({ activeIndex, isWashProcess }: ProgressBarProps) => {
+const ProgressBar = ({ activeIndex, isWashProcess, progress }: ProgressBarProps) => {
   const numbers = ["1", "2", "3"]; //TODO: skal opdateres til at bruge dataen fra backenden
 
-  // beregner hvor langt progressbaren skal fyldes i procent baseret på den aktive index og det totale antal trin
-  const progressWidth = ((activeIndex - 1) / (numbers.length - 1)) * 100;
+
+  const clampedProgress = isWashProcess ? resolveProgressSteps(numbers, activeIndex, progress) : 0;
+
 
   return (
     <div className="max-w-100 m-auto w-full">
@@ -41,10 +43,10 @@ const ProgressBar = ({ activeIndex, isWashProcess }: ProgressBarProps) => {
         {/* Animeret progress-linje */}
         <motion.div
           className="absolute left-0 top-1/2 h-0.5 -translate-y-1/2 bg-(--brand-green)"
-          initial={{ width: 0 }}
-          animate={{ width: `${progressWidth}%` }}
+          initial={false}
+          animate={{ width: `${clampedProgress}%` }}
           transition={{
-            duration: 1,
+            duration: 0.8,
             ease: "easeInOut",
           }}
         />

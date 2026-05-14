@@ -27,7 +27,7 @@ export default function Home() {
     <div>
       {/* =================== STEP 1 ================== */}
       <section>
-        <ProgressBar activeIndex={1} />
+        <ProgressBar activeIndex={1} totalTime={120} />
 
         <form>
           <Input

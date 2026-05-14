@@ -7,6 +7,7 @@ import PrimaryButton from "@/components/global/buttons/onClick/PrimaryButton";
 import TextArea from "@/components/global/forms/TextArea";
 import Smileys from "@/components/global/icons/grafik/Smileys";
 import Popup from "@/components/global/cards/PopUp";
+import Checkmark from "@/components/global/icons/grafik/Checkmark";
 
 import { useFeedback } from "@/hooks/useFeedback";
 import { FeedbackProps } from "@/types/feedback";
@@ -32,7 +33,6 @@ export default function Feedback() {
 
   return (
     <section>
-      <Popup title="Tak" subtitle="Din feedback er indsendt" message="Her kan der stå en lille besked" submessage="Vi sætter stor pris på din tilbagemelding!"></Popup>
       <h1>Feedback</h1>
 
       <form onSubmit={handleSubmitFeedback}>
@@ -45,7 +45,7 @@ export default function Feedback() {
         </div>
       </form>
 
-      {showSuccess && <Popup title="Tak for din feedback!" message="Du bliver sendt videre om 5 sekunder..." />}
+      {showSuccess && <Popup title="Tak for din feedback!" message="Du bliver sendt videre om 5 sekunder..." icon={<Checkmark color={"var(--brand-green)"} size={50} />} />}
     </section>
   );
 }

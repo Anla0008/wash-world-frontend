@@ -3,8 +3,6 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { getUser } from "@/hooks/useAuth";
-import { useWash } from "@/hooks/useWash";
-import { useRouter } from "next/navigation";
 import { User } from "@/types/user";
 import Input from "@/components/global/forms/Input";
 import ProgressBar from "@/components/global/grafik/ProgressBar";
@@ -13,7 +11,6 @@ import PrimaryButton from "@/components/global/buttons/onClick/PrimaryButton";
 export default function Home() {
   const [params, setParams] = useState<User>({} as User);
   const { login } = useAuth();
-  const router = useRouter();
 
   const handleLogin = async () => {
     const response = await login(params);

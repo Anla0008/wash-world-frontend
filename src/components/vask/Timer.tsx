@@ -1,9 +1,10 @@
 "use client";
 import { motion } from "framer-motion";
 import { TimerProps } from "@/types/timer";
-import { useWashProgress } from "@/hooks/useWash";
+import { useWash } from "@/hooks/useWash";
 
 const Timer = ({ totalTime, progress, formattedTime }: TimerProps) => {
+  const { useWashProgress } = useWash();
   const hasExternalProgress = progress !== undefined && formattedTime !== undefined;
   const washProgress = useWashProgress(hasExternalProgress ? 0 : totalTime);
   const resolvedProgress = progress ?? washProgress.progress;

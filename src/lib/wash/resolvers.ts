@@ -1,5 +1,4 @@
 import { WashRoute, WashStep } from "@/types/wash";
-
   // ===========================================================
   //  BESTEM RUTE EFTER SUBSCRIPTION (SIMULERET)
   // ===========================================================
@@ -40,7 +39,7 @@ export const resolveProgressIndex = (
   //    UDREGN WIDTH TIL NÆSTE STEP FOR PROGRESSBAR
   // ===========================================================
 
-export const resolveProgressSteps = (numbers: string[], activeIndex: number, progress?: number) => {
+export const resolveProgressSteps = (numbers: string[], activeIndex: number, progress?: number) => { //numbers: string fordi det er det format vi får fra API'et
   // total antal steps, baseret på numre i arrayet
     const totalSteps = numbers.length;
 
@@ -62,3 +61,15 @@ export const resolveProgressSteps = (numbers: string[], activeIndex: number, pro
 
   return clampedProgress;
 }
+
+  // ===========================================================
+  //                 SIMULER LEDIG VASKEHAL
+  // ==========================================================
+
+  export const generateAvailibleWashHalls = (): string => {
+
+    const washHalls = ["1", "2", "3"]; // TODO: erstat med vaskehaller, brugeren er tættest på
+    const randomIndex = Math.floor(Math.random() * washHalls.length); // Vælg tilfældigt index
+
+    return washHalls[randomIndex]; 
+  }

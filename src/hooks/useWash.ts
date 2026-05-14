@@ -1,12 +1,26 @@
 "use client";
 import { WashRoute } from "@/types/wash";
-import { useCallback } from "react";
 import { User } from "@/types/user";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { SingleWashType } from "@/types/singleWashType";
 import { WashingHalls } from "@/types/wash";
+import { useAuth } from "./useAuth";
 
 export function useWash() {
+  const { getLocations } = useAuth();
+
+// ===========================================================
+//                  GET LOCATION PÅ BRUGER
+// ===========================================================
+
+  const getUserLocation = useCallback(async (): Promise<string> => {
+    const locations = await getLocations();
+
+    // Random valgt lokation fra API responsen (simulering)
+    const userLocation = locations[Math.floor(Math.random() * locations.length)];
+
+    return userLocation;
+  }, [getLocations]);
 
 // ===========================================================
 //        BESTEM ROUTE EFTER SUBSCRIPTION (SIMULERET)
@@ -54,121 +68,126 @@ export function useWash() {
     [getWashStepFromApi]
   );
 
-  return {
-    getWashStepFromApi,
-    navigateToWashRoute,
-  };
-}
-
 // ===========================================================
 //                RANDOM VENTETID SIMULERING 
 // ===========================================================
-  
-  export const getRandomWaitTime = (): number => {
+
+  const getRandomWaitTime = useCallback((): number => {
     const min = 60; // 1 minut
     const max = 300; // 5 minut
     return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
+  }, []);
 
 // ===========================================================
 //                GET ENKELTVASK  (SIMULERING)
 // ===========================================================
 
-export function useSingleWash() {
-  const [data, setData] = useState<SingleWashType | null>(null);
+  const useSingleWash = () => {
+    const [data, setData] = useState<SingleWashType | null>(null);
 
-  useEffect(() => {
-    const getRequest = async () => {
-
+    useEffect(() => {
+      const getRequest = async () => {
         const response = await fetch("/api/wash/single", {
           cache: "no-store",
-        method: "GET",
-       
+          method: "GET",
         });
 
         const json = (await response.json()) as SingleWashType;
         setData(json);
-    };
+      };
 
-    void getRequest();
-  }, []);
+      void getRequest();
+    }, []);
 
-  return { data };
-}
+    return { data };
+  };
 
 // ===========================================================
 //                  GET LEDIG VASKEHAL
 // ===========================================================
 
-export function useWashHall() {
-  const [washHalls, setWashHalls] = useState<WashingHalls[]>([]);
-  const baseUrl = "http://127.0.0.1:80";
+  const useWashHall = () => {
+    const [washHalls, setWashHalls] = useState<WashingHalls[]>([]);
+    const baseUrl = "http://127.0.0.1:80";
 
-  useEffect(() => {
-    const fetchWashHalls = async () => {
-      const response = await fetch(baseUrl + "/washhall", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-store",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+    useEffect(() => {
+      const fetchWashHalls = async () => {
+        const response = await fetch(baseUrl + "/washhall", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "no-store",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
 
-      if (!response.ok) {
-        throw new Error("Failed to get WashHalls");
-      }
+        if (!response.ok) {
+          throw new Error("Failed to get WashHalls");
+        }
 
-      const data = await response.json();
+        const data = await response.json();
 
-      setWashHalls(data.car_wash_hall_info);
-    };
+        setWashHalls(data.car_wash_hall_info);
+      };
 
-    void fetchWashHalls();
-  }, []);
+      void fetchWashHalls();
+    }, []);
 
-  return { washHalls };
-}
+    return { washHalls };
+  };
 
 // ===========================================================
 //    BEREGN PROGRESS WIDTH (til timer og progressbar)
 // ===========================================================
 
-export function useWashProgress(totalTime: number) {
-  // simuleret nuværende tid
-  const [currentTime, setCurrentTime] = useState(0);
+  const useWashProgress = (totalTime: number) => {
+    // simuleret nuværende tid
+    const [currentTime, setCurrentTime] = useState(0);
+    // useEffect for at mounte et interval, der opdaterer currentTime , og rydder det op ved unmount
+    useEffect(() => {
+      if (totalTime <= 0) {
+        setCurrentTime(0);
+        return;
+      }
 
-  useEffect(() => {
-    if (totalTime <= 0) {
-      setCurrentTime(0);
-      return;
-    }
+      const interval = setInterval(() => { // setInterval for at opdatere currentTime hvert sekund indtil den når totalTime
+        setCurrentTime((prev) => {
+          // reset når den rammer slutningen
+          if (prev >= totalTime) {
+            return 0;
+          }
 
-    const interval = setInterval(() => {
-      setCurrentTime((prev) => {
-        // reset når den rammer slutningen
-        if (prev >= totalTime) {
-          return 0;
-        }
+          return prev + 1;
+        });
+      }, 1000);
 
-        return prev + 1;
-      });
-    }, 1000);
+      return () => clearInterval(interval);
+    }, [totalTime]); // nulstil
 
-    return () => clearInterval(interval);
-  }, [totalTime]);
+    // progress i procent
+    const progress =
+      totalTime > 0 ? Math.min((currentTime / totalTime) * 100, 100) : 0;
 
-  // progress i procent
-  const progress =
-    totalTime > 0 ? Math.min((currentTime / totalTime) * 100, 100) : 0;
+    // formatter tid til mm:ss
+    const remainingTime = Math.max(totalTime - currentTime, 0); // beregn resterende tid
+    const minutes = Math.floor(remainingTime / 60); // /60 for at få hele minutter fra den resterende tid
+    const seconds = remainingTime % 60; // % 60 for at få resterende sekunder efter at have trukket hele minutter fra
 
-  // formatter tid til mm:ss
-  const remainingTime = Math.max(totalTime - currentTime, 0);
-  const minutes = Math.floor(remainingTime / 60);
-  const seconds = remainingTime % 60;
+    const formattedTime = `${String(minutes).padStart(2, "0")}.${String(
+      seconds,
+    ).padStart(2, "0")}`; // padStart sikrer, der altid er to cifre for både minutter og sekunder, og adskiller dem med et punktum
+    return { progress, formattedTime, currentTime, remainingTime };
+  };
 
-  const formattedTime = `${String(minutes).padStart(2, "0")}.${String(
-    seconds,
-  ).padStart(2, "0")}`;
-  return { progress, formattedTime, currentTime, remainingTime };
+  return {
+    getUserLocation,
+    getWashStepFromApi,
+    navigateToWashRoute,
+    getRandomWaitTime,
+    useSingleWash,
+    useWashHall,
+    useWashProgress,
+  };
 }
+
+

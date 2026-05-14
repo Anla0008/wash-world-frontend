@@ -67,7 +67,7 @@ export function useAuth() {
 }
 
 // ===========================================================
-//                      GET LOGGED IN USER
+//            GET LOGGED IN USER (ONLY TEST PURPOSE)
 // ===========================================================
 
 export function getUser() {

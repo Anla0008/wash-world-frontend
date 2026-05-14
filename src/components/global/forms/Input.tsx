@@ -10,6 +10,7 @@ const Input = ({
   type,
   placeholder,
   onChange,
+  disabled,
 }: FormProps) => {
   const [charCount, setCharCount] = useState(0);
 
@@ -23,6 +24,7 @@ const Input = ({
           setCharCount(e.target.value.length);
           onChange?.(e);
         }}
+        disabled={disabled}
       />
 
       <p

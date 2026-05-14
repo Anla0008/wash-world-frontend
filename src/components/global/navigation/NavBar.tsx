@@ -5,9 +5,15 @@ import Wash from "@/components/global/icons/navbar/Wash";
 import Map from "../icons/navbar/Map";
 import Favourites from "../icons/navbar/Favourites";
 import { usePathname } from "next/navigation";
+import { getUser } from "@/hooks/useAuth";
+import { WashRoute } from "@/types/wash";
 
 const NavBar = () => {
+  const { getUserData } = getUser();
+  const washRoute: WashRoute = getUserData().has_sub ? "/activeWash" : "/buyWash";
+
   const pathname = usePathname();
+  const user = getUserData();
 
   const li = [
     {
@@ -64,8 +70,8 @@ const NavBar = () => {
         </li>
 
         <li className="bg-foreground flex flex-col items-center justify-center rounded-full p-3 border-5 border-background absolute left-1/2" style={{ transform: "translate(-50%, -35%)" }}>
-          <a href="/vask" aria-label="vask">
-            <Wash size={50} color={pathname === "/vask" ? "var(--brand-green-reverse)" : "var(--background)"} />
+          <a href={washRoute} aria-label="vask">
+            <Wash size={50} color={pathname === washRoute ? "var(--brand-green-reverse)" : "var(--background)"} />
           </a>
         </li>
       </ul>

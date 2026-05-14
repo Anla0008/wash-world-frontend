@@ -49,6 +49,7 @@
 :root {
   /* Defination af default farver (light mode) */
   --background: #ffffff;
+  --background-transparent: #ffffff96;
   --foreground: #121212;
   --foreground-reverse: #ffffff; /* bruges når teksten skal være omvendt pga. mørkere card */
 
@@ -74,6 +75,7 @@
   :root {
     /* Defination af farver til dark mode – som er anderledes ind tidligere defineret */
     --background: #121212;
+    --background-transparent: #12121296;
     --foreground: #fff;
     --foreground-reverse: #121212; /* bruges når teksten skal være omvendt pga. lysere card */
 
@@ -117,7 +119,7 @@ nav {
 }
 
 h1 {
-  font-size: 3rem;
+  font-size: 2.5rem;
   .extra-bold {
     font-family: "Gilroy";
     font-weight: 800;

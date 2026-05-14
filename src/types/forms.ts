@@ -7,4 +7,6 @@ export type FormProps = {
   placeholder: string;
   type: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void; // callback funktion der kaldes når input ændres i forældrekomponenten
+  onTextAreaChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  disabled?: boolean;
 };

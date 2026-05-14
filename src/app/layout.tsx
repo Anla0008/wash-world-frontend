@@ -38,7 +38,7 @@ export default function RootLayout({
         <link rel="shortcut icon" href="favicon/favicon.ico" />
       </head>
       <body>
-        <MswInitializer />
+        <MswInitializer>
         <div id="app-shell">
           <div className="mb-20">
             {/* opdateres senere til at passe med usewash systemet */}
@@ -47,6 +47,7 @@ export default function RootLayout({
           <main className="flex flex-col mb-20 px-8">{children}</main>
           <NavBar />
         </div>
+        </MswInitializer>
       </body>
     </html>
   );

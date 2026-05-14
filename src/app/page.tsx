@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { getUser } from "@/hooks/useAuth";
+import { useWash } from "@/hooks/useWash";
+import { useRouter } from "next/navigation";
 import { User } from "@/types/user";
-import PrimaryButtonAnchorTag from "@/components/global/buttons/anchortag/PrimaryButtonAnchorTag";
 import Input from "@/components/global/forms/Input";
 import ProgressBar from "@/components/global/grafik/ProgressBar";
 import PrimaryButton from "@/components/global/buttons/onClick/PrimaryButton";
@@ -11,11 +13,12 @@ import PrimaryButton from "@/components/global/buttons/onClick/PrimaryButton";
 export default function Home() {
   const [params, setParams] = useState<User>({} as User);
   const { login } = useAuth();
+  const router = useRouter();
 
-  const handleSubmitLogin = async (e: any) => {
-    e.preventDefault();
-
+  const handleLogin = async () => {
     const response = await login(params);
+    const { getUserData } = getUser();
+    const user = getUserData();
 
     console.log(response);
   };
@@ -26,7 +29,7 @@ export default function Home() {
       <section>
         <ProgressBar activeIndex={1} />
 
-        <form onSubmit={handleSubmitLogin}>
+        <form>
           <Input
             label="E-mail*"
             error={false}
@@ -49,9 +52,9 @@ export default function Home() {
             }
           />
 
-          <PrimaryButtonAnchorTag href="/dashboard">
+          <PrimaryButton onClick={handleLogin}>
             Login
-          </PrimaryButtonAnchorTag>
+          </PrimaryButton>
         </form>
       </section>
     </div>

@@ -6,6 +6,9 @@ import { User } from "@/types/user";
 
 export function useWash() {
 
+// ===========================================================
+//        BESTEM ROUTE EFTER SUBSCRIPTION (SIMULERET)
+// ===========================================================
   const getWashStepFromApi = useCallback(
     async (user: User): Promise<WashRoute> => {
 
@@ -30,6 +33,10 @@ export function useWash() {
     []
   );
 
+// ===========================================================
+//            NAVIGATION TIL KORREKT WASH ROUTE
+// ===========================================================
+
   const navigateToWashRoute = useCallback(
     async (
       navigate: (path: string) => void,
@@ -45,8 +52,20 @@ export function useWash() {
     [getWashStepFromApi]
   );
 
+// ===========================================================
+//                RANDOM VENTETID SIMULERING 
+// ===========================================================
+  
+  const getRandomWaitTime = (): number => {
+    const min = 60; // 1 minut
+    const max = 300; // 5 minut
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
   return {
     getWashStepFromApi,
     navigateToWashRoute,
+    getRandomWaitTime,
   };
 }
+

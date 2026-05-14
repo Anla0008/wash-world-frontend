@@ -6,9 +6,10 @@ import { washProgressConfig } from "@/lib/wash/config";
 
 const Wash = () => {
     return ( 
-        <div>
+        <div className="flex flex-col gap-12">
             <ProgressBar activeIndex={washProgressConfig["/activeWash"]} isWashProcess={true} />
             <Timer totalTime={120} />
+            
         </div>
      );
 }

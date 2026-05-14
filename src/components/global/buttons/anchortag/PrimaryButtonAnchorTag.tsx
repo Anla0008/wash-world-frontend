@@ -1,8 +1,5 @@
 "use client";
 import { useState } from "react";
-import type { ReactNode } from "react";
-import { motion } from "framer-motion";
-import { on } from "events";
 import { AnchorButtonProps } from "@/types/button";
 
 const PrimaryButtonAnchorTag = ({
@@ -17,7 +14,7 @@ const PrimaryButtonAnchorTag = ({
     <a
       href={href}
       target={target}
-      className={`bg-(--brand-green) m-auto relative px-5 pr-10 py-2 w-fit extra-bold ${isDisabled ? "cursor-not-allowed bg-(--gray-80) text-(--gray-60)" : ""}`}
+      className={`bg-(--brand-green) relative inline-flex px-5 pr-10 py-2 w-fit extra-bold ${isDisabled ? "cursor-not-allowed bg-(--gray-80) text-(--gray-60)" : ""}`}
       style={{
         clipPath: "polygon(0 0, 100% 0, calc(100% - 16px) 100%, 0 100%)",
         boxShadow:

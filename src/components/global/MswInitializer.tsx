@@ -1,27 +1,22 @@
 "use client";
+import { useEffect, useState } from "react";
 
-import { useEffect } from "react";
+export default function MswInitializer({ children }: { children: React.ReactNode }) {
+  const [mswReady, setMswReady] = useState(
+    process.env.NODE_ENV !== "development" ||
+    process.env.NEXT_PUBLIC_ENABLE_MSW === "false"
+  );
 
-export default function MswInitializer() {
   useEffect(() => {
-    if (process.env.NODE_ENV !== "development") {
-      return;
-    }
-
-    const enableMsw = process.env.NEXT_PUBLIC_ENABLE_MSW !== "false";
-
-    if (!enableMsw) {
-      return;
-    }
+    if (mswReady) return;
 
     import("@/mocks/browser")
-      .then(({ worker }) => {
-        worker.start({ onUnhandledRequest: "bypass" });
-      })
-      .catch((error) => {
-        console.error("Failed to start MSW worker", error);
-      });
+      .then(({ worker }) => worker.start({ onUnhandledRequest: "bypass" }))
+      .then(() => setMswReady(true))
+      .catch(console.error);
   }, []);
 
-  return null;
+  if (!mswReady) return null; // eller en spinner
+
+  return <>{children}</>;
 }

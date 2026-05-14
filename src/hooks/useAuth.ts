@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import { User } from "@/types/user";
 
 export function useAuth() {
-  const baseUrl = "http://127.0.0.1";
+  const baseUrl = "http://127.0.0.1:80";
 
   // ===========================================================
   //                          SIGNUP

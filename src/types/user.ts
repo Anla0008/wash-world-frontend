@@ -5,7 +5,7 @@ export type User = {
   user_last_name: string;
   user_hashed_password: string;
   user_repeat_hashed_password: string;
-  license_plate: string;
+  plate_number: string;
   has_sub?: boolean;
 };
 
@@ -14,7 +14,7 @@ export type FieldKey =
   | "firstName"
   | "lastName"
   | "email"
-  | "licensePlate"
+  | "plateNumber"
   | "cardNumber"
   | "cardholderName"
   | "expiryDate"

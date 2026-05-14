@@ -6,6 +6,10 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
+        hostname: "washworld.dk",
+      },
+      {
+        protocol: "https",
         hostname: "washworld-wordpress-production.storage.googleapis.com",
       },
     ],

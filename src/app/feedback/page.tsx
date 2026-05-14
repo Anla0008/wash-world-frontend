@@ -31,6 +31,7 @@ export default function Feedback() {
     }
   };
 
+  // TODO - tilføje error håndtering ved click uden at have klikket smiley
   return (
     <section>
       <h1>Feedback</h1>

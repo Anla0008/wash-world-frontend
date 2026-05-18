@@ -2,6 +2,7 @@ import { http, HttpResponse } from "msw";
 import { singleWashData } from "@/mockupData/singleWashData";
 import { WashStepResponse } from "@/types/wash";
 import { washHallWaitTime } from "@/mockupData/washHallWaitTime";
+import { carInWashHall } from "@/mockupData/carInWashHall";
 
 import {
   resolveRoute,
@@ -65,6 +66,13 @@ return HttpResponse.json();
   return HttpResponse.json();
   }),
 
+  // ===========================================================
+  //              GET INDKØRSEL I VASKEHAL
+  // ===========================================================
+
+  http.get("/api/washhall/entry", () => {
+  return HttpResponse.json(carInWashHall.seconds);
+  }),
 
 ];
 

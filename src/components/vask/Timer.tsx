@@ -8,6 +8,10 @@ const Timer = ({ totalTime, onComplete }: TimerProps) => {
   const [currentTime, setCurrentTime] = useState(0);
 
   useEffect(() => {
+    setCurrentTime(0);
+  }, [totalTime]);
+
+  useEffect(() => {
     if (totalTime <= 0) {
       setCurrentTime(0);
       return;

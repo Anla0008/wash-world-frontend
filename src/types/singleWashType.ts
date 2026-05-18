@@ -1,8 +1,17 @@
+export type WashType = {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  duration: number;
+};
+
 export type SingleWashType = {
-  types: {
-    name: string;
-    description: string;
-    price: number;
-    duration: number;
-  }[];
+  types: WashType[];
+};
+
+export type WashStore = {
+  selectedWash: WashType | null;
+
+  setSelectedWash: (wash: WashType) => void;
 };

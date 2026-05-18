@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import { User } from "@/types/user";
 
 export function useAuth() {
-  const baseUrl = "http://127.0.0.1:80";
+  const baseUrl = "http://127.0.0.1";
 
   // ===========================================================
   //                          SIGNUP
@@ -30,6 +30,16 @@ export function useAuth() {
   }, []);
 
   // ===========================================================
+  //                          VERIFY
+  // ===========================================================
+  const verify = useCallback(async (key: string) => {
+    const response = await fetch(baseUrl + `/verify/${key}`);
+    if (!response.ok) {
+      throw new Error("Failed to verify");
+    }
+  }, []);
+
+  // ===========================================================
   //                          LOGIN
   // ===========================================================
   const login = useCallback(async (params: User) => {
@@ -37,15 +47,18 @@ export function useAuth() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Cache-Control": "no-store",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify(params),
     });
 
     if (!response.ok) {
-      throw new Error("Failed to login");
+      return { error: "Failed to login" };
     }
+
+    const data = await response.json();
+    console.log(data);
+    localStorage.setItem("token", data.access_token);
+    return data;
   }, []);
 
   // ===========================================================
@@ -135,7 +148,16 @@ export function useAuth() {
   }, []);
 
   // Herunder returnerer vi ALLE routes, som vi ønsker at kunne bruge i vores komponenter
-  return { signup, login, getLocations, getSingleLocation, getFavorites, addFavorite, removeFavorite };
+  return {
+    signup,
+    verify,
+    login,
+    getLocations,
+    getSingleLocation,
+    getFavorites,
+    addFavorite,
+    removeFavorite,
+  };
 }
 
 // ===========================================================

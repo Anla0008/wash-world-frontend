@@ -15,16 +15,17 @@ const WaitForWash = ({ activeIndex }: WaitForWashProps) => {
     generateAvailibleWashHalls()
   );
 
-  const { useWashHallWaitTime } = useWash();
+  const { useEntryToWashHall } = useWash();
+  const { entryTime } = useEntryToWashHall();
 
-  const { waitTime } = useWashHallWaitTime();
+  
 
   return (
     <div>
       <ProgressBar
         activeIndex={activeIndex}
         isWashProcess={true}
-        progress={waitTime ?? 0}
+        progress={entryTime ?? 0}
       />
 
       <h1 className="extra-bold">
@@ -38,8 +39,8 @@ const WaitForWash = ({ activeIndex }: WaitForWashProps) => {
 
       {/* // Timeren er skjult, da den kun skal bruges til at navigere videre, når tiden er gået. */}
       <div className="hidden">
-      {waitTime !== null && (
-        <Timer totalTime={waitTime} onComplete={() => router.push("/activeWash")} />
+      {entryTime !== null && (
+        <Timer totalTime={entryTime} onComplete={() => router.push("/activeWash")} />
       )}
       </div>
     </div>

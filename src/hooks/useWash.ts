@@ -7,8 +7,10 @@ import { WashingHalls } from "@/types/wash";
 import { useAuth } from "./useAuth";
 import { WashHallWaitTimeResponse } from "@/types/washHallWaitTimeType";
 import { resolveWaitTime } from "@/lib/wash/resolvers";
+import { WashType } from "@/types/singleWashType";
 
 export function useWash() {
+      const baseUrl = "http://127.0.0.1:80";
 
   // ===========================================================
   //                  GET LOCATION PÅ BRUGER
@@ -52,7 +54,7 @@ export function useWash() {
   );
 
 // ===========================================================
-//            NAVIGATION TIL KORREKT WASH ROUTE
+//            NAVIGATION TIL KORREKT WASH ROUTE (SIMULERING)
 // ===========================================================
 
   const navigateToWashRoute = useCallback(
@@ -96,25 +98,81 @@ export function useWash() {
   };
 
 // ===========================================================
-//               POST BRUGERS VALGT VASKEHALL
+//               POST BRUGERS VASKEPROCES
 // ===========================================================
+const postAvailableWashHall = useCallback(
+  async ({
+    wash,
+    startedAt,
+    endedAt,
+  }: {
+    wash: WashType;
+    startedAt: number | null;
+    endedAt: number | null;
+  }) => {
 
-  const postAvailableWashHall = useCallback(
-    async (washHallId: string) => {
-      const response = await fetch("/api/wash/single", {
+    console.log("POST DATA:", {
+      wash,
+      startedAt,
+      endedAt,
+    });
+
+    const response = await fetch(
+      baseUrl + "/car-wash-history",
+      {
         method: "POST",
-        body: JSON.stringify({ wash_hall_id: washHallId }),
-      });
 
-      if (!response.ok) {
-        throw new Error("Failed to choose available wash hall");
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-store",
+
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+
+        body: JSON.stringify({
+          license_plate_fk: "ABC123",
+
+          car_wash_location_fk: "location_1",
+
+          car_wash_hall_fk: "hall_1",
+
+          car_wash_price: wash.price,
+
+          car_wash_type: wash.name,
+
+          car_wash_started_at: startedAt,
+
+          car_wash_ended_at: endedAt,
+        }),
       }
-    },
-    []
-  );
+    );
+
+    console.log("STATUS:", response.status);
+
+    if (!response.ok) {
+
+      const errorData = await response.json();
+
+      console.log("BACKEND ERROR:", errorData);
+
+      throw new Error(
+        errorData.error || "Failed to save wash"
+      );
+    }
+
+    console.log(localStorage.getItem("token"));
+
+    const data = await response.json();
+
+    console.log("SUCCESS:", data);
+
+    return data;
+  },
+  []
+);
 
 // ===========================================================
-//                  GET VENTETID FOR VASKEHAL
+//                  GET VENTETID FOR VASKEHAL (SIMULERING)
 // ===========================================================
 const useWashHallWaitTime = () => {
   const [waitTime, setWaitTime] = useState<number | null>(null);
@@ -146,7 +204,6 @@ const useWashHallWaitTime = () => {
 
   const useWashHall = () => {
     const [washHalls, setWashHalls] = useState<WashingHalls[]>([]);
-    const baseUrl = "http://127.0.0.1:80";
 
     useEffect(() => {
       const fetchWashHalls = async () => {
@@ -174,6 +231,35 @@ const useWashHallWaitTime = () => {
     return { washHalls };
   };
 
+// ===========================================================
+//                GET INDKØRSEL I VASKEHAL (simuleret)
+// ===========================================================
+const useEntryToWashHall = () => {
+  const [entryTime, setEntryTime] = useState<number | null>(null);
+
+  useEffect(() => {
+    const getRequest = async () => {
+      const response = await fetch("/api/washhall/entry", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-store",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to get entry to wash hall");
+      }
+
+      const data = await response.json();
+      setEntryTime(data);
+    };
+
+    void getRequest();
+  }, []);
+
+  return { entryTime };
+};
 
   return {
     getUserLocation,
@@ -183,6 +269,7 @@ const useWashHallWaitTime = () => {
     useSingleWash,
     useWashHall,
     useWashHallWaitTime,
+    useEntryToWashHall,
   };
 }
 

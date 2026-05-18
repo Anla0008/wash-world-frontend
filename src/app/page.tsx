@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { getUser } from "@/hooks/useAuth";
 import { User } from "@/types/user";
+import { useRouter } from "next/navigation";
 import Input from "@/components/global/forms/Input";
 import ProgressBar from "@/components/global/grafik/ProgressBar";
 import PrimaryButton from "@/components/global/buttons/onClick/PrimaryButton";
@@ -11,22 +11,22 @@ import PrimaryButton from "@/components/global/buttons/onClick/PrimaryButton";
 export default function Home() {
   const [params, setParams] = useState<User>({} as User);
   const { login } = useAuth();
+  const router = useRouter(); // Bruges da vi navigerer EFTER handleLogin() er kørt
 
-  const handleLogin = async () => {
-    const response = await login(params);
-    const { getUserData } = getUser();
-    const user = getUserData();
-
-    console.log(response);
+  const handleLogin = async (e: any) => {
+    e.preventDefault();
+    await login(params);
+    // Det er vigtigt at dette sker EFTER login, da dashboardet kræver token for at kunne hente data fra backend.
+    // Hvis vi navigerede til dashboardet FØR login, ville vi få en error, da der ikke ville være noget token i localStorage endnu.
+    router.push("/dashboard"); // Her bruges router, og token er gemt i localStorage.
   };
 
   return (
     <div>
-      {/* =================== STEP 1 ================== */}
       <section>
         <ProgressBar activeIndex={1} totalTime={120} />
 
-        <form>
+        <form onSubmit={handleLogin}>
           <Input
             label="E-mail*"
             error={false}
@@ -49,9 +49,7 @@ export default function Home() {
             }
           />
 
-          <PrimaryButton onClick={handleLogin}>
-            Login
-          </PrimaryButton>
+          <PrimaryButton>Login</PrimaryButton>
         </form>
       </section>
     </div>

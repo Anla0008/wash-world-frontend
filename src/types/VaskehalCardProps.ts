@@ -1,4 +1,4 @@
-type VaskehalCardProps = {
+export type VaskehalCardProps = {
   location_pk: string;
   city: string;
   address: string;
@@ -10,10 +10,11 @@ type VaskehalCardProps = {
 
 // Tilføj export
 // export type VaskehalCardProps = {
-//   location_pk: string;
-//   city: string;
-//   address: string;
-//   openingHours: string;
-//   image: string;
-//   href: string;
+// location_pk: string;
+// city: string;
+// address: string;
+// openingHours: string;
+// image: string;
+// href: string;
+// isFavorite?: boolean;
 // };

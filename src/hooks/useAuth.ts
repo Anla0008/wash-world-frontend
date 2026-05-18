@@ -62,8 +62,22 @@ export function useAuth() {
     return data.locations;
   }, []);
 
+  // ===========================================================
+  //                      SINGLE LOCATION
+  // ===========================================================
+  const getSingleLocation = useCallback(async (id: string) => {
+    const response = await fetch(baseUrl + `/locations/${id}`);
+
+    if (!response.ok) {
+      throw new Error("Failed to get single location");
+    }
+
+    const data = await response.json();
+    return data.location;
+  }, []);
+
   // Herunder returnerer vi ALLE routes, som vi ønsker at kunne bruge i vores komponenter
-  return { signup, login, getLocations };
+  return { signup, login, getLocations, getSingleLocation };
 }
 
 // ===========================================================

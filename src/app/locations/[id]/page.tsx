@@ -157,22 +157,31 @@ import TravlhedGraf from "@/components/singleview/TravlhedGraf";
 
 export default function SingleLocationPage() {
   const { id } = useParams();
-  const { getLocations } = useAuth();
+  const { getSingleLocation } = useAuth();
 
   const [location, setLocation] = useState<Location | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function loadLocation() {
-      const data = await getLocations();
+      try {
+        const data = await getSingleLocation(id as string);
 
-      const foundLocation = data.find((location: Location) => location.location_pk === id);
+        console.log("Single location data:", data);
 
-      setLocation(foundLocation || null);
-      setIsLoading(false);
+        setLocation(data || null);
+      } catch (error) {
+        console.error("Der skete en fejl ved hentning af location:", error);
+        setLocation(null);
+      } finally {
+        setIsLoading(false);
+      }
     }
-    loadLocation();
-  }, [getLocations, id]);
+
+    if (id) {
+      loadLocation();
+    }
+  }, [getSingleLocation, id]);
 
   if (isLoading) {
     return (

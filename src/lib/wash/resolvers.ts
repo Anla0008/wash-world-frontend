@@ -1,4 +1,7 @@
+// resolvers bruges til at simulerer logikken i vores API, så vi kan teste forskellige scenarier og holde vores komponenter rene for logik
 import { WashRoute, WashStep } from "@/types/wash";
+import { WashHallWaitTimeResponse } from "@/types/washHallWaitTimeType";
+
   // ===========================================================
   //  BESTEM RUTE EFTER SUBSCRIPTION (SIMULERET)
   // ===========================================================
@@ -73,3 +76,13 @@ export const resolveProgressSteps = (numbers: string[], activeIndex: number, pro
 
     return washHalls[randomIndex]; 
   }
+
+// ===========================================================
+//            RESOLVE RANDOM WAIT TIME
+// ===========================================================
+export const resolveWaitTime = (
+  waitTime: WashHallWaitTimeResponse
+): number => {
+  const { wait_time_seconds_min: min, wait_time_seconds_max: max } = waitTime;
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};

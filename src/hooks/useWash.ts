@@ -5,13 +5,15 @@ import { useCallback, useEffect, useState } from "react";
 import { SingleWashType } from "@/types/singleWashType";
 import { WashingHalls } from "@/types/wash";
 import { useAuth } from "./useAuth";
+import { WashHallWaitTimeResponse } from "@/types/washHallWaitTimeType";
+import { resolveWaitTime } from "@/lib/wash/resolvers";
 
 export function useWash() {
-  const { getLocations } = useAuth();
 
-// ===========================================================
-//                  GET LOCATION PÅ BRUGER
-// ===========================================================
+  // ===========================================================
+  //                  GET LOCATION PÅ BRUGER
+  // ===========================================================
+  const { getLocations } = useAuth();
 
   const getUserLocation = useCallback(async (): Promise<string> => {
     const locations = await getLocations();
@@ -68,15 +70,6 @@ export function useWash() {
     [getWashStepFromApi]
   );
 
-// ===========================================================
-//                RANDOM VENTETID SIMULERING 
-// ===========================================================
-
-  const getRandomWaitTime = useCallback((): number => {
-    const min = 60; // 1 minut
-    const max = 300; // 5 minut
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }, []);
 
 // ===========================================================
 //                GET ENKELTVASK  (SIMULERING)
@@ -103,7 +96,52 @@ export function useWash() {
   };
 
 // ===========================================================
-//                  GET LEDIG VASKEHAL
+//               POST BRUGERS VALGT VASKEHALL
+// ===========================================================
+
+  const postAvailableWashHall = useCallback(
+    async (washHallId: string) => {
+      const response = await fetch("/api/wash/single", {
+        method: "POST",
+        body: JSON.stringify({ wash_hall_id: washHallId }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to choose available wash hall");
+      }
+    },
+    []
+  );
+
+// ===========================================================
+//                  GET VENTETID FOR VASKEHAL
+// ===========================================================
+const useWashHallWaitTime = () => {
+  const [waitTime, setWaitTime] = useState<number | null>(null);
+
+  useEffect(() => {
+    const getRequest = async () => {
+      const response = await fetch("/api/washhall/waittime", {
+        cache: "no-store",
+        method: "GET",
+      });
+
+      const json =
+        (await response.json()) as WashHallWaitTimeResponse;
+
+      const randomWaitTime = resolveWaitTime(json);
+
+      setWaitTime(randomWaitTime);
+    };
+
+    void getRequest();
+  }, []);
+
+  return { waitTime, setWaitTime };
+};
+
+// ===========================================================
+//             GET ANTAL AF VASKEHALLER FRA BACKEND
 // ===========================================================
 
   const useWashHall = () => {
@@ -129,64 +167,22 @@ export function useWash() {
 
         setWashHalls(data.car_wash_hall_info);
       };
-
+      // void for at køre den asynkrone funktion uden at skulle håndtere løftet, da useEffect ikke kan være asynkron
       void fetchWashHalls();
     }, []);
 
     return { washHalls };
   };
 
-// ===========================================================
-//    BEREGN PROGRESS WIDTH (til timer og progressbar)
-// ===========================================================
-
-  const useWashProgress = (totalTime: number) => {
-    // simuleret nuværende tid
-    const [currentTime, setCurrentTime] = useState(0);
-    // useEffect for at mounte et interval, der opdaterer currentTime , og rydder det op ved unmount
-    useEffect(() => {
-      if (totalTime <= 0) {
-        setCurrentTime(0);
-        return;
-      }
-
-      const interval = setInterval(() => { // setInterval for at opdatere currentTime hvert sekund indtil den når totalTime
-        setCurrentTime((prev) => {
-          // reset når den rammer slutningen
-          if (prev >= totalTime) {
-            return 0;
-          }
-
-          return prev + 1;
-        });
-      }, 1000);
-
-      return () => clearInterval(interval);
-    }, [totalTime]); // nulstil
-
-    // progress i procent
-    const progress =
-      totalTime > 0 ? Math.min((currentTime / totalTime) * 100, 100) : 0;
-
-    // formatter tid til mm:ss
-    const remainingTime = Math.max(totalTime - currentTime, 0); // beregn resterende tid
-    const minutes = Math.floor(remainingTime / 60); // /60 for at få hele minutter fra den resterende tid
-    const seconds = remainingTime % 60; // % 60 for at få resterende sekunder efter at have trukket hele minutter fra
-
-    const formattedTime = `${String(minutes).padStart(2, "0")}.${String(
-      seconds,
-    ).padStart(2, "0")}`; // padStart sikrer, der altid er to cifre for både minutter og sekunder, og adskiller dem med et punktum
-    return { progress, formattedTime, currentTime, remainingTime };
-  };
 
   return {
     getUserLocation,
     getWashStepFromApi,
+    postAvailableWashHall,
     navigateToWashRoute,
-    getRandomWaitTime,
     useSingleWash,
     useWashHall,
-    useWashProgress,
+    useWashHallWaitTime,
   };
 }
 

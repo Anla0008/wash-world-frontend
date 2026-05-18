@@ -1,17 +1,12 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Card from "../icons/grafik/Card";
 import Wash from "../icons/navbar/Wash";
 import Checkmark from "../icons/grafik/Checkmark";
 import { ProgressBarProps } from "@/types/progressbar";
-import { resolveProgressSteps } from "@/lib/wash/resolvers";
 
-const ProgressBar = ({ activeIndex, isWashProcess, progress }: ProgressBarProps) => {
+const ProgressBar = ({ activeIndex, isWashProcess }: ProgressBarProps) => {
   const numbers = ["1", "2", "3"]; //TODO: skal opdateres til at bruge dataen fra backenden
-
-
-  const clampedProgress = isWashProcess ? resolveProgressSteps(numbers, activeIndex, progress) : 0;
 
 
   return (
@@ -39,17 +34,6 @@ const ProgressBar = ({ activeIndex, isWashProcess, progress }: ProgressBarProps)
       <div className="relative">
         {/* Baggrundslinje */}
         <div className="absolute inset-x-0 top-1/2 h-0.5 -translate-y-1/2 bg-foreground/30" />
-
-        {/* Animeret progress-linje */}
-        <motion.div
-          className="absolute left-0 top-1/2 h-0.5 -translate-y-1/2 bg-(--brand-green)"
-          initial={false}
-          animate={{ width: `${clampedProgress}%` }}
-          transition={{
-            duration: 0.8,
-            ease: "easeInOut",
-          }}
-        />
 
         <ul className="relative z-10 flex justify-between gap-10">
           {numbers.map((number) => {

@@ -1,13 +1,21 @@
 "use client";
 import { useWash } from "@/hooks/useWash";
-import PrimaryButtonAnchorTag from "../global/buttons/anchortag/PrimaryButtonAnchorTag";
+import PrimaryButton from "../global/buttons/onClick/PrimaryButton";
+import { useRouter } from "next/navigation";
 
 export default function SingleWash() {
   const { useSingleWash } = useWash();
+  const { postAvailableWashHall } = useWash();
   const { data } = useSingleWash();
+  const router = useRouter();
 
   if (!data) {
     return <p>Loading...</p>;
+  }
+
+  const handleClick = () => {
+    postAvailableWashHall(data.types[0].name);
+    router.push("/waitingLine");
   }
 
   return (
@@ -29,7 +37,7 @@ export default function SingleWash() {
      
         <div className="flex w-full items-center justify-end gap-5">
             <a className="underline" href="/">Læs mere</a>
-            <PrimaryButtonAnchorTag href="/waitingLine">Vælg</PrimaryButtonAnchorTag>
+            <PrimaryButton onClick={() => handleClick()}>Vælg</PrimaryButton>
         </div>
 
         </li>

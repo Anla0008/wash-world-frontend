@@ -1,6 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { singleWashData } from "@/mockupData/singleWashData";
 import { WashStepResponse } from "@/types/wash";
+import { washHallWaitTime } from "@/mockupData/washHallWaitTime";
 
 import {
   resolveRoute,
@@ -38,7 +39,33 @@ export const handlers = [
 
 http.get("/api/wash/single", () => {
   return HttpResponse.json(singleWashData);
-})
+}),
+
+// ===========================================================
+//              POST SINGLEVASK TYPE
+// ===========================================================
+
+http.post("/api/wash/single", () => {
+return HttpResponse.json();
+}),
+
+  // ===========================================================
+  //              GET WASH HALL WAIT TIME
+  // ===========================================================
+
+  http.get("/api/washhall/waittime", () => {
+  return HttpResponse.json(washHallWaitTime);
+  }),
+
+  // ===========================================================
+  //              GET LEDIG VASKEHAL
+  // ===========================================================
+
+  http.get("/api/washhall/available", () => {
+  return HttpResponse.json();
+  }),
+
+
 ];
 
 

@@ -7,13 +7,18 @@ import Favourites from "../icons/navbar/Favourites";
 import { usePathname } from "next/navigation";
 import { getUser } from "@/hooks/useAuth";
 import { WashRoute } from "@/types/wash";
+import { resolveWashRouteFromDistance, useNearestWash } from "@/lib/wash/resolvers";
 
 const NavBar = () => {
   const { getUserData } = getUser();
-  const washRoute: WashRoute = getUserData().has_sub ? "/activeWash" : "/buyWash";
+  const { nearestDistanceKm } = useNearestWash();
 
   const pathname = usePathname();
   const user = getUserData();
+  const washRoute: WashRoute =
+    nearestDistanceKm !== null
+      ? resolveWashRouteFromDistance(nearestDistanceKm, user.has_sub)
+      : "/errorInDistance";
 
   const li = [
     {

@@ -1,4 +1,4 @@
-export type WashRoute = "/buyWash" | "/activeWash";
+export type WashRoute = "/buyWash" | "/activeWash" | "/errorInDistance";
 
 export type WashStep = "buyWash" | "activeWash";
 

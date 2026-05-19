@@ -8,12 +8,16 @@ import { useAuth } from "./useAuth";
 import { WashHallWaitTimeResponse } from "@/types/washHallWaitTimeType";
 import { resolveWaitTime } from "@/lib/wash/resolvers";
 import { WashType } from "@/types/singleWashType";
+import { useWashStore } from "@/stores/useWashStore";
+import { distanceFromWashhall } from "@/lib/wash/resolvers";
+import { get } from "http";
+import { number } from "framer-motion";
 
 export function useWash() {
       const baseUrl = "http://127.0.0.1:80";
 
   // ===========================================================
-  //                  GET LOCATION PÅ BRUGER
+  //            GET LOCATION PÅ BRUGER
   // ===========================================================
   const { getLocations } = useAuth();
 
@@ -23,8 +27,11 @@ export function useWash() {
     // Random valgt lokation fra API responsen (simulering)
     const userLocation = locations[Math.floor(Math.random() * locations.length)];
 
+    useWashStore.getState().setUserLocation(userLocation);
+
     return userLocation;
   }, [getLocations]);
+
 
 // ===========================================================
 //        BESTEM ROUTE EFTER SUBSCRIPTION (SIMULERET)
@@ -62,6 +69,8 @@ export function useWash() {
       navigate: (path: string) => void,
       user: User
     ) => {
+
+      const distance = distanceFromWashhall();
 
       const route = await getWashStepFromApi(user);
 

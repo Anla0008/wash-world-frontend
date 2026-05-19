@@ -3,6 +3,7 @@ import { singleWashData } from "@/mockupData/singleWashData";
 import { WashStepResponse } from "@/types/wash";
 import { washHallWaitTime } from "@/mockupData/washHallWaitTime";
 import { carInWashHall } from "@/mockupData/carInWashHall";
+import { distance } from "@/mockupData/distance";
 
 import {
   resolveRoute,

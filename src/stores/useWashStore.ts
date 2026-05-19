@@ -4,11 +4,15 @@ import { create } from "zustand";
 import { WashType } from "@/types/singleWashType";
 
 type WashStore = {
+    userLocation: string | null;
+
   selectedWash: WashType | null;
 
   startedAt: number | null;
   endedAt: number | null;
-washDate: string | null;
+    washDate: string | null;
+
+setUserLocation: (location: string) => void;
 
   setSelectedWash: (wash: WashType) => void;
 
@@ -17,15 +21,21 @@ washDate: string | null;
   setEndedAt: (time: number) => void;
 
   setWashDate: (date: string) => void;
-
+  
   clearWash: () => void;
 };
 
 export const useWashStore = create<WashStore>((set) => ({
+userLocation: null,
   selectedWash: null,
   startedAt: null,
 endedAt: null,
   washDate: null,
+
+setUserLocation: (location) =>
+    set({
+      userLocation: location,
+    }),
 
   setSelectedWash: (wash) =>
     set({

@@ -3,6 +3,7 @@ import "./globals.css";
 import NavBar from "@/components/global/navigation/NavBar";
 import Header from "@/components/global/navigation/Header";
 import MswInitializer from "@/components/global/MswInitializer";
+import { FavoritesInitializer } from "@/components/global/favorit/FavoritesInitializer";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -17,36 +18,23 @@ export default function RootLayout({
   return (
     <html lang="da">
       <head>
-        <link
-          rel="apple-touch-icon"
-          sizes="180x180"
-          href="favicon/apple-touch-icon.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="32x32"
-          href="favicon/favicon-32x32.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="16x16"
-          href="favicon/favicon-16x16.png"
-        />
+        <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png" />
         <link rel="manifest" href="favicon/site.webmanifest" />
         <link rel="shortcut icon" href="favicon/favicon.ico" />
       </head>
       <body>
         <MswInitializer>
-        <div id="app-shell">
-          <div className="mb-20">
-            {/* opdateres senere til at passe med usewash systemet */}
-            {/* <Header points={155} /> */}
+          <FavoritesInitializer />
+          <div id="app-shell">
+            <div className="mb-20">
+              {/* opdateres senere til at passe med usewash systemet */}
+              {/* <Header points={155} /> */}
+            </div>
+            <main className="flex flex-col mb-20 px-8">{children}</main>
+            <NavBar />
           </div>
-          <main className="flex flex-col mb-20 px-8">{children}</main>
-          <NavBar />
-        </div>
         </MswInitializer>
       </body>
     </html>

@@ -1,32 +1,92 @@
+// "use client";
+
+// import { useEffect, useState } from "react";
+// import { useAuth } from "@/hooks/useAuth";
+// import { Location } from "@/types/locations";
+// import VaskehalCard from "@/components/global/cards/VaskehalCard";
+
+// export default function Favorites() {
+//   const { getFavorites } = useAuth();
+//   const [favorites, setFavorites] = useState<Location[]>([]);
+
+//   useEffect(() => {
+//     async function loadFavorites() {
+//       try {
+//         const data = await getFavorites();
+//         setFavorites(data);
+//       } catch (error) {
+//         console.error("Fejl ved indlæsning af favoritter:", error);
+//       }
+//     }
+//     loadFavorites();
+//   }, [getFavorites]);
+
+//   return (
+//     <div className="max-w-lg w-full flex flex-col gap-15">
+//       <section className="flex flex-col gap-4">
+//         <p className="text-2xl font-bold">Favoritter</p>
+
+//         {favorites.length === 0 ? <p className="text-sm text-(--gray-40)">Du har ingen favoritter endnu.</p> : favorites.map((location) => <VaskehalCard key={location.location_pk} location_pk={location.location_pk} city={location.location_city} address={location.location_address} openingHours="07 - 22" image={location.location_img} href={`/locations/${location.location_pk}`} isFavorite={true} />)}
+//       </section>
+//     </div>
+//   );
+// }
+
 "use client";
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Location } from "@/types/locations";
 import VaskehalCard from "@/components/global/cards/VaskehalCard";
+import { useFavoritesStore } from "@/stores/favoritesStore";
 
 export default function Favorites() {
   const { getFavorites } = useAuth();
   const [favorites, setFavorites] = useState<Location[]>([]);
+  const [fadingOut, setFadingOut] = useState<Set<string>>(new Set());
+  const favoriteIds = useFavoritesStore((state) => state.favoriteIds);
 
   useEffect(() => {
-    async function loadFavorites() {
-      try {
-        const data = await getFavorites();
-        setFavorites(data);
-      } catch (error) {
-        console.error("Fejl ved indlæsning af favoritter:", error);
-      }
-    }
-    loadFavorites();
-  }, [getFavorites]);
+    getFavorites().then(setFavorites).catch(console.error);
+  }, []);
+
+  // Synkroniser listen når favoriteIds ændres (fx når bruger fjerner en favorit)
+  useEffect(() => {
+    setFavorites((prev) => prev.filter((loc) => favoriteIds.has(loc.location_pk)));
+  }, [favoriteIds]);
+
+  const handleRemove = (location_pk: string) => {
+    setFadingOut((prev) => new Set(prev).add(location_pk));
+    setTimeout(() => {
+      setFadingOut((prev) => {
+        const next = new Set(prev);
+        next.delete(location_pk);
+        return next;
+      });
+    }, 300);
+  };
 
   return (
     <div className="max-w-lg w-full flex flex-col gap-15">
       <section className="flex flex-col gap-4">
         <p className="text-2xl font-bold">Favoritter</p>
 
-        {favorites.length === 0 ? <p className="text-sm text-(--gray-40)">Du har ingen favoritter endnu.</p> : favorites.map((location) => <VaskehalCard key={location.location_pk} location_pk={location.location_pk} city={location.location_city} address={location.location_address} openingHours="07 - 22" image={location.location_img} href={`/locations/${location.location_pk}`} isFavorite={true} />)}
+        {favorites.length === 0 ? (
+          <p className="text-sm text-(--gray-40)">Du har ingen favoritter endnu.</p>
+        ) : (
+          favorites.map((location) => (
+            <div
+              key={location.location_pk}
+              className="transition-all duration-300"
+              style={{
+                opacity: fadingOut.has(location.location_pk) ? 0 : 1,
+                transform: fadingOut.has(location.location_pk) ? "scale(0.95)" : "scale(1)",
+              }}
+            >
+              <VaskehalCard location_pk={location.location_pk} city={location.location_city} address={location.location_address} openingHours="07 - 22" image={location.location_img} href={`/locations/${location.location_pk}`} onRemove={() => handleRemove(location.location_pk)} />
+            </div>
+          ))
+        )}
       </section>
     </div>
   );

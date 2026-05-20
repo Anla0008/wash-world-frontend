@@ -3,13 +3,17 @@ import { singleWashData } from "@/mockupData/singleWashData";
 import { WashStepResponse } from "@/types/wash";
 import { washHallWaitTime } from "@/mockupData/washHallWaitTime";
 import { carInWashHall } from "@/mockupData/carInWashHall";
-import { distance } from "@/mockupData/distance";
+import { initializeHallState } from "@/lib/wash/resolvers";
+import { updateHallState } from "@/lib/wash/resolvers";
+import { washHallState } from "@/mockupData/washHallState";
+import { useAuth } from "@/hooks/useAuth";
 
 import {
   resolveRoute,
   resolveStep,
-  resolveProgressIndex,
 } from "@/lib/wash/resolvers";
+import { get } from "http";
+const baseUrl = "http://127.0.0.1";
 
 export const handlers = [
   // ===========================================================
@@ -27,7 +31,6 @@ export const handlers = [
       // Konstruerer response objektet
       step: resolveStep(route),
       route,
-      progressIndex: resolveProgressIndex(route),
       has_sub: hasSub,
     };
 
@@ -62,10 +65,79 @@ return HttpResponse.json();
   // ===========================================================
   //              GET LEDIG VASKEHAL
   // ===========================================================
+http.get(
+  "/api/washhall/available",
+  async ({ request }) => {
+    const url = new URL(request.url);
 
-  http.get("/api/washhall/available", () => {
-  return HttpResponse.json();
-  }),
+    const location_pk =
+      url.searchParams.get("location_pk");
+
+    if (!location_pk) {
+      return HttpResponse.json(
+        { error: "Missing location_pk" },
+        { status: 400 }
+      );
+    }
+
+    // Fetch washhalls fra backenden
+     const response = await fetch(baseUrl + `/locations/${location_pk}`);
+
+    if (!response.ok) {
+      return HttpResponse.json(
+        { error: "Failed to fetch washhalls" },
+        { status: 500 }
+      );
+    }
+
+    const data = await response.json();
+
+    const washHalls: { car_wash_hall_number: number }[] =
+      data.wash_halls;
+
+    initializeHallState(washHalls);
+
+    const resolvedHalls =
+      washHalls.map((hall) => {
+        const currentState =
+          washHallState.get(
+            String(hall.car_wash_hall_number)
+          );
+
+        if (!currentState) return null;
+
+        const updatedState =
+          updateHallState(currentState);
+
+        washHallState.set(
+          String(hall.car_wash_hall_number),
+          updatedState
+        );
+
+        return {
+          ...hall,
+          ...updatedState,
+        };
+      });
+
+    const availableHalls =
+      resolvedHalls.filter(
+        (hall: any) =>
+          hall && !hall.occupied
+      );
+
+    const selectedHall =
+      availableHalls[0] ??
+      resolvedHalls.sort(
+        (a: any, b: any) =>
+          a.waitTime - b.waitTime
+      )[0];
+
+    return HttpResponse.json({
+      hall: selectedHall,
+    });
+  }
+),
 
   // ===========================================================
   //              GET INDKØRSEL I VASKEHAL

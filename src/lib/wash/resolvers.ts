@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { Location } from "@/types/locations";
 import { WashRoute, WashStep } from "@/types/wash";
 import { WashHallWaitTimeResponse } from "@/types/washHallWaitTimeType";
+import { washHallState } from "@/mockupData/washHallState";
+import { useWashStore } from "@/stores/useWashStore";
 
 // ===========================================================
 //       GET NÆRMESTE VASKEHAL PÅ LOKATION (GEO)
@@ -24,10 +26,12 @@ function getDistanceKm(lat1: number, lng1: number, lat2: number, lng2: number): 
 }
 
 export const useNearestWash = () => {
-    const { getLocations } = useAuth();
-    const [nearestLocation, setNearestLocation] = useState<Location | null>(null);
+  const { getLocations } = useAuth();
+  const [nearestLocation, setNearestLocation] = useState<Location | null>(null);
   const [nearestDistanceKm, setNearestDistanceKm] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const setUserLocation = useWashStore((state) => state.setUserLocation);
+  const setUserLocationObj = useWashStore((state) => state.setUserLocationObj);
 
     useEffect(() => {
     if (!navigator.geolocation) {
@@ -51,6 +55,10 @@ export const useNearestWash = () => {
                 }, null);
 
             setNearestLocation(nearest);
+            if (nearest?.location_pk) {
+              setUserLocation(nearest.location_pk);
+              setUserLocationObj(nearest);
+            }
             if (nearest?.location_lat !== undefined && nearest?.location_lng !== undefined) {
               const distance = getDistanceKm(
                 latitude,
@@ -109,64 +117,67 @@ export const resolveWashRouteFromDistance = (
   return resolveRoute(hasSub);
 };
 
-  // ===========================================================
-  //      DEFINER PROGRESSINDEX FOR HVER ROUTE (progressbar)
-  // ===========================================================
+export const resolveDurationToMinutesSeconds = (
+  durationInSeconds: number
+) => {
+  const minutes = Math.floor(durationInSeconds / 60);
+  const seconds = durationInSeconds % 60;
 
-export const resolveProgressIndex = (
-  route: WashRoute
-): number => {
-  switch (route) {
-    case "/buyWash":
-      return 1;
-
-    case "/activeWash":
-      return 2;
-
-    default:
-      return 0;
-  }
+  return {
+    minutes,
+    seconds,
+    formattedDuration: `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`,
+  };
 };
 
-  // ===========================================================
-  //    UDREGN WIDTH TIL NÆSTE STEP FOR PROGRESSBAR
-  // ===========================================================
 
-export const resolveProgressSteps = (numbers: string[], activeIndex: number, progress?: number) => { //numbers: string fordi det er det format vi får fra API'et
-  // total antal steps, baseret på numre i arrayet
-    const totalSteps = numbers.length;
-
-    // Beregn den grundlæggende progress baseret på aktive steps
-    const stepProgressWidth =
-      totalSteps > 1 ? ((activeIndex - 1) / (totalSteps - 1)) * 100 : 0;
-
-    // Beregn bredden af hvert segment mellem steps
-      const segmentWidth = 100 / (totalSteps - 1);
-      
-    // Beregn startpunktet for det nuværende segment
-      const currentSegmentStart = (activeIndex - 1) * segmentWidth;
-
-    // Beregn den endelige progress ved at tilføje den procentvise progress inden for det nuværende segment
-      const clampedProgress =
-        progress !== undefined
-          ? currentSegmentStart + (progress / 100) * segmentWidth
-          : stepProgressWidth;
-
-  return clampedProgress;
-}
 
   // ===========================================================
-  //                 SIMULER LEDIG VASKEHAL
+  //            INITIALISER VASKEHALL STATE
   // ==========================================================
 
-  export const generateAvailibleWashHalls = (): string => {
+export function initializeHallState(halls: { car_wash_hall_number: number }[]) {
+  halls.forEach((hall) => {
+    const key = String(hall.car_wash_hall_number);
+    if (!washHallState.has(key)) {
+      washHallState.set(key, {
+        occupied: Math.random() > 0.3,
+        waitTime: Math.floor(Math.random() * 600),
+        updatedAt: Date.now(),
+      });
+    }
+  });
+}
 
-    const washHalls = ["1", "2", "3"]; // TODO: erstat med vaskehaller, brugeren er tættest på
-    const randomIndex = Math.floor(Math.random() * washHalls.length); // Vælg tilfældigt index
+// ===========================================================
+//            OPDATER VASKEHALL STATE
+// ==========================================================
+export function updateHallState(state: {
+  occupied: boolean;
+  waitTime: number;
+  updatedAt: number;
+}) {
+  const now = Date.now();
 
-    return washHalls[randomIndex]; 
-  }
+  const secondsPassed =
+    (now - state.updatedAt) / 1000;
 
+  const nextWaitTime = Math.max(
+    0,
+    state.waitTime - secondsPassed
+  );
+
+  const occupied =
+    nextWaitTime > 0
+      ? true
+      : Math.random() > 0.8;
+
+  return {
+    occupied,
+    waitTime: nextWaitTime,
+    updatedAt: now,
+  };
+}
 // ===========================================================
 //            RESOLVE RANDOM WAIT TIME
 // ===========================================================

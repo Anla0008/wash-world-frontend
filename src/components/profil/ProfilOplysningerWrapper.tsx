@@ -3,7 +3,7 @@ import PrimaryButton from "../global/buttons/onClick/PrimaryButton";
 
 const ProfilOplysningerWrapper = () => {
   return (
-    <section className="bg-(--gray-80) w-100 px-4 py-4 flex flex-col gap-5 rounded-md">
+    <section className="bg-(--gray-80) px-4 py-4 flex flex-col gap-5 rounded-md">
       <h3 className="extra-bold">Opdater oplysninger</h3>
 
       <ProfilOplysningerCard section={"profile"} />

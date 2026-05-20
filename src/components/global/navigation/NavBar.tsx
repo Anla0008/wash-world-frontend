@@ -6,7 +6,7 @@ import Map from "../icons/navbar/Map";
 import Favourites from "../icons/navbar/Favourites";
 import { usePathname } from "next/navigation";
 import { getUser } from "@/hooks/useAuth";
-import { WashRoute } from "@/types/wash";
+import { WashRoute } from "@/types/washType";
 import { resolveWashRouteFromDistance, useNearestWash } from "@/lib/wash/resolvers";
 
 const NavBar = () => {

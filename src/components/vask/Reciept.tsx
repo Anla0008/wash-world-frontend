@@ -40,7 +40,7 @@ const {
 
     clearWash();
 
-    router.push("/");
+    router.push("/dashboard");
   };
 
   // ===========================================================

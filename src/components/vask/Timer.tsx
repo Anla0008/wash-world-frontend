@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
-import { TimerProps } from "@/types/wash";
+import { TimerProps } from "@/types/washType";
 
 const Timer = ({ totalTime, onComplete }: TimerProps) => {
   const [currentTime, setCurrentTime] = useState(0);

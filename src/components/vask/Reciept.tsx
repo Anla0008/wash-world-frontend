@@ -17,8 +17,8 @@ const {
   startedAt,
   endedAt,
   availibleWashHall,
-  userLocation,
-  userLocationObj,
+  locationID,
+  locationName,
   clearWash,
 } = useWashStore();
 
@@ -35,7 +35,7 @@ const {
       startedAt,
       endedAt,
       availibleWashHall,
-      userLocation,
+      locationID,
     });
 
     clearWash();
@@ -141,7 +141,7 @@ const {
           </p>
 
           <p>
-            {availibleWashHall} - {userLocationObj?.location_city ?? userLocation}
+            Hal {availibleWashHall} - {locationName}
           </p>
         </div>
 

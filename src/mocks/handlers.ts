@@ -81,7 +81,7 @@ http.get(
     }
 
     // Fetch washhalls fra backenden
-     const response = await fetch(baseUrl + `/locations/${location_pk}`);
+     const response = await fetch(baseUrl + `/wash-hall/${location_pk}`);
 
     if (!response.ok) {
       return HttpResponse.json(

@@ -1,9 +1,10 @@
+"use client";
+
 import AbbonomenterCard from "@/components/global/cards/AbbonomenterCard";
 import MinProfilCard from "@/components/profil/MinProfilCard";
 import PointCard from "@/components/global/cards/PointCard";
 import KundeserviceCard from "@/components/global/cards/KundeserviceCard";
 import FAQ from "@/components/global/cards/FAQ";
-import PrimaryButtonAnchorTag from "@/components/global/buttons/anchortag/PrimaryButtonAnchorTag";
 import DeleteUserButton from "@/components/global/buttons/onClick/DeleteUserButton";
 
 export default function Profil() {
@@ -20,10 +21,21 @@ export default function Profil() {
       </div>
       <FAQ></FAQ>
       <div className="flex justify-center mt-18">
-        {/* TODO: Log ud funktionalitet skal implementeres i backend, og denne knap skal linke til den endpoint, der håndterer log ud */}
-        <PrimaryButtonAnchorTag href="/logud" className="text-center">
+        {/* Button stylet om tertriary button, men med log ud logik op – bruges KUN her */}
+        {/* JWT er stateless – log ud sker ved at slette tokenet lokalt */}
+        <button
+          className="bg-foreground text-background relative px-5 pr-10 py-2 w-fit extra-bold"
+          style={{
+            clipPath: "polygon(0 0, 100% 0, calc(100% - 16px) 100%, 0 100%)",
+            boxShadow: "inset -10px -10px 20px #121212, inset 20px 20px 30px rgba(255, 255, 255, 0.25)",
+          }}
+          onClick={() => {
+            localStorage.removeItem("access_token"); // Sletter tokenet fra browseren
+            window.location.href = "/"; // Sender brugeren til forsiden
+          }}
+        >
           Log ud
-        </PrimaryButtonAnchorTag>
+        </button>
       </div>
       <div className="flex justify-center mt-18">
         <DeleteUserButton></DeleteUserButton>

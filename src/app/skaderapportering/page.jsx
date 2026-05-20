@@ -6,6 +6,7 @@ import TextArea from "@/components/global/forms/TextArea";
 import PrimaryButton from "@/components/global/buttons/onClick/PrimaryButton";
 import Popup from "@/components/global/cards/PopUp";
 import Checkmark from "@/components/global/icons/grafik/Checkmark";
+import ArrowLeft from "@/components/global/icons/navigation/ArrowLeft";
 
 export default function Skaderapportering() {
   const [error, setError] = useState("");
@@ -40,6 +41,7 @@ export default function Skaderapportering() {
 
   return (
     <div>
+      <ArrowLeft onClick={() => router.push("/profil")} size={30} />
       <h1 className="extra-bold pb-8">Skaderapportering</h1>
       <form onSubmit={handleSubmit}>
         <TextArea label="Beskriv*" placeholder="Beskriv din skade og oplevelse..." name="description" type="text" onTextAreaChange={() => setError("")} />

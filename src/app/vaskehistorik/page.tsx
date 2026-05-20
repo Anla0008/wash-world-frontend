@@ -1,15 +1,22 @@
-import HistorikCard from "@/components/profil/HistorikCard";
+"use client";
 
-export default async function Vaskehistorik() {
-  const res = await fetch("http://localhost:5000/wash-history/2"); // Skift 2 ud med brugerens pk fra JWT
-  const data = await res.json();
+import HistorikCard from "@/components/profil/HistorikCard";
+import useWashHistory from "@/hooks/useWashHistory";
+import ArrowLeft from "@/components/global/icons/navigation/ArrowLeft";
+
+import { useRouter } from "next/navigation";
+
+export default function Vaskehistorik() {
+  const history = useWashHistory("3"); // TODO: Skift til JWT bruger
+  const router = useRouter();
 
   return (
     <div>
+      <ArrowLeft onClick={() => router.push("/profil")} size={30} />
       <h1 className="extra-bold">Vaskehistorik</h1>
       <div className="flex flex-col gap-3">
-        {data.history.map((wash: any) => (
-          <HistorikCard key={wash.car_wash_history_pk} location={wash.location_name} date={new Date(wash.date_of_wash).toLocaleDateString("da-DK")} description={wash.car_wash_type} price={wash.car_wash_price} points={wash.car_wash_price} href={`/historik/${wash.car_wash_history_pk}`} />
+        {history.map((wash: any) => (
+          <HistorikCard key={wash.car_wash_history_pk} location={wash.location_name} date={new Date(wash.date_of_wash).toLocaleDateString("da-DK")} description={wash.car_wash_type} price={wash.car_wash_price} points={wash.car_wash_price} href="/car-wash-history" />
         ))}
       </div>
     </div>

@@ -7,7 +7,7 @@ import { FormProps } from "@/types/forms";
 
 const TextArea = ({ label, error, validated, placeholder, name, onTextAreaChange }: FormProps) => {
   // TODO: opdater denne senere til regex fra backend
-  const maxLength = 500;
+  const maxLength = 200;
 
   const [charCount, setCharCount] = useState(0);
 

@@ -58,7 +58,7 @@ export function useAuth() {
 
     const data = await response.json();
     console.log(data);
-    localStorage.setItem("token", data.access_token);
+    localStorage.setItem("token", data.access_token); // Gemmer token i localStorage ved login
     return data;
   }, []);
 

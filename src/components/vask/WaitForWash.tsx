@@ -3,11 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useWash } from "@/hooks/useWash";
 import { useWashStore } from "@/stores/useWashStore";
-
-import Timer from "./Timer";
+import { useEffect } from "react";
 import ProgressBar from "../global/grafik/ProgressBar";
 
-import { WaitForWashProps } from "@/types/washHallWaitTimeType";
+import { WaitForWashProps } from "@/types/washType";
 
 import Image from "next/image";
 
@@ -16,11 +15,18 @@ const WaitForWash = ({
 }: WaitForWashProps) => {
   const router = useRouter();
 
-  // Læs den allerede gemte vaskehal fra store – aldrig re-fetch
+  // Læs den allerede gemte vaskehal fra store
   const availibleWashHall = useWashStore((s) => s.availibleWashHall);
+  
 
   const { useEntryToWashHall } = useWash();
-  const { entryTime } = useEntryToWashHall();
+    const { registered } = useEntryToWashHall(availibleWashHall);
+
+    useEffect(() => {
+      if (registered) {
+        router.push("/activeWash");
+      }
+    }, [registered, router]);
 
   if (!availibleWashHall) {
     return <p>Ingen ledig vaskehal valgt</p>;
@@ -31,7 +37,6 @@ const WaitForWash = ({
       <ProgressBar
         activeIndex={activeIndex}
         isWashProcess={true}
-        progress={entryTime ?? 0}
       />
 
       <h1 className="extra-bold">
@@ -50,18 +55,12 @@ const WaitForWash = ({
         height={500}
       />
 
-      <div className="hidden">
-        {entryTime !== null && (
-          <Timer
-            totalTime={entryTime}
-            onComplete={() =>
-              router.push("/activeWash")
-            }
-          />
-        )}
-      </div>
+      <p>
+        Registrerer bil i vaskehal...
+      </p>
+
     </div>
   );
-};
+}
 
 export default WaitForWash;

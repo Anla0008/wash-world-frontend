@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 const WaitingLine = () => {
     const router = useRouter();
     const { useWashHallWaitTime } = useWash();
-    const { waitTime } = useWashHallWaitTime();
+    const waitTime = useWashHallWaitTime();
 
     return (
         <div className="flex flex-col gap-5">

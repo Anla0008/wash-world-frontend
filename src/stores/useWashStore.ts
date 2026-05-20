@@ -1,10 +1,11 @@
 "use client";
 
 import { create } from "zustand";
-import { WashStore } from "@/types/wash";
+import { WashStore } from "@/types/washType";
 
 export const useWashStore = create<WashStore>((set) => ({
-  
+
+  // start med undefined for at tvinge eksplicit valg af vaskehal
   locationID: "undefined",
   locationName: "undefined",
   availibleWashHall: null,
@@ -13,6 +14,7 @@ export const useWashStore = create<WashStore>((set) => ({
   endedAt: null,
   washDate: null,
 
+  // set alle state funktioner til at opdatere den relevante del af state i zustand store
 
 setLocationID: (locationID) =>
     set({
@@ -51,6 +53,7 @@ setLocationName: (locationName) =>
       ((state.selectedWash?.duration ?? 0) * 1000),
   })),
 
+  // nulstil for at forberede til næste vask
   clearWash: () =>
     set({
       selectedWash: null,

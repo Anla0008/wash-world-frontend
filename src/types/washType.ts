@@ -29,8 +29,7 @@ export type WashingHalls = {
   // ==========================================================
 
 export type WashHallWaitTimeResponse = {
-  wait_time_seconds_min: number;
-  wait_time_seconds_max: number;
+  [hallNumber: string]: number;
 };
 
 export type WaitForWashProps = {

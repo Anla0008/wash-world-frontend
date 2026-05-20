@@ -65,26 +65,24 @@ return HttpResponse.json();
   // ===========================================================
   //              GET LEDIG VASKEHAL
   // ===========================================================
-http.get(
-  "/api/washhall/available",
-  async ({ request }) => {
+http.get("/api/washhall/available", async ({ request }) => {
+
     const url = new URL(request.url);
 
-    const location_pk =
-      url.searchParams.get("location_pk");
+    const location_pk = url.searchParams.get("location_pk");
 
-    if (!location_pk) {
-      return HttpResponse.json(
+    // Valider at location_pk er til stede
+    if (!location_pk) {return HttpResponse.json(
         { error: "Missing location_pk" },
         { status: 400 }
-      );
+      ); 
     }
 
     // Fetch washhalls fra backenden
      const response = await fetch(baseUrl + `/wash-hall/${location_pk}`);
 
-    if (!response.ok) {
-      return HttpResponse.json(
+    // Håndter fejl ved fetching
+    if (!response.ok) {return HttpResponse.json(
         { error: "Failed to fetch washhalls" },
         { status: 500 }
       );
@@ -92,51 +90,39 @@ http.get(
 
     const data = await response.json();
 
+    // Initialiser wash hall state for alle vaskehaller ved lokationen
     const washHalls: { car_wash_hall_number: number }[] =
       data.wash_halls;
 
     initializeHallState(washHalls);
 
-    const resolvedHalls =
-      washHalls.map((hall) => {
-        const currentState =
-          washHallState.get(
-            String(hall.car_wash_hall_number)
-          );
+    const resolvedHalls = washHalls.map((hall) => {
+
+      // Hent den aktuelle state for vaskehallen (state angivet i lib/wash/resolvers.ts)
+      const currentState = washHallState.get(String(hall.car_wash_hall_number));
 
         if (!currentState) return null;
 
-        const updatedState =
-          updateHallState(currentState);
+        // Opdater state baseret på hvor lang tid der er gået siden sidste opdatering
+        const updatedState = updateHallState(currentState);
 
-        washHallState.set(
-          String(hall.car_wash_hall_number),
-          updatedState
-        );
+        // Gem den opdaterede state tilbage i washHallState
+        washHallState.set(String(hall.car_wash_hall_number), updatedState);
 
+        // spread både vaskehallens statiske data og den opdaterede state i det endelige objekt der returneres
         return {
           ...hall,
           ...updatedState,
         };
       });
 
-    const availableHalls =
-      resolvedHalls.filter(
-        (hall: any) =>
-          hall && !hall.occupied
-      );
+    // Filtrer vaskehaller, der er markeret som optaget fra
+    const availableHalls = resolvedHalls.filter((hall: any) => hall && !hall.occupied);
 
-    const selectedHall =
-      availableHalls[0] ??
-      resolvedHalls.sort(
-        (a: any, b: any) =>
-          a.waitTime - b.waitTime
-      )[0];
+    // vælg hal, der har kortest ventetid blandt de ledige vaskehaller. Hvis alle er optaget: vælg den med kortest ventetid
+    const selectedHall = availableHalls[0] ?? resolvedHalls.sort((a: any, b: any) => a.waitTime - b.waitTime)[0];
 
-    return HttpResponse.json({
-      hall: selectedHall,
-    });
-  }
+    return HttpResponse.json({hall: selectedHall,});}
 ),
 
   // ===========================================================

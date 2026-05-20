@@ -137,12 +137,24 @@ export const resolveDurationToMinutesSeconds = (
   // ==========================================================
 
 export function initializeHallState(halls: { car_wash_hall_number: number }[]) {
+
   halls.forEach((hall) => {
+
+    // Brug vaskehalens nummer som nøgle
     const key = String(hall.car_wash_hall_number);
+
+    // Hvis der ikke allerede er en state for denne vaskehal, så opret en ny
     if (!washHallState.has(key)) {
+
       washHallState.set(key, {
+
+        // Simuleret initial state: 30% chance for at være optaget
         occupied: Math.random() > 0.3,
+
+        // ventetid mellem 0-10 minutter
         waitTime: Math.floor(Math.random() * 600),
+
+        // Gem tidspunkt for sidste opdatering
         updatedAt: Date.now(),
       });
     }
@@ -152,25 +164,18 @@ export function initializeHallState(halls: { car_wash_hall_number: number }[]) {
 // ===========================================================
 //            OPDATER VASKEHALL STATE
 // ==========================================================
-export function updateHallState(state: {
-  occupied: boolean;
-  waitTime: number;
-  updatedAt: number;
-}) {
+export function updateHallState(state: {occupied: boolean; waitTime: number; updatedAt: number;}) {
+  
   const now = Date.now();
 
-  const secondsPassed =
-    (now - state.updatedAt) / 1000;
+  // Beregn hvor lang tid der er gået siden sidste opdatering
+  const secondsPassed = (now - state.updatedAt) / 1000;
 
-  const nextWaitTime = Math.max(
-    0,
-    state.waitTime - secondsPassed
-  );
+  // Opdater ventetiden baseret på hvor lang tid der er gået
+  const nextWaitTime = Math.max(0, state.waitTime - secondsPassed);
 
-  const occupied =
-    nextWaitTime > 0
-      ? true
-      : Math.random() > 0.8;
+  // Simuler at vaskehallen bliver optaget eller ledig baseret på ventetiden og tilfældighed
+  const occupied = nextWaitTime > 0 ? true: Math.random() > 0.8;
 
   return {
     occupied,

@@ -8,8 +8,7 @@ import { useAuth } from "./useAuth";
 import { WashHallWaitTimeResponse } from "@/types/washHallWaitTimeType";
 import { resolveWaitTime } from "@/lib/wash/resolvers";
 import { WashType } from "@/types/singleWashType";
-import { useWashStore } from "@/stores/useWashStore";
-import { Location } from "@/types/locations";
+import { postWash } from "@/types/postWash";
 
 
 export function useWash() {
@@ -107,20 +106,7 @@ export function useWash() {
 // ===========================================================
 //               POST BRUGERS VASKEPROCES
 // ===========================================================
-const postAvailableWashHall = useCallback(
-  async ({
-    wash,
-    startedAt,
-    endedAt,
-    availibleWashHall,
-    locationID,
-  }: {
-    wash: WashType;
-    startedAt: number | null;
-    endedAt: number | null;
-    availibleWashHall: number | null;
-    locationID: string | null;
-  } ) => {
+const postAvailableWashHall = useCallback(async ({wash, startedAt, endedAt, availibleWashHall, locationID,}: postWash) => {
 
     console.log("POST DATA:", {
       wash,
@@ -130,9 +116,7 @@ const postAvailableWashHall = useCallback(
       locationID,
     });
 
-    const response = await fetch(
-      baseUrl + "/car-wash-history",
-      {
+    const response = await fetch(baseUrl + "/car-wash-history",{
         method: "POST",
 
         headers: {
@@ -143,8 +127,6 @@ const postAvailableWashHall = useCallback(
         },
 
         body: JSON.stringify({
-          license_plate_fk: "ABC123",
-
           car_wash_location_fk: locationID,
 
           car_wash_hall_fk: availibleWashHall,
@@ -168,9 +150,7 @@ const postAvailableWashHall = useCallback(
 
       console.log("BACKEND ERROR:", errorData);
 
-      throw new Error(
-        errorData.error || "Failed to save wash"
-      );
+      throw new Error(errorData.error || "Failed to save wash");
     }
 
     console.log(localStorage.getItem("token"));
@@ -214,17 +194,13 @@ const useWashHallWaitTime = () => {
 // ===========================================================
 //             GET NÆSTE LEDIGE VASKEHAL (SIMULERING)
 // ===========================================================
-const useAvailableWashHall = (
-  location_pk?: string
-) => {
-  const [hall, setHall] =
-    useState<WashingHalls | null>(null);
+const useAvailableWashHall = (location_pk?: string) => {
 
-  const [isLoading, setIsLoading] =
-    useState(false);
+  const [hall, setHall] = useState<WashingHalls | null>(null);
 
-  const [error, setError] =
-    useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!location_pk) return;
@@ -251,8 +227,9 @@ const useAvailableWashHall = (
 
         const data = await response.json();
 
-
+        // status på ledig vaskehal, er defineret i mocks/handlers.ts
         setHall(data.hall);
+
       } catch (err) {
         setError(
           err instanceof Error

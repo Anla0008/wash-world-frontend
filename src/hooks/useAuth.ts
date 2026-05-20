@@ -93,13 +93,13 @@ export function useAuth() {
   //                        GET FAVORITES
   // ===========================================================
   const getFavorites = useCallback(async () => {
-    const response = await fetch(baseUrl + "/favorites/2", {
-      // ToDo: skift 2 ud med rigtig user_pk når JWT er klar
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(baseUrl + "/favorites", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Cache-Control": "no-store",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     if (!response.ok) {
@@ -114,37 +114,45 @@ export function useAuth() {
   //                        ADD FAVORITE
   // ===========================================================
   const addFavorite = useCallback(async (location_pk: string) => {
+    const token = localStorage.getItem("token");
+
     const response = await fetch(baseUrl + "/favorites", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Cache-Control": "no-store",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ location_pk }),
+      body: JSON.stringify({
+        location_pk: location_pk,
+      }),
     });
 
     if (!response.ok) {
       throw new Error("Failed to add favorite");
     }
+
+    return await response.json();
   }, []);
 
   // ===========================================================
   //                       REMOVE FAVORITE
   // ===========================================================
   const removeFavorite = useCallback(async (location_pk: string) => {
+    const token = localStorage.getItem("token");
+
     const response = await fetch(baseUrl + `/favorites/${location_pk}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        "Cache-Control": "no-store",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
     if (!response.ok) {
       throw new Error("Failed to remove favorite");
     }
+
+    return await response.json();
   }, []);
 
   // Herunder returnerer vi ALLE routes, som vi ønsker at kunne bruge i vores komponenter

@@ -5,37 +5,22 @@ import { motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { FilterProgressBarProps } from "@/types/filtering";
 
-const FilterProgressBar = ({
-  numbers = [1, 2, 3, 4, 5], //TODO: skal opdateres til at bruge dataen fra backenden m. singleviews indhold
-  initialMinStep,
-  initialMaxStep,
-  onRangeChange,
-}: FilterProgressBarProps) => {
-  const sortedNumbers = useMemo(
-    () => [...numbers].sort((a, b) => a - b),
-    [numbers],
-  ); // sorterer tallene i stigende rækkefølge - fallback
+const FilterProgressBar = ({ numbers = [1], initialMinStep, initialMaxStep, onRangeChange }: FilterProgressBarProps) => {
+  const sortedNumbers = useMemo(() => [...numbers].sort((a, b) => a - b), [numbers]); // sorterer tallene i stigende rækkefølge - fallback
 
   const minStep = sortedNumbers[0];
   const maxStep = sortedNumbers[sortedNumbers.length - 1];
 
   // sikrer af minStep ikke er højere end maxStep og omvendt, og at de begge er inden for det tilladte interval
   const initialRange = useMemo<[number, number]>(() => {
-    const startMin = Math.min(
-      Math.max(initialMinStep ?? minStep, minStep),
-      maxStep,
-    );
-    const startMax = Math.min(
-      Math.max(initialMaxStep ?? maxStep, minStep),
-      maxStep,
-    );
+    const startMin = Math.min(Math.max(initialMinStep ?? minStep, minStep), maxStep);
+    const startMax = Math.min(Math.max(initialMaxStep ?? maxStep, minStep), maxStep);
 
     return [Math.min(startMin, startMax), Math.max(startMin, startMax)];
   }, [initialMinStep, initialMaxStep, minStep, maxStep]);
 
   // activeRange er den valgte rækkevidde, som opdateres, når brugeren interagerer med slideren
-  const [activeRange, setActiveRange] =
-    useState<[number, number]>(initialRange);
+  const [activeRange, setActiveRange] = useState<[number, number]>(initialRange);
 
   useEffect(() => {
     setActiveRange(initialRange);
@@ -54,8 +39,7 @@ const FilterProgressBar = ({
     }
 
     // konverterer en værdi til en procentdel af det samlede interval
-    const toPercent = (value: number) =>
-      ((value - minStep) / (maxStep - minStep)) * 100;
+    const toPercent = (value: number) => ((value - minStep) / (maxStep - minStep)) * 100;
     const start = toPercent(activeStepMin);
     const end = toPercent(activeStepMax);
     // returnering af startpositionen og bredden af det aktive område i procent
@@ -77,7 +61,7 @@ const FilterProgressBar = ({
         }}
         className="relative flex w-full touch-none select-none items-center px-1.5"
       >
-        <Slider.Track className="relative h-1.5 w-full rounded-full bg-white/20">
+        <Slider.Track className="relative h-1.5 w-full rounded-full bg-foreground/20">
           <motion.div
             className="absolute top-0 h-full rounded-full bg-foreground"
             animate={{
@@ -92,10 +76,7 @@ const FilterProgressBar = ({
           />
           {/* generer knapper ved at mappe over de sortede tal */}
           {sortedNumbers.map((number, index) => {
-            const position =
-              sortedNumbers.length === 1
-                ? 0
-                : (index / (sortedNumbers.length - 1)) * 100;
+            const position = sortedNumbers.length === 1 ? 0 : (index / (sortedNumbers.length - 1)) * 100;
 
             const isActiveMin = number === activeStepMin;
             const isActiveMax = number === activeStepMax;
@@ -111,16 +92,10 @@ const FilterProgressBar = ({
                   const distanceToMax = Math.abs(number - activeStepMax);
                   // hvis det klikkede tal er tættere på det nuværende minimum, opdateres minimum, ellers opdateres maksimum
                   if (distanceToMin <= distanceToMax) {
-                    setActiveRange([
-                      Math.min(number, activeStepMax),
-                      Math.max(number, activeStepMax),
-                    ]);
+                    setActiveRange([Math.min(number, activeStepMax), Math.max(number, activeStepMax)]);
                     return;
                   }
-                  setActiveRange([
-                    Math.min(activeStepMin, number),
-                    Math.max(activeStepMin, number),
-                  ]);
+                  setActiveRange([Math.min(activeStepMin, number), Math.max(activeStepMin, number)]);
                 }}
                 className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2"
                 style={{
@@ -139,13 +114,7 @@ const FilterProgressBar = ({
                   className={`
                                         flex h-14 w-14 items-center justify-center rounded-full
                                         text-2xl font-bold transition-colors duration-300
-                                        ${
-                                          isActiveMin || isActiveMax
-                                            ? "bg-(--brand-green) text-foreground"
-                                            : isInRange
-                                              ? "bg-foreground text-background"
-                                              : "bg-foreground"
-                                        }
+                                        ${isActiveMin || isActiveMax ? "bg-(--brand-green) text-foreground" : isInRange ? "bg-foreground text-background" : "bg-foreground text-background"}
                                     `}
                 >
                   {number}

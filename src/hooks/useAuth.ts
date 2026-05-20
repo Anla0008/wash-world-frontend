@@ -63,6 +63,26 @@ export function useAuth() {
   }, []);
 
   // ===========================================================
+  //                      FORGOT PASSWORD
+  // ===========================================================
+  const forgotPassword = useCallback(async (params: User) => {
+    const response = await fetch(baseUrl + "/forgot-password", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(params),
+    });
+
+    const data = await response.json();
+
+    console.log("Status:", response.status);
+    console.log("Body:", data);
+
+    return { ok: response.ok, data };
+  }, []);
+
+  // ===========================================================
   //                          LOCATIONS
   // ===========================================================
   const getLocations = useCallback(async () => {
@@ -161,6 +181,7 @@ export function useAuth() {
     signup,
     verify,
     login,
+    forgotPassword,
     getLocations,
     getSingleLocation,
     getFavorites,

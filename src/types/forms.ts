@@ -5,6 +5,7 @@ export type FormProps = {
   error?: boolean;
   validated?: boolean;
   placeholder: string;
+  value: string; // så der huskes det udfyldte i input når man går tilbage på pil
   type: string;
   errorMessage?: string; // til at vise en fejlbesked under inputfeltet, hvis error er true
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void; // callback funktion der kaldes når input ændres i forældrekomponenten

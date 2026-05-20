@@ -12,14 +12,25 @@ import Link from "next/link";
 
 export default function Home() {
   const [params, setParams] = useState<User>({} as User);
+  const [loginFailed, setLoginFailed] = useState(false);
   const { login } = useAuth();
-  const router = useRouter(); // Bruges da vi navigerer EFTER handleLogin() er kørt
+  const router = useRouter();
 
   const handleLogin = async (e: any) => {
     e.preventDefault();
-    await login(params);
-    // Det er vigtigt at dette sker EFTER login, da dashboardet kræver token for at kunne hente data fra backend.
-    // Hvis vi navigerede til dashboardet FØR login, ville vi få en error, da der ikke ville være noget token i localStorage endnu.
+
+    const response = await login(params);
+
+    // Hvis backend afviste login (forkert email eller kodeord)
+    if (response?.error) {
+      setLoginFailed(true);
+      return;
+    }
+
+    // Det er vigtigt at dette sker EFTER login, da dashboardet kræver token
+    // for at kunne hente data fra backend. Hvis vi navigerede til dashboardet
+    // FØR login, ville vi få en error, da der ikke ville være noget token
+    // i localStorage endnu.
     router.push("/dashboard"); // Her bruges router, og token er gemt i localStorage.
   };
 
@@ -39,22 +50,30 @@ export default function Home() {
       <form onSubmit={handleLogin}>
         <Input
           label="E-mail*"
-          error={false}
+          error={loginFailed}
           validated={false}
           type="email"
           placeholder="navn@eksempel.com"
-          onChange={(e) => setParams({ ...params, user_email: e.target.value })}
+          value={params.user_email ?? ""}
+          errorMessage="Forkert e-mail eller kodeord"
+          onChange={(e) => {
+            setParams({ ...params, user_email: e.target.value });
+            setLoginFailed(false);
+          }}
         />
 
         <Input
           label="Kode*"
-          error={false}
+          error={loginFailed}
           validated={false}
           type="password"
           placeholder="123456"
-          onChange={(e) =>
-            setParams({ ...params, user_hashed_password: e.target.value })
-          }
+          value={params.user_hashed_password ?? ""}
+          errorMessage="Forkert e-mail eller kodeord"
+          onChange={(e) => {
+            setParams({ ...params, user_hashed_password: e.target.value });
+            setLoginFailed(false);
+          }}
         />
 
         <div className="text-center mt-10">

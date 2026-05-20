@@ -45,28 +45,32 @@ export default function Signup() {
     repeatPasswordValid &&
     plateNumberValid;
 
-  const handleStep1Submit = async (e: any) => {
+  // Step 1 → Step 2: bare valider og gå videre, INTET API-kald
+  const handleStep1Submit = (e: any) => {
     e.preventDefault();
     if (!step1Valid) return;
+    setStep(2);
+  };
+
+  // Step 2 → Step 3: NU kaldes backend
+  const handleSubmitSignup = async (e: any) => {
+    e.preventDefault();
 
     const response = await signup(params);
     const fieldError = getBackendFieldError(response);
 
     if (fieldError === "email") {
       setEmailTaken(true);
+      setStep(1);
       return;
     }
 
     if (fieldError === "plate_number") {
       setPlateTaken(true);
+      setStep(1);
       return;
     }
 
-    setStep(2);
-  };
-
-  const handleSubmitSignup = (e: any) => {
-    e.preventDefault();
     setStep(3);
   };
 
@@ -87,6 +91,7 @@ export default function Signup() {
               validated={emailValid}
               type="email"
               placeholder="navn@eksempel.com"
+              value={params.user_email ?? ""}
               errorMessage={
                 emailTaken
                   ? "Denne e-mail er allerede i brug"
@@ -104,6 +109,7 @@ export default function Signup() {
               validated={firstNameValid}
               type="text"
               placeholder="Anders"
+              value={params.user_first_name ?? ""}
               errorMessage="Fornavn skal være mellem 2 og 20 tegn"
               onChange={(e) =>
                 setParams({ ...params, user_first_name: e.target.value })
@@ -116,6 +122,7 @@ export default function Signup() {
               validated={lastNameValid}
               type="text"
               placeholder="Andersen"
+              value={params.user_last_name ?? ""}
               errorMessage="Efternavn skal være mellem 2 og 20 tegn"
               onChange={(e) =>
                 setParams({ ...params, user_last_name: e.target.value })
@@ -128,6 +135,7 @@ export default function Signup() {
               validated={passwordValid}
               type="password"
               placeholder="123456"
+              value={params.user_hashed_password ?? ""}
               errorMessage="Koden skal være mindst 8 tegn"
               onChange={(e) =>
                 setParams({ ...params, user_hashed_password: e.target.value })
@@ -142,6 +150,7 @@ export default function Signup() {
               validated={repeatPasswordValid}
               type="password"
               placeholder="123456"
+              value={params.user_repeat_hashed_password ?? ""}
               errorMessage="Koderne matcher ikke"
               onChange={(e) =>
                 setParams({
@@ -157,6 +166,7 @@ export default function Signup() {
               validated={plateNumberValid}
               type="text"
               placeholder="AB12345"
+              value={params.plate_number ?? ""}
               errorMessage={
                 plateTaken
                   ? "Denne nummerplade er allerede i brug"
@@ -198,6 +208,7 @@ export default function Signup() {
               error={false}
               validated={false}
               type="text"
+              value=""
               placeholder="1234 5678 9012 3456"
               disabled={true}
             />
@@ -206,6 +217,7 @@ export default function Signup() {
               error={false}
               validated={false}
               type="text"
+              value=""
               placeholder="Anders Andersen"
               disabled={true}
             />
@@ -215,6 +227,7 @@ export default function Signup() {
                 error={false}
                 validated={false}
                 type="text"
+                value=""
                 placeholder="01/01/2000"
                 disabled={true}
               />
@@ -223,6 +236,7 @@ export default function Signup() {
                 error={false}
                 validated={false}
                 type="text"
+                value=""
                 placeholder="1234"
                 disabled={true}
               />
@@ -239,7 +253,6 @@ export default function Signup() {
       {step === 3 && (
         <section className="flex flex-col items-center gap-10">
           <WashWorldLogo />
-          <ArrowLeft onClick={() => setStep(2)} size={30} />
           <ProgressBar activeIndex={3} />
 
           <h1>Du er der næsten!</h1>

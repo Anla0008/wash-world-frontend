@@ -9,6 +9,7 @@ const Input = ({
   validated,
   type,
   placeholder,
+  value,
   onChange,
   disabled,
   errorMessage,
@@ -26,6 +27,7 @@ const Input = ({
           onChange?.(e);
         }}
         disabled={disabled}
+        value={value}
       />
 
       <p

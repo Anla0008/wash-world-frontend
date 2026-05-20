@@ -1,24 +1,30 @@
 "use client";
+
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useWash } from "@/hooks/useWash";
-import { generateAvailibleWashHalls } from "@/lib/wash/resolvers";
+import { useWashStore } from "@/stores/useWashStore";
+
 import Timer from "./Timer";
 import ProgressBar from "../global/grafik/ProgressBar";
+
 import { WaitForWashProps } from "@/types/washHallWaitTimeType";
+
 import Image from "next/image";
 
-const WaitForWash = ({ activeIndex }: WaitForWashProps) => {
+const WaitForWash = ({
+  activeIndex,
+}: WaitForWashProps) => {
   const router = useRouter();
 
-  const [availableWashHall] = useState(() =>
-    generateAvailibleWashHalls()
-  );
+  // Læs den allerede gemte vaskehal fra store – aldrig re-fetch
+  const availibleWashHall = useWashStore((s) => s.availibleWashHall);
 
   const { useEntryToWashHall } = useWash();
   const { entryTime } = useEntryToWashHall();
 
-  
+  if (!availibleWashHall) {
+    return <p>Ingen ledig vaskehal valgt</p>;
+  }
 
   return (
     <div>
@@ -29,19 +35,30 @@ const WaitForWash = ({ activeIndex }: WaitForWashProps) => {
       />
 
       <h1 className="extra-bold">
-        Kør ind i hal {availableWashHall}
+        Kør ind i hal {availibleWashHall}
       </h1>
 
       <p>
-        Vasken starter når du er kørt ind i vaskehallen.
+        Vasken starter når du er kørt ind i
+        vaskehallen.
       </p>
-      <Image src={"/icons/vaskehal.svg"} alt="Vaskehal" width={500} height={500} />
 
-      {/* // Timeren er skjult, da den kun skal bruges til at navigere videre, når tiden er gået. */}
+      <Image
+        src={"/icons/vaskehal.svg"}
+        alt="Vaskehal"
+        width={500}
+        height={500}
+      />
+
       <div className="hidden">
-      {entryTime !== null && (
-        <Timer totalTime={entryTime} onComplete={() => router.push("/activeWash")} />
-      )}
+        {entryTime !== null && (
+          <Timer
+            totalTime={entryTime}
+            onComplete={() =>
+              router.push("/activeWash")
+            }
+          />
+        )}
       </div>
     </div>
   );

@@ -9,4 +9,6 @@ export type Location = {
   car_wash_self?: number;
   car_wash_vacuum?: number;
   location_img: string;
+  location_lat?: number;
+  location_lng?: number;
 };

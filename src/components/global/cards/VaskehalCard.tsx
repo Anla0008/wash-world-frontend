@@ -7,12 +7,27 @@ import PrimaryButtonAnchorTag from "../buttons/anchortag/PrimaryButtonAnchorTag"
 import useRandomWaitStatus from "@/hooks/useRandomWaitStatus";
 import { IoIosHeartEmpty } from "react-icons/io";
 import { IoMdHeart } from "react-icons/io";
+import { VaskehalCardProps } from "@/types/VaskehalCardProps";
+import { useAuth } from "@/hooks/useAuth";
 
 // Værdierne her skal senere hentes dynamisk fra car_wash_locations db tabel
-
-const VaskehalCard = ({ city, address, openingHours, image, href }: VaskehalCardProps) => {
+const VaskehalCard = ({ city, address, openingHours, image, href, location_pk, isFavorite: initialFavorite = false }: VaskehalCardProps) => {
+  const { addFavorite, removeFavorite } = useAuth();
   const status = useRandomWaitStatus();
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(initialFavorite);
+
+  const handleFavorite = async () => {
+    try {
+      if (isFavorite) {
+        await removeFavorite(location_pk);
+      } else {
+        await addFavorite(location_pk);
+      }
+      setIsFavorite(!isFavorite);
+    } catch (error) {
+      console.error("Fejl ved favorit:", error);
+    }
+  };
 
   const statusColor = status === "Kort ventetid" ? "bg-(--brand-green)" : status === "Moderat ventetid" ? "bg-(--splash)" : "bg-(--error-red)";
 
@@ -51,7 +66,7 @@ const VaskehalCard = ({ city, address, openingHours, image, href }: VaskehalCard
         </div>
       </div>
 
-      <button type="button" onClick={() => setIsFavorite(!isFavorite)} aria-label={isFavorite ? "Fjern fra favoritter" : "Tilføj til favoritter"} className="absolute top-3 right-3 text-2xl text-foreground">
+      <button type="button" onClick={handleFavorite} aria-label={isFavorite ? "Fjern fra favoritter" : "Tilføj til favoritter"} className="absolute top-3 right-3 text-2xl text-foreground">
         {isFavorite ? <IoMdHeart /> : <IoIosHeartEmpty />}
       </button>
     </article>

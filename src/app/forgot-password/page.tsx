@@ -7,10 +7,9 @@ import { useRouter } from "next/navigation";
 import Input from "@/components/global/forms/Input";
 import PrimaryButton from "@/components/global/buttons/onClick/PrimaryButton";
 import WashWorldLogo from "@/components/global/icons/grafik/WashWorldLogo";
-import Image from "next/image";
 import Link from "next/link";
 
-export default function Home() {
+export default function ForgotPassword() {
   const [params, setParams] = useState<User>({} as User);
   const { login } = useAuth();
   const router = useRouter(); // Bruges da vi navigerer EFTER handleLogin() er kørt
@@ -24,17 +23,15 @@ export default function Home() {
   };
 
   return (
-    <section className="flex flex-col gap-10">
+    <section>
       <WashWorldLogo />
 
-      <Image
-        src="/brand/washworld_car.svg"
-        alt="WashWorld car"
-        width={238}
-        height={129}
-        style={{ width: 238, height: 129 }}
-        loading="eager"
-      />
+      <div className="flex flex-col gap-2 my-12">
+        <h1 className="text-center">Glemt kode?</h1>
+        <p>
+          Indtast din e mail og modtag et link til at nulstille din adgangskode
+        </p>
+      </div>
 
       <form onSubmit={handleLogin}>
         <Input
@@ -46,28 +43,14 @@ export default function Home() {
           onChange={(e) => setParams({ ...params, user_email: e.target.value })}
         />
 
-        <Input
-          label="Kode*"
-          error={false}
-          validated={false}
-          type="password"
-          placeholder="123456"
-          onChange={(e) =>
-            setParams({ ...params, user_hashed_password: e.target.value })
-          }
-        />
-
-        <div className="text-center mt-10">
-          <PrimaryButton>Login</PrimaryButton>
+        <div className="text-center mt-10 mb-4">
+          <PrimaryButton>Send email</PrimaryButton>
         </div>
-      </form>
 
-      <div className="flex flex-row gap-2 justify-center">
-        <p>Har du ikke en konto?</p>
-        <Link href={"/sign-up"}>
-          <p className="extra-bold underline">Opret bruger</p>
+        <Link href={"/"} className="text-center">
+          <p className="underline">Annuller</p>
         </Link>
-      </div>
+      </form>
     </section>
   );
 }

@@ -7,6 +7,7 @@ import VaskehalCard from "@/components/global/cards/VaskehalCard";
 type FindVaskehalBottomSheetProps = {
   locations: Location[];
   selectedLocationPk: string | null;
+  favoriteIds: string[];
 };
 
 // Højder i procent af skærmen
@@ -14,7 +15,7 @@ const MIN_HEIGHT = 35;
 const MID_HEIGHT = 60;
 const MAX_HEIGHT = 85;
 
-export default function FindVaskehalBottomSheet({ locations, selectedLocationPk }: FindVaskehalBottomSheetProps) {
+export default function FindVaskehalBottomSheet({ locations, selectedLocationPk, favoriteIds }: FindVaskehalBottomSheetProps) {
   const [height, setHeight] = useState(MID_HEIGHT);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -82,7 +83,7 @@ export default function FindVaskehalBottomSheet({ locations, selectedLocationPk 
   }
 
   return (
-    <section className={`fixed bottom-0 left-1/2 z-50 flex w-full max-w-[430px] -translate-x-1/2 flex-col rounded-t-3xl bg-background p-4 text-foreground shadow-2xl ${isDragging ? "" : "transition-all duration-300"}`} style={{ height: `${height}dvh` }}>
+    <section className={`fixed bottom-0 left-1/2 z-50 flex w-full max-w-107 -translate-x-1/2 flex-col rounded-t-3xl bg-background p-4 text-foreground shadow-2xl ${isDragging ? "" : "transition-all duration-300"}`} style={{ height: `${height}dvh` }}>
       <div onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp} className="mx-auto mb-4 flex h-8 w-full shrink-0 touch-none cursor-grab select-none items-center justify-center active:cursor-grabbing" role="button" aria-label="Træk bottom sheet op eller ned">
         <span className="h-1 w-12 rounded-full bg-(--gray-60)" />
       </div>
@@ -105,7 +106,7 @@ export default function FindVaskehalBottomSheet({ locations, selectedLocationPk 
               className={`rounded-md transition-all duration-300 ${isSelected ? "ring-4 ring-(--brand-green)" : ""}`}
             >
               {/* <VaskehalCard city={location.location_city} address={location.location_address} openingHours="07 - 22" image={location.location_img} href="#" location_pk={location.location_pk} /> */}
-              <VaskehalCard city={location.location_city} address={location.location_address} openingHours="07 - 22" image={location.location_img} href={`/locations/${location.location_pk}`} location_pk={location.location_pk} />
+              <VaskehalCard city={location.location_city} address={location.location_address} openingHours="07 - 22" image={location.location_img} href={`/locations/${location.location_pk}`} location_pk={location.location_pk} isFavorite={favoriteIds.includes(location.location_pk)} />
             </div>
           );
         })}

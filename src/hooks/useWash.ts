@@ -5,13 +5,21 @@ import { useCallback, useEffect, useState } from "react";
 import { SingleWashType } from "@/types/singleWashType";
 import { WashingHalls } from "@/types/wash";
 import { useAuth } from "./useAuth";
+import { WashHallWaitTimeResponse } from "@/types/washHallWaitTimeType";
+import { resolveWaitTime } from "@/lib/wash/resolvers";
+import { WashType } from "@/types/singleWashType";
+import { useWashStore } from "@/stores/useWashStore";
+import { distanceFromWashhall } from "@/lib/wash/resolvers";
+import { get } from "http";
+import { number } from "framer-motion";
 
 export function useWash() {
-  const { getLocations } = useAuth();
+      const baseUrl = "http://127.0.0.1:80";
 
-// ===========================================================
-//                  GET LOCATION PÅ BRUGER
-// ===========================================================
+  // ===========================================================
+  //            GET LOCATION PÅ BRUGER
+  // ===========================================================
+  const { getLocations } = useAuth();
 
   const getUserLocation = useCallback(async (): Promise<string> => {
     const locations = await getLocations();
@@ -19,8 +27,11 @@ export function useWash() {
     // Random valgt lokation fra API responsen (simulering)
     const userLocation = locations[Math.floor(Math.random() * locations.length)];
 
+    useWashStore.getState().setUserLocation(userLocation);
+
     return userLocation;
   }, [getLocations]);
+
 
 // ===========================================================
 //        BESTEM ROUTE EFTER SUBSCRIPTION (SIMULERET)
@@ -50,7 +61,7 @@ export function useWash() {
   );
 
 // ===========================================================
-//            NAVIGATION TIL KORREKT WASH ROUTE
+//            NAVIGATION TIL KORREKT WASH ROUTE (SIMULERING)
 // ===========================================================
 
   const navigateToWashRoute = useCallback(
@@ -58,6 +69,8 @@ export function useWash() {
       navigate: (path: string) => void,
       user: User
     ) => {
+
+      const distance = distanceFromWashhall();
 
       const route = await getWashStepFromApi(user);
 
@@ -68,15 +81,6 @@ export function useWash() {
     [getWashStepFromApi]
   );
 
-// ===========================================================
-//                RANDOM VENTETID SIMULERING 
-// ===========================================================
-
-  const getRandomWaitTime = useCallback((): number => {
-    const min = 60; // 1 minut
-    const max = 300; // 5 minut
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }, []);
 
 // ===========================================================
 //                GET ENKELTVASK  (SIMULERING)
@@ -103,12 +107,112 @@ export function useWash() {
   };
 
 // ===========================================================
-//                  GET LEDIG VASKEHAL
+//               POST BRUGERS VASKEPROCES
+// ===========================================================
+const postAvailableWashHall = useCallback(
+  async ({
+    wash,
+    startedAt,
+    endedAt,
+  }: {
+    wash: WashType;
+    startedAt: number | null;
+    endedAt: number | null;
+  }) => {
+
+    console.log("POST DATA:", {
+      wash,
+      startedAt,
+      endedAt,
+    });
+
+    const response = await fetch(
+      baseUrl + "/car-wash-history",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-store",
+
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+
+        body: JSON.stringify({
+          license_plate_fk: "ABC123",
+
+          car_wash_location_fk: "location_1",
+
+          car_wash_hall_fk: "hall_1",
+
+          car_wash_price: wash.price,
+
+          car_wash_type: wash.name,
+
+          car_wash_started_at: startedAt,
+
+          car_wash_ended_at: endedAt,
+        }),
+      }
+    );
+
+    console.log("STATUS:", response.status);
+
+    if (!response.ok) {
+
+      const errorData = await response.json();
+
+      console.log("BACKEND ERROR:", errorData);
+
+      throw new Error(
+        errorData.error || "Failed to save wash"
+      );
+    }
+
+    console.log(localStorage.getItem("token"));
+
+    const data = await response.json();
+
+    console.log("SUCCESS:", data);
+
+    return data;
+  },
+  []
+);
+
+// ===========================================================
+//                  GET VENTETID FOR VASKEHAL (SIMULERING)
+// ===========================================================
+const useWashHallWaitTime = () => {
+  const [waitTime, setWaitTime] = useState<number | null>(null);
+
+  useEffect(() => {
+    const getRequest = async () => {
+      const response = await fetch("/api/washhall/waittime", {
+        cache: "no-store",
+        method: "GET",
+      });
+
+      const json =
+        (await response.json()) as WashHallWaitTimeResponse;
+
+      const randomWaitTime = resolveWaitTime(json);
+
+      setWaitTime(randomWaitTime);
+    };
+
+    void getRequest();
+  }, []);
+
+  return { waitTime, setWaitTime };
+};
+
+// ===========================================================
+//             GET ANTAL AF VASKEHALLER FRA BACKEND
 // ===========================================================
 
   const useWashHall = () => {
     const [washHalls, setWashHalls] = useState<WashingHalls[]>([]);
-    const baseUrl = "http://127.0.0.1:80";
 
     useEffect(() => {
       const fetchWashHalls = async () => {
@@ -129,7 +233,7 @@ export function useWash() {
 
         setWashHalls(data.car_wash_hall_info);
       };
-
+      // void for at køre den asynkrone funktion uden at skulle håndtere løftet, da useEffect ikke kan være asynkron
       void fetchWashHalls();
     }, []);
 
@@ -137,56 +241,44 @@ export function useWash() {
   };
 
 // ===========================================================
-//    BEREGN PROGRESS WIDTH (til timer og progressbar)
+//                GET INDKØRSEL I VASKEHAL (simuleret)
 // ===========================================================
+const useEntryToWashHall = () => {
+  const [entryTime, setEntryTime] = useState<number | null>(null);
 
-  const useWashProgress = (totalTime: number) => {
-    // simuleret nuværende tid
-    const [currentTime, setCurrentTime] = useState(0);
-    // useEffect for at mounte et interval, der opdaterer currentTime , og rydder det op ved unmount
-    useEffect(() => {
-      if (totalTime <= 0) {
-        setCurrentTime(0);
-        return;
+  useEffect(() => {
+    const getRequest = async () => {
+      const response = await fetch("/api/washhall/entry", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-store",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to get entry to wash hall");
       }
 
-      const interval = setInterval(() => { // setInterval for at opdatere currentTime hvert sekund indtil den når totalTime
-        setCurrentTime((prev) => {
-          // reset når den rammer slutningen
-          if (prev >= totalTime) {
-            return 0;
-          }
+      const data = await response.json();
+      setEntryTime(data);
+    };
 
-          return prev + 1;
-        });
-      }, 1000);
+    void getRequest();
+  }, []);
 
-      return () => clearInterval(interval);
-    }, [totalTime]); // nulstil
-
-    // progress i procent
-    const progress =
-      totalTime > 0 ? Math.min((currentTime / totalTime) * 100, 100) : 0;
-
-    // formatter tid til mm:ss
-    const remainingTime = Math.max(totalTime - currentTime, 0); // beregn resterende tid
-    const minutes = Math.floor(remainingTime / 60); // /60 for at få hele minutter fra den resterende tid
-    const seconds = remainingTime % 60; // % 60 for at få resterende sekunder efter at have trukket hele minutter fra
-
-    const formattedTime = `${String(minutes).padStart(2, "0")}.${String(
-      seconds,
-    ).padStart(2, "0")}`; // padStart sikrer, der altid er to cifre for både minutter og sekunder, og adskiller dem med et punktum
-    return { progress, formattedTime, currentTime, remainingTime };
-  };
+  return { entryTime };
+};
 
   return {
     getUserLocation,
     getWashStepFromApi,
+    postAvailableWashHall,
     navigateToWashRoute,
-    getRandomWaitTime,
     useSingleWash,
     useWashHall,
-    useWashProgress,
+    useWashHallWaitTime,
+    useEntryToWashHall,
   };
 }
 

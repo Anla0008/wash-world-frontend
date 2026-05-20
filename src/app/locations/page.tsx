@@ -82,19 +82,23 @@ const FindVaskehalMap = dynamic(() => import("@/components/findVaskehal/FindVask
 });
 
 export default function FindVaskehal() {
-  const { getLocations } = useAuth();
+  const { getLocations, getFavorites } = useAuth();
 
   const [locations, setLocations] = useState<Location[]>([]);
   const [selectedLocationPk, setSelectedLocationPk] = useState<string | null>(null);
+  const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
 
   useEffect(() => {
     async function loadLocations() {
       const data = await getLocations();
       setLocations(data);
+
+      const favs = await getFavorites();
+      setFavoriteIds(favs.map((f: Location) => f.location_pk));
     }
 
     loadLocations();
-  }, [getLocations]);
+  }, [getLocations, getFavorites]);
 
   return (
     <main className="-mx-8 relative h-dvh overflow-hidden bg-background text-foreground">
@@ -102,7 +106,7 @@ export default function FindVaskehal() {
         <FindVaskehalMap locations={locations} onSelectLocation={(location) => setSelectedLocationPk(location.location_pk)} />
       </section>
 
-      <FindVaskehalBottomSheet locations={locations} selectedLocationPk={selectedLocationPk} />
+      <FindVaskehalBottomSheet locations={locations} selectedLocationPk={selectedLocationPk} favoriteIds={favoriteIds} />
     </main>
   );
 }

@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import { User } from "@/types/user";
 
 export function useAuth() {
-  const baseUrl = "http://127.0.0.1:80";
+  const baseUrl = "http://127.0.0.1";
 
   // ===========================================================
   //                          SIGNUP
@@ -20,12 +20,23 @@ export function useAuth() {
       body: JSON.stringify(params),
     });
 
+    // Læs body'en én gang og gem i variabel
+    const data = await response.json();
+
     // Logger hvad backenden svarer så vi kan se hvad der fejler
     console.log("Status:", response.status);
-    console.log("Body:", await response.json());
+    console.log("Body:", data);
 
+    return data;
+  }, []);
+
+  // ===========================================================
+  //                          VERIFY
+  // ===========================================================
+  const verify = useCallback(async (key: string) => {
+    const response = await fetch(baseUrl + `/verify/${key}`);
     if (!response.ok) {
-      throw new Error("Failed to signup");
+      throw new Error("Failed to verify");
     }
   }, []);
 
@@ -37,15 +48,18 @@ export function useAuth() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Cache-Control": "no-store",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify(params),
     });
 
     if (!response.ok) {
-      throw new Error("Failed to login");
+      return { error: "Failed to login" };
     }
+
+    const data = await response.json();
+    console.log(data);
+    localStorage.setItem("token", data.access_token);
+    return data;
   }, []);
 
   // ===========================================================
@@ -76,8 +90,83 @@ export function useAuth() {
     return data.location;
   }, []);
 
+  // ===========================================================
+  //                        GET FAVORITES
+  // ===========================================================
+  const getFavorites = useCallback(async () => {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(baseUrl + "/favorites", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Failed to get favorites");
+    }
+
+    const data = await response.json();
+    return data.favorites;
+  }, []);
+
+  // ===========================================================
+  //                        ADD FAVORITE
+  // ===========================================================
+  const addFavorite = useCallback(async (location_pk: string) => {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(baseUrl + "/favorites", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        location_pk: location_pk,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to add favorite");
+    }
+
+    return await response.json();
+  }, []);
+
+  // ===========================================================
+  //                       REMOVE FAVORITE
+  // ===========================================================
+  const removeFavorite = useCallback(async (location_pk: string) => {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(baseUrl + `/favorites/${location_pk}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to remove favorite");
+    }
+
+    return await response.json();
+  }, []);
+
   // Herunder returnerer vi ALLE routes, som vi ønsker at kunne bruge i vores komponenter
-  return { signup, login, getLocations, getSingleLocation };
+  return {
+    signup,
+    verify,
+    login,
+    getLocations,
+    getSingleLocation,
+    getFavorites,
+    addFavorite,
+    removeFavorite,
+  };
 }
 
 // ===========================================================

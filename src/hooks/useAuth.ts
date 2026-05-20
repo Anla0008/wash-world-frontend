@@ -20,13 +20,14 @@ export function useAuth() {
       body: JSON.stringify(params),
     });
 
+    // Læs body'en én gang og gem i variabel
+    const data = await response.json();
+
     // Logger hvad backenden svarer så vi kan se hvad der fejler
     console.log("Status:", response.status);
-    console.log("Body:", await response.json());
+    console.log("Body:", data);
 
-    if (!response.ok) {
-      throw new Error("Failed to signup");
-    }
+    return data;
   }, []);
 
   // ===========================================================

@@ -3,10 +3,9 @@
 import { create } from "zustand";
 import { WashType } from "@/types/singleWashType";
 import { Location } from "@/types/locations";
-
 type WashStore = {
-  userLocation: string | null;
-  userLocationObj: Location | null;
+  locationID: Location["location_pk"];
+  locationName: Location["location_name"];
     availibleWashHall: number | null;
     selectedWash: WashType | null;
 
@@ -14,8 +13,8 @@ type WashStore = {
     endedAt: number | null;
     washDate: string | null;
 
-  setUserLocation: (location: string) => void;
-  setUserLocationObj: (location: Location) => void;
+  setLocationID: (locationID: string) => void;
+  setLocationName: (locationName: string) => void;
 
   setAvailibleWashHall: (hallNumber: number) => void;
 
@@ -31,8 +30,8 @@ type WashStore = {
 };
 
 export const useWashStore = create<WashStore>((set) => ({
-  userLocation: null,
-  userLocationObj: null,
+  locationID: "undefined",
+  locationName: "undefined",
   availibleWashHall: null,
   selectedWash: null,
   startedAt: null,
@@ -40,14 +39,14 @@ export const useWashStore = create<WashStore>((set) => ({
   washDate: null,
 
 
-setUserLocation: (location) =>
+setLocationID: (locationID) =>
     set({
-      userLocation: location,
+      locationID: locationID  ,
     }),
 
-setUserLocationObj: (location) =>
+setLocationName: (locationName) =>
     set({
-      userLocationObj: location,
+      locationName: locationName,
     }),
 
   setAvailibleWashHall: (hallNumber) =>
@@ -84,6 +83,7 @@ setUserLocationObj: (location) =>
       startedAt: null,
       endedAt: null,
       washDate: null,
-      userLocationObj: null,
+      locationID: undefined,
+      locationName: undefined,
     }),
 }));

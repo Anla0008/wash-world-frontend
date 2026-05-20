@@ -30,8 +30,8 @@ export const useNearestWash = () => {
   const [nearestLocation, setNearestLocation] = useState<Location | null>(null);
   const [nearestDistanceKm, setNearestDistanceKm] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const setUserLocation = useWashStore((state) => state.setUserLocation);
-  const setUserLocationObj = useWashStore((state) => state.setUserLocationObj);
+  const setUserLocationId = useWashStore((state) => state.setLocationID);
+  const setUserLocationName = useWashStore((state) => state.setLocationName);
 
     useEffect(() => {
     if (!navigator.geolocation) {
@@ -56,8 +56,8 @@ export const useNearestWash = () => {
 
             setNearestLocation(nearest);
             if (nearest?.location_pk) {
-              setUserLocation(nearest.location_pk);
-              setUserLocationObj(nearest);
+              setUserLocationId(nearest.location_pk);
+              setUserLocationName(nearest.location_name);
             }
             if (nearest?.location_lat !== undefined && nearest?.location_lng !== undefined) {
               const distance = getDistanceKm(

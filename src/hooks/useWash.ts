@@ -18,18 +18,19 @@ export function useWash() {
   // ===========================================================
   //            GET LOCATION PÅ BRUGER
   // ===========================================================
-  const { getLocations } = useAuth();
+  // const { getLocations } = useAuth();
 
-  const getUserLocation = useCallback(async (): Promise<string> => {
-    const locations = await getLocations();
+  // const getUserLocation = useCallback(async (): Promise<string> => {
+  //   const locations = await getLocations();
 
-    // Random valgt lokation fra API responsen (simulering)
-    const userLocation = locations[Math.floor(Math.random() * locations.length)];
+  //   // Random valgt lokation fra API responsen (simulering)
+  //   const userLocation = locations[Math.floor(Math.random() * locations.length)];
 
-    useWashStore.getState().setUserLocation(userLocation.location_pk);
+  //   useWashStore.getState().setLocationID(userLocation.location_pk);
+  //   useWashStore.getState().setLocationName(userLocation.location_name);
 
-    return userLocation.location_pk;
-  }, [getLocations]);
+  //   return userLocation.location_pk;
+  // }, [getLocations]);
 
 
 // ===========================================================
@@ -112,13 +113,13 @@ const postAvailableWashHall = useCallback(
     startedAt,
     endedAt,
     availibleWashHall,
-    nearestLocation,
+    locationID,
   }: {
     wash: WashType;
     startedAt: number | null;
     endedAt: number | null;
     availibleWashHall: number | null;
-    nearestLocation: string | null;
+    locationID: string | null;
   } ) => {
 
     console.log("POST DATA:", {
@@ -126,7 +127,7 @@ const postAvailableWashHall = useCallback(
       startedAt,
       endedAt,
       availibleWashHall,
-      nearestLocation,
+      locationID,
     });
 
     const response = await fetch(
@@ -144,7 +145,7 @@ const postAvailableWashHall = useCallback(
         body: JSON.stringify({
           license_plate_fk: "ABC123",
 
-          car_wash_location_fk: nearestLocation,
+          car_wash_location_fk: locationID,
 
           car_wash_hall_fk: availibleWashHall,
 
@@ -304,7 +305,6 @@ const useEntryToWashHall = () => {
 };
 
   return {
-    getUserLocation,
     getWashStepFromApi,
     postAvailableWashHall,
     navigateToWashRoute,

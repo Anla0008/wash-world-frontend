@@ -15,49 +15,58 @@ import {
   validateName,
   validatePassword,
   validatePlateNumber,
+  getBackendFieldError,
 } from "@/lib/form/validering";
 
 export default function Signup() {
-  // Gemmer alle brugerens input værdier (email, navn, kode osv.)
   const [params, setParams] = useState<User>({} as User);
-
-  // Holder styr på hvilket step brugeren er på (starter på 1)
   const [step, setStep] = useState(1);
-
-  // Henter signup funktionen fra vores auth hook
   const { signup } = useAuth();
 
-  // En state per felt du vil validere
-  const [emailError, setEmailError] = useState(false);
-  const [emailValidated, setEmailValidated] = useState(false);
+  // Backend-fejl - sættes hvis email eller nummerplade allerede er i brug
+  const [emailTaken, setEmailTaken] = useState(false);
+  const [plateTaken, setPlateTaken] = useState(false);
 
-  const [firstNameError, setFirstNameError] = useState(false);
-  const [firstNameValidated, setFirstNameValidated] = useState(false);
+  // Validering - udregnes direkte fra params, ingen state nødvendig
+  const emailValid = validateEmail(params.user_email ?? "");
+  const firstNameValid = validateName(params.user_first_name ?? "");
+  const lastNameValid = validateName(params.user_last_name ?? "");
+  const passwordValid = validatePassword(params.user_hashed_password ?? "");
+  const repeatPasswordValid =
+    !!params.user_hashed_password &&
+    params.user_hashed_password === params.user_repeat_hashed_password;
+  const plateNumberValid = validatePlateNumber(params.plate_number ?? "");
 
-  const [lastNameError, setLastNameError] = useState(false);
-  const [lastNameValidated, setLastNameValidated] = useState(false);
+  const step1Valid =
+    emailValid &&
+    firstNameValid &&
+    lastNameValid &&
+    passwordValid &&
+    repeatPasswordValid &&
+    plateNumberValid;
 
-  const [passwordError, setPasswordError] = useState(false);
-  const [passwordValidated, setPasswordValidated] = useState(false);
-
-  const [repeatPasswordError, setRepeatPasswordError] = useState(false);
-  const [repeatPasswordValidated, setRepeatPasswordValidated] = useState(false);
-
-  const [plateNumberError, setPlateNumberError] = useState(false);
-  const [plateNumberValidated, setPlateNumberValidated] = useState(false);
-
-  // Kaldes når brugeren trykker på "Opret bruger" knappen i step 2
-  const handleSubmitSignup = async (e: any) => {
-    // Forhindrer siden i at reloade når formen submittes
+  const handleStep1Submit = async (e: any) => {
     e.preventDefault();
+    if (!step1Valid) return;
 
-    // Sender brugerens data til backend og venter på svar
     const response = await signup(params);
+    const fieldError = getBackendFieldError(response);
 
-    // Logger svaret fra backend så vi kan se om det gik godt
-    console.log(response);
+    if (fieldError === "email") {
+      setEmailTaken(true);
+      return;
+    }
 
-    // Sætter step til 3 så vi kommer videre til næste del af flowet
+    if (fieldError === "plate_number") {
+      setPlateTaken(true);
+      return;
+    }
+
+    setStep(2);
+  };
+
+  const handleSubmitSignup = (e: any) => {
+    e.preventDefault();
     setStep(3);
   };
 
@@ -69,98 +78,99 @@ export default function Signup() {
           <WashWorldLogo />
           <ProgressBar activeIndex={1} />
 
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              setStep(2);
-            }}
-          >
+          <form onSubmit={handleStep1Submit}>
             <h1 className="text-center">Opret bruger</h1>
 
             <Input
               label="E-mail*"
-              error={emailError}
-              validated={emailValidated}
+              error={(!!params.user_email && !emailValid) || emailTaken}
+              validated={emailValid}
               type="email"
               placeholder="navn@eksempel.com"
+              errorMessage={
+                emailTaken
+                  ? "Denne e-mail er allerede i brug"
+                  : "Indtast en gyldig e-mail"
+              }
               onChange={(e) => {
-                const value = e.target.value;
-                setParams({ ...params, user_email: value });
-
-                // Validerer email med regex fra validation.ts
-                setEmailValidated(validateEmail(value));
-                setEmailError(!validateEmail(value));
+                setParams({ ...params, user_email: e.target.value });
+                setEmailTaken(false);
               }}
             />
 
             <Input
               label="Fornavn*"
-              error={firstNameError}
-              validated={firstNameValidated}
+              error={!!params.user_first_name && !firstNameValid}
+              validated={firstNameValid}
               type="text"
               placeholder="Anders"
-              onChange={(e) => {
-                const value = e.target.value;
-                setParams({ ...params, user_first_name: value });
-
-                // Validerer fornavn med regex fra validation.ts (2-20 tegn)
-                setFirstNameValidated(validateName(value));
-                setFirstNameError(!validateName(value));
-              }}
+              errorMessage="Fornavn skal være mellem 2 og 20 tegn"
+              onChange={(e) =>
+                setParams({ ...params, user_first_name: e.target.value })
+              }
             />
 
             <Input
               label="Efternavn*"
-              error={lastNameError}
-              validated={lastNameValidated}
+              error={!!params.user_last_name && !lastNameValid}
+              validated={lastNameValid}
               type="text"
               placeholder="Andersen"
-              onChange={(e) => {
-                const value = e.target.value;
-                setParams({ ...params, user_last_name: value });
-
-                // Validerer efternavn med regex fra validation.ts (2-20 tegn)
-                setLastNameValidated(validateName(value));
-                setLastNameError(!validateName(value));
-              }}
+              errorMessage="Efternavn skal være mellem 2 og 20 tegn"
+              onChange={(e) =>
+                setParams({ ...params, user_last_name: e.target.value })
+              }
             />
 
             <Input
               label="Kode*"
-              error={passwordError}
-              validated={passwordValidated}
+              error={!!params.user_hashed_password && !passwordValid}
+              validated={passwordValid}
               type="password"
               placeholder="123456"
-              onChange={(e) => {
-                const value = e.target.value;
-                setParams({ ...params, user_hashed_password: value });
-
-                // Validerer kode med regex fra validation.ts (8-255 tegn)
-                setPasswordValidated(validatePassword(value));
-                setPasswordError(!validatePassword(value));
-              }}
+              errorMessage="Koden skal være mindst 8 tegn"
+              onChange={(e) =>
+                setParams({ ...params, user_hashed_password: e.target.value })
+              }
             />
 
             <Input
               label="Gentag kode*"
-              error={repeatPasswordError}
-              validated={repeatPasswordValidated}
+              error={
+                !!params.user_repeat_hashed_password && !repeatPasswordValid
+              }
+              validated={repeatPasswordValid}
               type="password"
               placeholder="123456"
-              onChange={(e) => {
-                const value = e.target.value;
-                setParams({ ...params, user_repeat_hashed_password: value });
+              errorMessage="Koderne matcher ikke"
+              onChange={(e) =>
+                setParams({
+                  ...params,
+                  user_repeat_hashed_password: e.target.value,
+                })
+              }
+            />
 
-                // Tjekker om de to koder matcher hinanden
-                setRepeatPasswordValidated(
-                  value === params.user_hashed_password,
-                );
-                setRepeatPasswordError(value !== params.user_hashed_password);
+            <Input
+              label="Nummerplade*"
+              error={(!!params.plate_number && !plateNumberValid) || plateTaken}
+              validated={plateNumberValid}
+              type="text"
+              placeholder="AB12345"
+              errorMessage={
+                plateTaken
+                  ? "Denne nummerplade er allerede i brug"
+                  : "Indtast 2 bogstaver og 5 cifre (fx AB12345)"
+              }
+              onChange={(e) => {
+                e.target.value = e.target.value.toUpperCase();
+                setParams({ ...params, plate_number: e.target.value });
+                setPlateTaken(false);
               }}
             />
 
             <div className="text-center mt-10">
-              <PrimaryButton>Gå videre</PrimaryButton>
+              <PrimaryButton disabled={!step1Valid}>Gå videre</PrimaryButton>
             </div>
           </form>
 
@@ -174,73 +184,48 @@ export default function Signup() {
       )}
 
       {/* ================================ STEP 2 =============================== */}
-
       {step === 2 && (
         <section className="grid gap-10">
           <WashWorldLogo />
           <ArrowLeft onClick={() => setStep(1)} size={30} />
           <ProgressBar activeIndex={2} />
 
+          <h1 className="text-center">Opret bruger</h1>
           <form onSubmit={handleSubmitSignup}>
-            <h1 className="text-center">Opret bruger</h1>
-
+            <h3>Kortoplysninger</h3>
             <Input
-              label="Nummerplade*"
-              error={plateNumberError}
-              validated={plateNumberValidated}
+              label="Kortnummer*"
+              error={false}
+              validated={false}
               type="text"
-              placeholder="AB 12 345"
-              onChange={(e) => {
-                const value = e.target.value;
-                setParams({ ...params, plate_number: e.target.value });
-
-                // Validerer nummerplade med regex fra validation.ts (2 bogstaver + 5 cifre)
-                setPlateNumberValidated(validatePlateNumber(value)); // 👈
-                setPlateNumberError(!validatePlateNumber(value));
-              }}
+              placeholder="1234 5678 9012 3456"
+              disabled={true}
             />
-
-            <div className="mt-18">
-              <h3>Kortoplysninger</h3>
+            <Input
+              label="Navn på kort*"
+              error={false}
+              validated={false}
+              type="text"
+              placeholder="Anders Andersen"
+              disabled={true}
+            />
+            <div className="flex flex-row gap-6">
               <Input
-                label="Navn på kort*"
+                label="Udløbsdato*"
                 error={false}
                 validated={false}
                 type="text"
-                placeholder="Anders Andersen"
+                placeholder="01/01/2000"
                 disabled={true}
-                onChange={(e) =>
-                  setParams({ ...params, user_first_name: e.target.value })
-                }
               />
-              <div className="flex flex-row gap-6">
-                <Input
-                  label="Udløbsdato*"
-                  error={false}
-                  validated={false}
-                  type="text"
-                  placeholder="01/01/2000"
-                  disabled={true}
-                  onChange={(e) =>
-                    setParams({ ...params, user_last_name: e.target.value })
-                  }
-                />
-
-                <Input
-                  label="CVC*"
-                  error={false}
-                  validated={false}
-                  type="text"
-                  placeholder="1234"
-                  disabled={true}
-                  onChange={(e) =>
-                    setParams({
-                      ...params,
-                      user_hashed_password: e.target.value,
-                    })
-                  }
-                />
-              </div>
+              <Input
+                label="CVC*"
+                error={false}
+                validated={false}
+                type="text"
+                placeholder="1234"
+                disabled={true}
+              />
             </div>
 
             <div className="text-center mt-10">

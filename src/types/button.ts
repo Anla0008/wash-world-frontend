@@ -5,6 +5,7 @@ export type ButtonProps = {
   isActive?: boolean;
   onToggle?: () => void;
   onClick?: () => void;
+  disabled?: boolean;
 };
 
 export type SwipeProps = {

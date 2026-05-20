@@ -11,6 +11,7 @@ const Input = ({
   placeholder,
   onChange,
   disabled,
+  errorMessage,
 }: FormProps) => {
   const [charCount, setCharCount] = useState(0);
 
@@ -29,7 +30,9 @@ const Input = ({
 
       <p
         className={`${error ? "text-(--error-red)" : validated ? "text-(--brand-green)" : ""} px-7 light`}
-      ></p>
+      >
+        {error && errorMessage}
+      </p>
 
       {/* // styling for at give input 60 graders snit */}
       <div
@@ -42,8 +45,7 @@ const Input = ({
       </div>
       {/* #TODO: gør så error og validated først kommer frem hvis charArt er over 0 - dette tages fra backenden */}
       <div className="absolute top-2.5">
-        {validated ? <Validated /> : null}
-        {error ? <Error /> : null}
+        {error ? <Error /> : validated ? <Validated /> : null}
       </div>
     </div>
   );

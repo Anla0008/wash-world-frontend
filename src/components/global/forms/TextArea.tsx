@@ -5,9 +5,9 @@ import { useState } from "react";
 import type { ReactNode } from "react";
 import { FormProps } from "@/types/forms";
 
-const TextArea = ({ label, error, validated, placeholder, onTextAreaChange }: FormProps) => {
+const TextArea = ({ label, error, validated, placeholder, name, onTextAreaChange }: FormProps) => {
   // TODO: opdater denne senere til regex fra backend
-  const maxLength = 200;
+  const maxLength = 500;
 
   const [charCount, setCharCount] = useState(0);
 
@@ -16,6 +16,7 @@ const TextArea = ({ label, error, validated, placeholder, onTextAreaChange }: Fo
       <textarea
         className="border-3 border-foreground w-full py-2 px-6 min-h-25"
         placeholder={placeholder}
+        name={name}
         onChange={(e) => {
           setCharCount(e.target.value.length);
           onTextAreaChange?.(e);

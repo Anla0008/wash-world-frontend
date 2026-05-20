@@ -4,6 +4,7 @@ import PrimaryButton from "../global/buttons/onClick/PrimaryButton";
 import { useWash } from "@/hooks/useWash";
 import { useWashStore } from "@/stores/useWashStore";
 import { useRouter } from "next/navigation";
+import ProgressBar from "../global/grafik/ProgressBar";
 
 const Reciept = () => {
 
@@ -15,6 +16,9 @@ const {
   selectedWash,
   startedAt,
   endedAt,
+  availibleWashHall,
+  userLocation,
+  userLocationObj,
   clearWash,
 } = useWashStore();
 
@@ -27,10 +31,12 @@ const {
     if (!selectedWash) return;
 
    await postAvailableWashHall({
-        wash: selectedWash,
-        startedAt,
-        endedAt,
-        });
+      wash: selectedWash,
+      startedAt,
+      endedAt,
+      availibleWashHall,
+      userLocation,
+    });
 
     clearWash();
 
@@ -54,18 +60,22 @@ const {
 
   return (
     <div className="flex flex-col gap-10">
+      <ProgressBar
+        activeIndex={3}
+        isWashProcess={true}
+      />
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col">
         <h1 className="extra-bold">
-          Tak fordi du vasker med os!
+           {startDate?.toLocaleDateString("da-DK")}
         </h1>
 
         <p>
-          Din vask er nu færdig.
+          Tak fordi du vasker hos os!
         </p>
       </div>
 
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-2">
 
         <h2 className="extra-bold">
           Din vask
@@ -122,6 +132,16 @@ const {
 
           <p>
             {selectedWash?.price} kr.
+          </p>
+        </div>
+
+        <div className="flex gap-2">
+          <p className="extra-bold">
+            Lokation:
+          </p>
+
+          <p>
+            {availibleWashHall} - {userLocationObj?.location_city ?? userLocation}
           </p>
         </div>
 

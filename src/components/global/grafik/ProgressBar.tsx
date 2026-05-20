@@ -4,10 +4,16 @@ import Card from "../icons/grafik/Card";
 import Wash from "../icons/navbar/Wash";
 import Checkmark from "../icons/grafik/Checkmark";
 import { ProgressBarProps } from "@/types/progressbar";
+import { useWashStore } from "@/stores/useWashStore";
+import { resolveDurationToMinutesSeconds } from "@/lib/wash/resolvers";
 
 const ProgressBar = ({ activeIndex, isWashProcess }: ProgressBarProps) => {
   const numbers = ["1", "2", "3"]; //TODO: skal opdateres til at bruge dataen fra backenden
 
+  const { selectedWash } = useWashStore();
+
+  const { formattedDuration } = resolveDurationToMinutesSeconds(selectedWash?.duration ?? 0);
+  const isFinalStep = activeIndex === numbers.length;
 
   return (
     <div className="max-w-100 m-auto w-full">
@@ -48,9 +54,16 @@ const ProgressBar = ({ activeIndex, isWashProcess }: ProgressBarProps) => {
 
             return (
               <li key={number}>
-                <div
-                  className={`h-10.5 w-10.5 border-2 border-foreground rounded-full ${backgroundClass}`}
-                />
+                <div className="flex flex-col items-center gap-2">
+                  <div
+                    className={`h-10.5 w-10.5 border-2 border-foreground rounded-full ${backgroundClass}`}
+                  />
+                  {stepNumber === 2 && isFinalStep ? (
+                    <span className="text-sm">
+                      {formattedDuration}
+                    </span>
+                  ) : null}
+                </div>
               </li>
             );
           })}

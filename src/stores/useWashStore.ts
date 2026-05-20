@@ -2,17 +2,22 @@
 
 import { create } from "zustand";
 import { WashType } from "@/types/singleWashType";
+import { Location } from "@/types/locations";
 
 type WashStore = {
-    userLocation: string | null;
+  userLocation: string | null;
+  userLocationObj: Location | null;
+    availibleWashHall: number | null;
+    selectedWash: WashType | null;
 
-  selectedWash: WashType | null;
-
-  startedAt: number | null;
-  endedAt: number | null;
+    startedAt: number | null;
+    endedAt: number | null;
     washDate: string | null;
 
-setUserLocation: (location: string) => void;
+  setUserLocation: (location: string) => void;
+  setUserLocationObj: (location: Location) => void;
+
+  setAvailibleWashHall: (hallNumber: number) => void;
 
   setSelectedWash: (wash: WashType) => void;
 
@@ -26,15 +31,28 @@ setUserLocation: (location: string) => void;
 };
 
 export const useWashStore = create<WashStore>((set) => ({
-userLocation: null,
+  userLocation: null,
+  userLocationObj: null,
+  availibleWashHall: null,
   selectedWash: null,
   startedAt: null,
-endedAt: null,
+  endedAt: null,
   washDate: null,
+
 
 setUserLocation: (location) =>
     set({
       userLocation: location,
+    }),
+
+setUserLocationObj: (location) =>
+    set({
+      userLocationObj: location,
+    }),
+
+  setAvailibleWashHall: (hallNumber) =>
+    set({
+      availibleWashHall: hallNumber,
     }),
 
   setSelectedWash: (wash) =>
@@ -62,8 +80,10 @@ setUserLocation: (location) =>
   clearWash: () =>
     set({
       selectedWash: null,
+      availibleWashHall: null,
       startedAt: null,
       endedAt: null,
       washDate: null,
+      userLocationObj: null,
     }),
 }));

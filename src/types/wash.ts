@@ -1,3 +1,4 @@
+import { Location } from "./locations";
 export type WashRoute = "/buyWash" | "/activeWash" | "/errorInDistance";
 
 export type WashStep = "buyWash" | "activeWash";
@@ -68,4 +69,43 @@ export type WashType = {
   description: string;
   price: number;
   duration: number;
+};
+
+  // ===========================================================
+  //                 LISTE OVER ENKELTVASKE
+  // ==========================================================
+
+export type SingleWashType = {
+  types: WashType[];
+};
+
+
+  // ===========================================================
+  //             ZUSTAND STORE FOR VASKEPROCES
+  // ==========================================================
+
+export type WashStore = {
+    locationID: Location["location_pk"];
+    locationName: Location["location_name"];
+    availibleWashHall: number | null;
+    selectedWash: WashType | null;
+
+    startedAt: number | null;
+    endedAt: number | null;
+    washDate: string | null;
+
+  setLocationID: (locationID: string) => void;
+  setLocationName: (locationName: string) => void;
+
+  setAvailibleWashHall: (hallNumber: number) => void;
+
+  setSelectedWash: (wash: WashType) => void;
+
+  setStartedAt: (time: number) => void;
+
+  setEndedAt: (time: number) => void;
+
+  setWashDate: (date: string) => void;
+  
+  clearWash: () => void;
 };

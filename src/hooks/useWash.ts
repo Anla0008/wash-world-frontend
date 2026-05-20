@@ -2,13 +2,11 @@
 import { WashRoute } from "@/types/wash";
 import { User } from "@/types/user";
 import { useCallback, useEffect, useState } from "react";
-import { SingleWashType } from "@/types/singleWashType";
+import { SingleWashType } from "@/types/wash";
 import { WashingHalls } from "@/types/wash";
-import { useAuth } from "./useAuth";
-import { WashHallWaitTimeResponse } from "@/types/washHallWaitTimeType";
+import { WashHallWaitTimeResponse } from "@/types/wash";
 import { resolveWaitTime } from "@/lib/wash/resolvers";
-import { WashType } from "@/types/singleWashType";
-import { postWash } from "@/types/postWash";
+import { postWash } from "@/types/wash";
 
 
 export function useWash() {

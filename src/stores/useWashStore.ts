@@ -1,35 +1,10 @@
 "use client";
 
 import { create } from "zustand";
-import { WashType } from "@/types/singleWashType";
-import { Location } from "@/types/locations";
-type WashStore = {
-  locationID: Location["location_pk"];
-  locationName: Location["location_name"];
-    availibleWashHall: number | null;
-    selectedWash: WashType | null;
-
-    startedAt: number | null;
-    endedAt: number | null;
-    washDate: string | null;
-
-  setLocationID: (locationID: string) => void;
-  setLocationName: (locationName: string) => void;
-
-  setAvailibleWashHall: (hallNumber: number) => void;
-
-  setSelectedWash: (wash: WashType) => void;
-
-  setStartedAt: (time: number) => void;
-
-  setEndedAt: (time: number) => void;
-
-  setWashDate: (date: string) => void;
-  
-  clearWash: () => void;
-};
+import { WashStore } from "@/types/wash";
 
 export const useWashStore = create<WashStore>((set) => ({
+  
   locationID: "undefined",
   locationName: "undefined",
   availibleWashHall: null,

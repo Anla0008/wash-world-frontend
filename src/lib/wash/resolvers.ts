@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useState } from "react";
 import { Location } from "@/types/locations";
 import { WashRoute, WashStep } from "@/types/wash";
-import { WashHallWaitTimeResponse } from "@/types/washHallWaitTimeType";
+import { WashHallWaitTimeResponse } from "@/types/wash";
 import { washHallState } from "@/mockupData/washHallState";
 import { useWashStore } from "@/stores/useWashStore";
 

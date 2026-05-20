@@ -9,9 +9,8 @@ import { WashHallWaitTimeResponse } from "@/types/washHallWaitTimeType";
 import { resolveWaitTime } from "@/lib/wash/resolvers";
 import { WashType } from "@/types/singleWashType";
 import { useWashStore } from "@/stores/useWashStore";
-import { distanceFromWashhall } from "@/lib/wash/resolvers";
-import { get } from "http";
-import { number } from "framer-motion";
+import { Location } from "@/types/locations";
+
 
 export function useWash() {
       const baseUrl = "http://127.0.0.1:80";
@@ -27,9 +26,9 @@ export function useWash() {
     // Random valgt lokation fra API responsen (simulering)
     const userLocation = locations[Math.floor(Math.random() * locations.length)];
 
-    useWashStore.getState().setUserLocation(userLocation);
+    useWashStore.getState().setUserLocation(userLocation.location_pk);
 
-    return userLocation;
+    return userLocation.location_pk;
   }, [getLocations]);
 
 
@@ -69,8 +68,6 @@ export function useWash() {
       navigate: (path: string) => void,
       user: User
     ) => {
-
-      const distance = distanceFromWashhall();
 
       const route = await getWashStepFromApi(user);
 
@@ -114,16 +111,22 @@ const postAvailableWashHall = useCallback(
     wash,
     startedAt,
     endedAt,
+    availibleWashHall,
+    nearestLocation,
   }: {
     wash: WashType;
     startedAt: number | null;
     endedAt: number | null;
-  }) => {
+    availibleWashHall: number | null;
+    nearestLocation: string | null;
+  } ) => {
 
     console.log("POST DATA:", {
       wash,
       startedAt,
       endedAt,
+      availibleWashHall,
+      nearestLocation,
     });
 
     const response = await fetch(
@@ -141,9 +144,9 @@ const postAvailableWashHall = useCallback(
         body: JSON.stringify({
           license_plate_fk: "ABC123",
 
-          car_wash_location_fk: "location_1",
+          car_wash_location_fk: nearestLocation,
 
-          car_wash_hall_fk: "hall_1",
+          car_wash_hall_fk: availibleWashHall,
 
           car_wash_price: wash.price,
 
@@ -208,37 +211,67 @@ const useWashHallWaitTime = () => {
 };
 
 // ===========================================================
-//             GET ANTAL AF VASKEHALLER FRA BACKEND
+//             GET NÆSTE LEDIGE VASKEHAL (SIMULERING)
 // ===========================================================
+const useAvailableWashHall = (
+  location_pk?: string
+) => {
+  const [hall, setHall] =
+    useState<WashingHalls | null>(null);
 
-  const useWashHall = () => {
-    const [washHalls, setWashHalls] = useState<WashingHalls[]>([]);
+  const [isLoading, setIsLoading] =
+    useState(false);
 
-    useEffect(() => {
-      const fetchWashHalls = async () => {
-        const response = await fetch(baseUrl + "/washhall", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Cache-Control": "no-store",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+  const [error, setError] =
+    useState<string | null>(null);
+
+  useEffect(() => {
+    if (!location_pk) return;
+
+    const fetchHall = async () => {
+      try {
+        setIsLoading(true);
+
+        const response = await fetch(
+          `/api/washhall/available?location_pk=${location_pk}`,
+          {
+            method: "GET",
+            headers: {
+              "Cache-Control": "no-store",
+            },
+          }
+        );
 
         if (!response.ok) {
-          throw new Error("Failed to get WashHalls");
+          throw new Error(
+            "Failed to fetch available washhall"
+          );
         }
 
         const data = await response.json();
 
-        setWashHalls(data.car_wash_hall_info);
-      };
-      // void for at køre den asynkrone funktion uden at skulle håndtere løftet, da useEffect ikke kan være asynkron
-      void fetchWashHalls();
-    }, []);
 
-    return { washHalls };
+        setHall(data.hall);
+      } catch (err) {
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Unknown error"
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    void fetchHall();
+  }, [location_pk]);
+
+  return {
+    hall,
+    isLoading,
+    error,
   };
+};
 
 // ===========================================================
 //                GET INDKØRSEL I VASKEHAL (simuleret)
@@ -276,8 +309,8 @@ const useEntryToWashHall = () => {
     postAvailableWashHall,
     navigateToWashRoute,
     useSingleWash,
-    useWashHall,
     useWashHallWaitTime,
+    useAvailableWashHall,
     useEntryToWashHall,
   };
 }

@@ -226,14 +226,12 @@ export function useAuth() {
     });
 
     const data = await response.json();
-    console.log("Status:", response.status);
-    console.log("Body:", data);
 
     if (!response.ok) {
-      throw new Error("Failed to delete user");
+      throw new Error(data.error || "Failed to delete user");
     }
 
-    return await response.json();
+    return data;
   }, []);
 
   // Herunder returnerer vi ALLE routes, som vi ønsker at kunne bruge i vores komponenter

@@ -53,7 +53,7 @@ const Swipe = ({ children, onComplete, disabled }: SwipeProps) => {
     >
       {/* Text */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-        <h3 className="extra-bold text-foreground">{children}</h3>
+        <h4 className="extra-bold text-foreground">{children}</h4>
       </div>
 
       {isDragging ? (

@@ -58,15 +58,19 @@ export type TimerProps = {
 };
 
 // ===========================================================
-//                    ENKELTVASKE
+//                    VASKE
 // ==========================================================
 
 export type WashType = {
   id: string;
   name: string;
+  sub_title: string;
   description: string;
-  price: number;
+  price_single: number;
+  price_subscription: number;
   duration: number;
+  checkmarks: string[];
+  image: string;
 };
 
 // ===========================================================

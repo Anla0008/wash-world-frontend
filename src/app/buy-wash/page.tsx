@@ -5,7 +5,7 @@ const BuyWash = () => {
     return ( 
         <div>
             <ProgressBar activeIndex={1} isWashProcess={true} />
-            <SingleWash />
+            <SingleWash isSubscription={false} />
         </div>
      );
 }

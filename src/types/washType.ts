@@ -1,7 +1,7 @@
 import { Location } from "./locations";
-export type WashRoute = "/buyWash" | "/activeWash" | "/error-in-distance";
+export type WashRoute = "/buy-wash" | "/active-wash" | "/error-in-distance";
 
-export type WashStep = "buyWash" | "activeWash";
+export type WashStep = "buy-wash" | "active-wash";
 
 // ===========================================================
 //                 NAVIGATION TIL STEP

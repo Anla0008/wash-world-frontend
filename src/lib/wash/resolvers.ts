@@ -133,7 +133,7 @@ export const useNearestWash = () => {
 //  BESTEM RUTE EFTER SUBSCRIPTION (SIMULERET)
 // ===========================================================
 export const resolveRoute = (hasSub: boolean): WashRoute => {
-  return hasSub ? "/activeWash" : "/buyWash";
+  return hasSub ? "/active-wash" : "/buy-wash";
 };
 
   // ===========================================================
@@ -141,9 +141,9 @@ export const resolveRoute = (hasSub: boolean): WashRoute => {
   // ===========================================================
 
 export const resolveStep = (route: WashRoute): WashStep => {
-  return route === "/activeWash"
-    ? "activeWash"
-    : "buyWash";
+  return route === "/active-wash"
+    ? "active-wash"
+    : "buy-wash";
 };
 
 // ===========================================================
@@ -157,7 +157,7 @@ export const distanceFromWashhall = (distanceKm: number): WashRoute => {
     return "/error-in-distance";
 
   } else {
-    return "/buyWash"; //TODO; få til at snakke sammen med abonnomentstatus eller ej funktionen resolveRoute
+    return "/buy-wash"; //TODO; få til at snakke sammen med abonnomentstatus eller ej funktionen resolveRoute
   }
 };
 

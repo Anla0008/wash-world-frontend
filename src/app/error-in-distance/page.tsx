@@ -11,7 +11,7 @@ const ErrorInDistancePage = () => {
           <span className="text-(--gray-60)">Sørg for, at din GPS er aktiveret, og at du har givet tilladelse til at dele din placering.</span>
         </p>
         <div className="flex flex-col gap-3 items-center p-5 border rounded-md border-(--gray-60)">
-          <PrimaryButtonAnchorTag href="/buyWash">Fortsæt</PrimaryButtonAnchorTag>
+          <PrimaryButtonAnchorTag href="/buy-wash">Fortsæt</PrimaryButtonAnchorTag>
           <p className="max-w-md text-sm text-(--gray-60)">Denne knap er kun beregnet til test og bruges ikke i det normale brugerflow.</p>
         </div>
       </div>

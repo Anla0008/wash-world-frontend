@@ -4,7 +4,7 @@ import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import L from "leaflet";
 import { Location } from "@/types/locations";
 
-type FindVaskehalMapProps = {
+type FindCarWashMapProps = {
   locations: Location[];
   onSelectLocation: (location: Location) => void;
 };
@@ -25,7 +25,7 @@ const washWorldIcon = L.divIcon({
   iconAnchor: [14, 14],
 });
 
-export default function FindVaskehalMap({ locations, onSelectLocation }: FindVaskehalMapProps) {
+export default function FindCarWashMap({ locations, onSelectLocation }: FindCarWashMapProps) {
   return (
     <MapContainer center={[56.05, 10.1]} zoom={8} zoomControl={false} attributionControl={false} className="h-full w-full" style={{ height: "100%", width: "100%" }}>
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />

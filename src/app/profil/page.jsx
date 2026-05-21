@@ -1,9 +1,9 @@
 "use client";
 
-import AbbonomenterCard from "@/components/global/cards/AbbonomenterCard";
-import MinProfilCard from "@/components/profil/MinProfilCard";
+import SubscriptionCard from "@/components/global/cards/SubscriptionCard";
+import MyProfilCard from "@/components/profil/MinProfilCard";
 import PointCard from "@/components/global/cards/PointCard";
-import KundeserviceCard from "@/components/global/cards/KundeserviceCard";
+import CustomerServiceCard from "@/components/global/cards/CustomerServiceCard";
 import FAQ from "@/components/global/cards/FAQ";
 import DeleteUserButton from "@/components/global/buttons/onClick/DeleteUserButton";
 
@@ -11,13 +11,13 @@ export default function Profil() {
   return (
     <div>
       <h1 className="extra-bold pb-8">Navn</h1> {/*TODO: Hent navn fra backend */}
-      <MinProfilCard></MinProfilCard>
+      <MyProfilCard></MyProfilCard>
       <h2 className="extra-bold pt-10">Abonnementer</h2>
-      <AbbonomenterCard></AbbonomenterCard>
+      <SubscriptionCard></SubscriptionCard>
       <h2 className="extra-bold pt-10">Dine point</h2>
       <PointCard></PointCard>
       <div className="mt-14 mb-20">
-        <KundeserviceCard></KundeserviceCard>
+        <CustomerServiceCard></CustomerServiceCard>
       </div>
       <FAQ></FAQ>
       <div className="flex justify-center mt-18">

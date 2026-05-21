@@ -6,13 +6,13 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useAuth } from "@/hooks/useAuth";
 import { Location } from "@/types/locations";
-import FindVaskehalBottomSheet from "@/components/findVaskehal/FindVaskehalBottomSheet";
+import FindCarWashBottomSheet from "@/components/findCarWash/FindCarWashBottomSheet";
 
-const FindVaskehalMap = dynamic(() => import("@/components/findVaskehal/FindVaskehalMap"), {
+const FindCarWashMap = dynamic(() => import("@/components/findCarWash/FindCarWashMap"), {
   ssr: false,
 });
 
-export default function FindVaskehal() {
+export default function FindCarWash() {
   const { getLocations, getFavorites } = useAuth();
 
   const [locations, setLocations] = useState<Location[]>([]);
@@ -34,10 +34,10 @@ export default function FindVaskehal() {
   return (
     <main className="-mx-8 relative h-dvh overflow-hidden bg-background text-foreground">
       <section className="absolute inset-0 z-0 h-full w-full">
-        <FindVaskehalMap locations={locations} onSelectLocation={(location) => setSelectedLocationPk(location.location_pk)} />
+        <FindCarWashMap locations={locations} onSelectLocation={(location) => setSelectedLocationPk(location.location_pk)} />
       </section>
 
-      <FindVaskehalBottomSheet locations={locations} selectedLocationPk={selectedLocationPk} favoriteIds={favoriteIds} />
+      <FindCarWashBottomSheet locations={locations} selectedLocationPk={selectedLocationPk} favoriteIds={favoriteIds} />
     </main>
   );
 }

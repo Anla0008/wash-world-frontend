@@ -37,7 +37,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Location } from "@/types/locations";
-import VaskehalCard from "@/components/global/cards/VaskehalCard";
+import CarWashCard from "@/components/global/cards/CarWashCard";
 import { useFavoritesStore } from "@/stores/favoritesStore";
 
 export default function Favorites() {
@@ -83,7 +83,7 @@ export default function Favorites() {
                 transform: fadingOut.has(location.location_pk) ? "scale(0.95)" : "scale(1)",
               }}
             >
-              <VaskehalCard location_pk={location.location_pk} city={location.location_city} address={location.location_address} openingHours="07 - 22" image={location.location_img} href={`/locations/${location.location_pk}`} onRemove={() => handleRemove(location.location_pk)} />
+              <CarWashCard location_pk={location.location_pk} city={location.location_city} address={location.location_address} openingHours="07 - 22" image={location.location_img} href={`/locations/${location.location_pk}`} onRemove={() => handleRemove(location.location_pk)} />
             </div>
           ))
         )}

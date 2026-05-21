@@ -8,7 +8,7 @@ import Popup from "@/components/global/cards/PopUp";
 import Checkmark from "@/components/global/icons/grafik/Checkmark";
 import ArrowLeft from "@/components/global/icons/navigation/ArrowLeft";
 
-export default function Skaderapportering() {
+export default function DamageReport() {
   const [error, setError] = useState("");
   const [showSuccess, setShowSuccess] = useState(false); // Styrer success popup
 

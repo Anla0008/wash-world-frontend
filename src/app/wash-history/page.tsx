@@ -1,12 +1,14 @@
 "use client";
 
-import HistorikCard from "@/components/profil/HistorikCard";
-import useWashHistory from "@/hooks/useWashHistory";
+import HistorikCard from "@/components/profil/HistoryCard";
+import { useWash } from "@/hooks/useWash";
 import ArrowLeft from "@/components/global/icons/navigation/ArrowLeft";
 
 import { useRouter } from "next/navigation";
 
-export default function Vaskehistorik() {
+export default function WashHistory() {
+  const { useWashHistory } = useWash();
+
   const history = useWashHistory("3"); // TODO: Skift til JWT bruger
   const router = useRouter();
 

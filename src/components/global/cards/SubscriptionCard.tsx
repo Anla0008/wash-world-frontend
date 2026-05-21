@@ -1,6 +1,6 @@
 import PrimaryButtonAnchorTag from "../buttons/anchortag/PrimaryButtonAnchorTag";
 
-const AbbonomenterCard = () => {
+const SubscriptionCard = () => {
   const plans = [
     {
       name: "Guld",
@@ -25,17 +25,8 @@ const AbbonomenterCard = () => {
   return (
     <section className="max-w-lg w-full flex gap-4 overflow-x-auto scroll-smooth hide-scrollbar pt-8 pb-8">
       {plans.map((plan) => (
-        <article
-          key={plan.name}
-          className={`bg-(--gray-60) w-52 h-52 rounded-md flex flex-col items-center justify-center shrink-0 ${
-            plan.popular ? "relative" : ""
-          }`}
-        >
-          {plan.popular && (
-            <div className="absolute -top-6 right-1 bg-(--splash) px-2 py-1 z-10">
-              Populær!
-            </div>
-          )}
+        <article key={plan.name} className={`bg-(--gray-60) w-52 h-52 rounded-md flex flex-col items-center justify-center shrink-0 ${plan.popular ? "relative" : ""}`}>
+          {plan.popular && <div className="absolute -top-6 right-1 bg-(--splash) px-2 py-1 z-10">Populær!</div>}
           <p className="extra-bold mt-2">{plan.name}</p>
           <div className="flex items-center gap-2">
             <h1 className="extra-bold">{plan.price}</h1>
@@ -49,4 +40,4 @@ const AbbonomenterCard = () => {
   );
 };
 
-export default AbbonomenterCard;
+export default SubscriptionCard;

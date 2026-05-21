@@ -83,11 +83,11 @@ import PrimaryButtonAnchorTag from "../buttons/anchortag/PrimaryButtonAnchorTag"
 import useRandomWaitStatus from "@/hooks/useRandomWaitStatus";
 import { IoIosHeartEmpty } from "react-icons/io";
 import { IoMdHeart } from "react-icons/io";
-import { VaskehalCardProps } from "@/types/VaskehalCardProps";
+import { CardWashCardProps } from "@/types/CardWashCardProps";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavoritesStore } from "@/stores/favoritesStore";
 
-const VaskehalCard = ({ city, address, openingHours, image, href, location_pk }: VaskehalCardProps) => {
+const CarWashCard = ({ city, address, openingHours, image, href, location_pk }: CardWashCardProps) => {
   const { addFavorite, removeFavorite } = useAuth();
   const status = useRandomWaitStatus();
 
@@ -155,4 +155,4 @@ const VaskehalCard = ({ city, address, openingHours, image, href, location_pk }:
   );
 };
 
-export default VaskehalCard;
+export default CarWashCard;

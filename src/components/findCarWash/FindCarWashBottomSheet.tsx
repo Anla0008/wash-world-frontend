@@ -169,7 +169,7 @@
 //                 }}
 //                 className={`rounded-md transition-all duration-300 ${isSelected ? "ring-4 ring-(--brand-green)" : ""}`}
 //               >
-//                 <VaskehalCard city={location.location_city} address={location.location_address} openingHours="07 - 22" image={location.location_img} href={`/locations/${location.location_pk}`} location_pk={location.location_pk} isFavorite={favoriteIds.includes(location.location_pk)} />
+//                 <CarWashCard city={location.location_city} address={location.location_address} openingHours="07 - 22" image={location.location_img} href={`/locations/${location.location_pk}`} location_pk={location.location_pk} isFavorite={favoriteIds.includes(location.location_pk)} />
 //               </div>
 //             );
 //           })
@@ -185,13 +185,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Location } from "@/types/locations";
-import VaskehalCard from "@/components/global/cards/VaskehalCard";
+import CarWashCard from "@/components/global/cards/CarWashCard";
 import SearchBar from "../global/filtering/SearchBar";
 import FilterWrapper from "../global/filtering/FilterWrapper";
 import Sorting from "../global/filtering/Sorting";
 import { useLocationFilterStore } from "@/stores/useLocationFilterStore";
 
-type FindVaskehalBottomSheetProps = {
+type FindCarWashBottomSheetProps = {
   locations: Location[];
   selectedLocationPk: string | null;
   favoriteIds: string[];
@@ -217,7 +217,7 @@ function matchesRange(value: number | undefined, range: Range) {
   return value !== undefined && value >= range.min && value <= range.max;
 }
 
-export default function FindVaskehalBottomSheet({ locations, selectedLocationPk, favoriteIds }: FindVaskehalBottomSheetProps) {
+export default function FindCarWashBottomSheet({ locations, selectedLocationPk, favoriteIds }: FindCarWashBottomSheetProps) {
   const [height, setHeight] = useState(MID_HEIGHT);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -364,7 +364,7 @@ export default function FindVaskehalBottomSheet({ locations, selectedLocationPk,
                 }}
                 className={`rounded-md transition-all duration-300 ${isSelected ? "ring-4 ring-(--brand-green)" : ""}`}
               >
-                <VaskehalCard city={location.location_city} address={location.location_address} openingHours="07 - 22" image={location.location_img} href={`/locations/${location.location_pk}`} location_pk={location.location_pk} isFavorite={favoriteIds.includes(location.location_pk)} />
+                <CarWashCard city={location.location_city} address={location.location_address} openingHours="07 - 22" image={location.location_img} href={`/locations/${location.location_pk}`} location_pk={location.location_pk} isFavorite={favoriteIds.includes(location.location_pk)} />
               </div>
             );
           })

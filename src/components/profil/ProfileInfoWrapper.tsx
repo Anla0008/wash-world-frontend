@@ -1,17 +1,17 @@
-import ProfilOplysningerCard from "./ProfilOplysningerCard";
+// import ProfileInfoCard from "../components/profil/ProfileInfoCard";
 import PrimaryButton from "../global/buttons/onClick/PrimaryButton";
 
-const ProfilOplysningerWrapper = () => {
+const ProfileInfoWrapper = () => {
   return (
     <section className="bg-(--gray-80) px-4 py-4 flex flex-col gap-5 rounded-md">
       <h3 className="extra-bold">Opdater oplysninger</h3>
 
-      <ProfilOplysningerCard section={"profile"} />
+      <ProfileInfoCard section={"profile"} />
 
       <div className="border-t-2 border-(--gray-60) pt-2">
         <h4 className="extra-bold pb-3">Kortoplysninger</h4>
 
-        <ProfilOplysningerCard section={"payment"} />
+        <ProfileInfoCard section={"payment"} />
 
         <button
           // TODO: sørg for onclick mapper dette card under sig selv
@@ -26,4 +26,4 @@ const ProfilOplysningerWrapper = () => {
   );
 };
 
-export default ProfilOplysningerWrapper;
+export default ProfileInfoWrapper;

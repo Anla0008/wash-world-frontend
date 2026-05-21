@@ -9,16 +9,20 @@ import { getUser } from "@/hooks/useAuth";
 import { WashRoute } from "@/types/washType";
 import { resolveWashRouteFromDistance, useNearestWash } from "@/lib/wash/resolvers";
 
+// Routes hvor navbar skal være skjult
+const hiddenRoutes = ["/", "/sign-up", "/verify", "/reset-password"];
+
 const NavBar = () => {
   const { getUserData } = getUser();
   const { nearestDistanceKm } = useNearestWash();
 
   const pathname = usePathname();
+
+  // Hvis den aktuelle rute er i listen over skjulte ruter, returner null for IKKE at vise navbar
+  if (hiddenRoutes.includes(pathname)) return null;
+
   const user = getUserData();
-  const washRoute: WashRoute =
-    nearestDistanceKm !== null
-      ? resolveWashRouteFromDistance(nearestDistanceKm, user.has_sub)
-      : "/errorInDistance";
+  const washRoute: WashRoute = nearestDistanceKm !== null ? resolveWashRouteFromDistance(nearestDistanceKm, user.has_sub) : "/error-in-distance";
 
   const li = [
     {

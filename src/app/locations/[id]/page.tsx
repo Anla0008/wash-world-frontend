@@ -14,7 +14,7 @@ import PracticInfoPrewash from "@/components/singleview/PracticInfoPrewash";
 import PracticInfoTime from "@/components/singleview/PracticInfoTime";
 import PracticInfoVacuumCleaner from "@/components/singleview/PracticInfoVacuumCleaner";
 import PracticInfoWashSelf from "@/components/singleview/PracticInfoWashSelf";
-import TravlhedGraf from "@/components/singleview/TravlhedGraf";
+import BusinessGraph from "@/components/singleview/BusinessGraph";
 
 export default function SingleLocationPage() {
   const { id } = useParams();
@@ -95,7 +95,7 @@ export default function SingleLocationPage() {
 
       <section className="mb-20">
         <h2 className="mb-8 text-3xl font-extrabold">Travlhed i {location.location_city}</h2>
-        <TravlhedGraf status="travl" /> {/* Hardcoded status for at vise grafen, skal senere være dynamisk baseret på location */}
+        <BusinessGraph status="travl" /> {/* Hardcoded status for at vise grafen, skal senere være dynamisk baseret på location */}
       </section>
 
       <section className="mb-20">

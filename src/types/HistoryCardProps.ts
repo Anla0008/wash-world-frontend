@@ -1,4 +1,4 @@
-type HistorikCardProps = {
+type HistoryCardProps = {
   location: string;
   date: string;
   description: string;

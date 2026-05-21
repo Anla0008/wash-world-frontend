@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import NavBar from "@/components/global/navigation/NavBar";
-import Header from "@/components/global/navigation/Header";
 import MswInitializer from "@/components/global/MswInitializer";
 import { FavoritesInitializer } from "@/components/global/favorit/FavoritesInitializer";
 
@@ -28,10 +27,7 @@ export default function RootLayout({
         <MswInitializer>
           <FavoritesInitializer />
           <div id="app-shell">
-            <div className="mb-20">
-              {/* opdateres senere til at passe med usewash systemet */}
-              {/* <Header points={155} /> */}
-            </div>
+            <div className="mb-20"></div>
             <main className="flex flex-col mb-20 px-8">{children}</main>
             <NavBar />
           </div>

@@ -6,7 +6,7 @@ import ArrowRight from "../global/icons/navigation/ArrowRight";
 import Validated from "../global/icons/validation/Validated";
 import Error from "../global/icons/validation/Error";
 
-const TravlhedGraf = ({ status }: { status: string }) => {
+const BusinessGraph = ({ status }: { status: string }) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
     align: "start", // TODO: start ved aktuelle time
@@ -27,10 +27,7 @@ const TravlhedGraf = ({ status }: { status: string }) => {
 
   const color = getColor();
 
-  const borderColor =
-    color !== "transparent"
-      ? `color-mix(in srgb, ${color} 70%, black)`
-      : "var(--gray-60)";
+  const borderColor = color !== "transparent" ? `color-mix(in srgb, ${color} 70%, black)` : "var(--gray-60)";
 
   // TODO: vis det aktuelle tidspunkt ud fra localeDateTime + en math.random af både status og højde
   const bars = [
@@ -75,18 +72,11 @@ const TravlhedGraf = ({ status }: { status: string }) => {
             const isStatusBar = !!bar.status;
 
             return (
-              <div
-                key={index}
-                className="flex-[0_0_auto] flex flex-col items-center justify-end"
-              >
+              <div key={index} className="flex-[0_0_auto] flex flex-col items-center justify-end">
                 {isStatusBar && (
                   <div className="flex gap-1 pb-1 items-center">
                     <span style={{ color }}>{bar.status}</span>
-                    {bar.status === "travl" ? (
-                      <Error />
-                    ) : bar.status === "rolig" ? (
-                      <Validated />
-                    ) : null}
+                    {bar.status === "travl" ? <Error /> : bar.status === "rolig" ? <Validated /> : null}
                   </div>
                 )}
 
@@ -113,4 +103,4 @@ const TravlhedGraf = ({ status }: { status: string }) => {
   );
 };
 
-export default TravlhedGraf;
+export default BusinessGraph;

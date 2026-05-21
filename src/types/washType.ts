@@ -1,11 +1,11 @@
 import { Location } from "./locations";
-export type WashRoute = "/buyWash" | "/activeWash" | "/errorInDistance";
+export type WashRoute = "/buyWash" | "/activeWash" | "/error-in-distance";
 
 export type WashStep = "buyWash" | "activeWash";
 
-  // ===========================================================
-  //                 NAVIGATION TIL STEP
-  // ==========================================================
+// ===========================================================
+//                 NAVIGATION TIL STEP
+// ==========================================================
 
 export type WashStepResponse = {
   step: WashStep;
@@ -13,9 +13,9 @@ export type WashStepResponse = {
   has_sub: boolean;
 };
 
-  // ===========================================================
-  //                         VASKEHALLER
-  // ==========================================================
+// ===========================================================
+//                         VASKEHALLER
+// ==========================================================
 
 export type WashingHalls = {
   car_wash_pk: string;
@@ -24,9 +24,9 @@ export type WashingHalls = {
   car_wash_hall_number: number;
 };
 
-  // ===========================================================
-  //                        VENTETID
-  // ==========================================================
+// ===========================================================
+//                        VENTETID
+// ==========================================================
 
 export type WashHallWaitTimeResponse = {
   [hallNumber: string]: number;
@@ -36,31 +36,30 @@ export type WaitForWashProps = {
   activeIndex: number;
 };
 
-  // ===========================================================
-  //                    POST VASK TIL BACKEND
-  // ==========================================================
-
+// ===========================================================
+//                    POST VASK TIL BACKEND
+// ==========================================================
 
 export type postWash = {
-    wash: WashType;
-    startedAt: number | null;
-    endedAt: number | null;
-    availibleWashHall: number | null;
-    locationID: string | null;
-}
+  wash: WashType;
+  startedAt: number | null;
+  endedAt: number | null;
+  availibleWashHall: number | null;
+  locationID: string | null;
+};
 
-  // ===========================================================
-  //                    TIMER
-  // ==========================================================
+// ===========================================================
+//                    TIMER
+// ==========================================================
 
 export type TimerProps = {
   totalTime: number;
   onComplete?: () => void;
 };
 
-  // ===========================================================
-  //                    ENKELTVASKE
-  // ==========================================================
+// ===========================================================
+//                    ENKELTVASKE
+// ==========================================================
 
 export type WashType = {
   id: string;
@@ -70,28 +69,27 @@ export type WashType = {
   duration: number;
 };
 
-  // ===========================================================
-  //                 LISTE OVER ENKELTVASKE
-  // ==========================================================
+// ===========================================================
+//                 LISTE OVER ENKELTVASKE
+// ==========================================================
 
 export type SingleWashType = {
   types: WashType[];
 };
 
-
-  // ===========================================================
-  //             ZUSTAND STORE FOR VASKEPROCES
-  // ==========================================================
+// ===========================================================
+//             ZUSTAND STORE FOR VASKEPROCES
+// ==========================================================
 
 export type WashStore = {
-    locationID: Location["location_pk"];
-    locationName: Location["location_name"];
-    availibleWashHall: number | null;
-    selectedWash: WashType | null;
+  locationID: Location["location_pk"];
+  locationName: Location["location_name"];
+  availibleWashHall: number | null;
+  selectedWash: WashType | null;
 
-    startedAt: number | null;
-    endedAt: number | null;
-    washDate: string | null;
+  startedAt: number | null;
+  endedAt: number | null;
+  washDate: string | null;
 
   setLocationID: (locationID: string) => void;
   setLocationName: (locationName: string) => void;
@@ -105,6 +103,6 @@ export type WashStore = {
   setEndedAt: (time: number) => void;
 
   setWashDate: (date: string) => void;
-  
+
   clearWash: () => void;
 };

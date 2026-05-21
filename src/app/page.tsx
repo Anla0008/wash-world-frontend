@@ -38,14 +38,7 @@ export default function Home() {
     <section className="flex flex-col gap-10">
       <WashWorldLogo />
 
-      <Image
-        src="/brand/washworld_car.svg"
-        alt="WashWorld car"
-        width={238}
-        height={129}
-        style={{ width: 238, height: 129 }}
-        loading="eager"
-      />
+      <Image src="/brand/washworld_car.svg" alt="WashWorld car" width={238} height={129} style={{ width: 238, height: 129 }} loading="eager" />
 
       <form onSubmit={handleLogin}>
         <Input

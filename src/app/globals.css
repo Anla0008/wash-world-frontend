@@ -1,13 +1,8 @@
 @import "tailwindcss";
 
-.washworld-map-marker {
-  width: 28px !important;
-  height: 28px !important;
-  border-radius: 50%;
-  background: var(--brand-green);
-  border: 4px solid white;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-}
+/* ============================================================
+   FONTE – @font-face definitioner
+   ============================================================ */
 
 @font-face {
   font-family: Gilroy;
@@ -45,67 +40,75 @@
   font-display: swap;
 }
 
+/* ============================================================
+   DESIGN TOKENS – CSS-variabler (light mode som standard)
+   ============================================================ */
+
 :root {
-  /* Defination af default farver (light mode) */
+  /* Baggrund & forgrund */
   --background: #ffffff;
   --background-transparent: #ffffff96;
   --foreground: #121212;
   --foreground-reverse: #ffffff; /* bruges når teksten skal være omvendt pga. mørkere card */
 
+  /* Brandfarver */
   --brand-green: #06c167;
   --brand-green-reverse: #0ce578;
   --splash: #ff6b06;
 
+  /* Gråtoner */
   --gray-80: #f7f7f7;
   --gray-60: #e5e5e5;
   --gray-10: #666666;
   --gray-5: #333333;
 
+  /* Statusfarver */
   --error-red: #f00d0d;
   --error-red-transparent: #f00d0d96;
   --blue-selected: #158cd5;
 }
+
+/* ============================================================
+   DESIGN TOKENS – Dark mode overrides
+   ============================================================ */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Baggrund & forgrund */
+    --background: #121212;
+    --background-transparent: #12121296;
+    --foreground: #fff;
+    --foreground-reverse: #121212; /* bruges når teksten skal være omvendt pga. lysere card */
+
+    /* Gråtoner (inverterede) */
+    --gray-80: #333333;
+    --gray-60: #666666;
+    --gray-10: #e5e5e5;
+    --gray-5: #f7f7f7;
+
+    /* Statusfarver */
+    --blue-selected: #005990;
+  }
+}
+
+/* ============================================================
+   TAILWIND THEME – mapping til CSS-variabler
+   ============================================================ */
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Defination af farver til dark mode – som er anderledes ind tidligere defineret */
-    --background: #121212;
-    --background-transparent: #12121296;
-    --foreground: #fff;
-    --foreground-reverse: #121212; /* bruges når teksten skal være omvendt pga. lysere card */
-
-    --gray-80: #333333;
-    --gray-60: #666666;
-    --gray-10: #e5e5e5;
-    --gray-5: #f7f7f7;
-
-    --blue-selected: #005990;
-  }
-}
+/* ============================================================
+   BASE – Body og app-shell
+   ============================================================ */
 
 body {
   font-family: "Gilroy";
-  background: #e0e0e0; /* grå udenfor */
+  background: #e0e0e0; /* grå udenfor app-shell */
   color: var(--foreground);
   font-size: 1rem;
-
-  .extra-bold {
-    font-family: "Gilroy";
-    font-weight: 800;
-  }
-  .light {
-    font-family: "Gilroy";
-    font-weight: 300;
-  }
-
-  .small {
-    font-size: 0.875rem;
-  }
 }
 
 #app-shell {
@@ -122,90 +125,77 @@ nav {
   bottom: 0;
 }
 
+/* ============================================================
+   TYPOGRAFI – Overskrifter og vægte
+   ============================================================ */
+
+.extra-bold {
+  font-family: "Gilroy";
+  font-weight: 800;
+}
+
+.light {
+  font-family: "Gilroy";
+  font-weight: 300;
+}
+
+.small {
+  font-size: 0.875rem;
+}
+
 h1 {
   font-size: 2.5rem;
-  .extra-bold {
-    font-family: "Gilroy";
-    font-weight: 800;
-  }
-
-  .light {
-    font-family: "Gilroy";
-    font-weight: 300;
-  }
 }
 
 h2 {
   font-size: 2rem;
-  .extra-bold {
-    font-family: "Gilroy";
-    font-weight: 800;
-  }
-
-  .light {
-    font-family: "Gilroy";
-    font-weight: 300;
-  }
 }
 
 h3 {
   font-size: 1.5rem;
-  .extra-bold {
-    font-family: "Gilroy";
-    font-weight: 800;
-  }
-
-  .light {
-    font-family: "Gilroy";
-    font-weight: 300;
-  }
 }
 
-/* ==============================  HERUNDER ER STYLING, SÅ MARGIN ER 0 VED HEADERS EFTER HINANDEN ========================== */
-
+/* Fjern margin mellem headers der følger direkte efter hinanden */
 h1 + h1,
+h1 + h2,
 h2 + h2,
-h3 + h3,
-h1 + h2 {
+h3 + h3 {
   margin-top: 0;
   margin-bottom: 0;
 }
 
-/* ===============================================  OVERWRITES TIL FARVER   =============================================== */
+/* ============================================================
+   HJÆLPEKLASSER – Farver
+   ============================================================ */
 
 .green {
   color: var(--brand-green);
 }
-
 .splash {
   color: var(--splash);
 }
-
-.gray-80 {
-  color: var(--80-percent-gray);
-}
-
-.gray-60 {
-  color: var(--60-percent-gray);
-}
-
-.gray-10 {
-  color: var(--10-percent-gray);
-}
-
-.gray-5 {
-  color: var(--5-percent-gray);
-}
-
 .error-red {
   color: var(--error-red);
 }
-
 .blue-selected {
   color: var(--blue-selected);
 }
+.gray-80 {
+  color: var(--gray-80);
+}
+.gray-60 {
+  color: var(--gray-60);
+}
+.gray-10 {
+  color: var(--gray-10);
+}
+.gray-5 {
+  color: var(--gray-5);
+}
 
-/* =======================================  SCROLLBAR STYLING  ================================= */
+/* ============================================================
+   HJÆLPEKLASSER – Scrollbar
+   ============================================================ */
 
 .hide-scrollbar {
   -ms-overflow-style: none; /* IE og Edge */
@@ -213,5 +203,19 @@ h1 + h2 {
 }
 
 .hide-scrollbar::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
+  display: none; /* Chrome og Safari */
+}
+
+/* ============================================================
+   KOMPONENTER – Kort-komponenter og UI-elementer
+   ============================================================ */
+
+/* Washworld kortmarkør på kort */
+.washworld-map-marker {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 50%;
+  background: var(--brand-green);
+  border: 4px solid white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }

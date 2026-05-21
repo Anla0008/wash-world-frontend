@@ -5,61 +5,47 @@ import { useCallback, useEffect, useState } from "react";
 import { resolveWaitTime } from "@/lib/wash/resolvers";
 import { postWash } from "@/types/washType";
 
-
 export function useWash() {
-      const baseUrl = "http://127.0.0.1:80";
+  const baseUrl = "http://127.0.0.1:80";
 
+  // ===========================================================
+  //        BESTEM ROUTE EFTER SUBSCRIPTION (SIMULERET)
+  // ===========================================================
+  const getWashStepFromApi = useCallback(async (user: User): Promise<WashRoute> => {
+    const response = await fetch(`/api/wash/step?has_sub=${user.has_sub}`, {
+      method: "GET",
+      headers: {
+        "Cache-Control": "no-store",
+      },
+    });
 
-// ===========================================================
-//        BESTEM ROUTE EFTER SUBSCRIPTION (SIMULERET)
-// ===========================================================
-  const getWashStepFromApi = useCallback(
-    async (user: User): Promise<WashRoute> => {
+    if (!response.ok) {
+      throw new Error("Failed to get wash step");
+    }
 
-      const response = await fetch(
-        `/api/wash/step?has_sub=${user.has_sub}`,
-        {
-          method: "GET",
-          headers: {
-            "Cache-Control": "no-store",
-          },
-        }
-      );
+    const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error("Failed to get wash step");
-      }
+    return data.route;
+  }, []);
 
-      const data = await response.json();
-
-      return data.route;
-    },
-    []
-  );
-
-// ===========================================================
-//            NAVIGATION TIL KORREKT WASH ROUTE (SIMULERING)
-// ===========================================================
+  // ===========================================================
+  //            NAVIGATION TIL KORREKT WASH ROUTE (SIMULERING)
+  // ===========================================================
 
   const navigateToWashRoute = useCallback(
-    async (
-      navigate: (path: string) => void,
-      user: User
-    ) => {
-
+    async (navigate: (path: string) => void, user: User) => {
       const route = await getWashStepFromApi(user);
 
       navigate(route);
 
       return route;
     },
-    [getWashStepFromApi]
+    [getWashStepFromApi],
   );
 
-
-// ===========================================================
-//                GET ENKELTVASK  (SIMULERING)
-// ===========================================================
+  // ===========================================================
+  //                GET ENKELTVASK  (SIMULERING)
+  // ===========================================================
 
   const useSingleWash = () => {
     const [data, setData] = useState<SingleWashType | null>(null);
@@ -81,11 +67,10 @@ export function useWash() {
     return { data };
   };
 
-// ===========================================================
-//               POST BRUGERS VASKEPROCES
-// ===========================================================
-const postAvailableWashHall = useCallback(async ({wash, startedAt, endedAt, availibleWashHall, locationID,}: postWash) => {
-
+  // ===========================================================
+  //               POST BRUGERS VASKEPROCES
+  // ===========================================================
+  const postAvailableWashHall = useCallback(async ({ wash, startedAt, endedAt, availibleWashHall, locationID }: postWash) => {
     console.log("POST DATA:", {
       wash,
       startedAt,
@@ -94,34 +79,32 @@ const postAvailableWashHall = useCallback(async ({wash, startedAt, endedAt, avai
       locationID,
     });
 
-    const response = await fetch(baseUrl + "/car-wash-history",{
-        method: "POST",
+    const response = await fetch(baseUrl + "/car-wash-history", {
+      method: "POST",
 
-        headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-store",
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store",
 
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
 
-        body: JSON.stringify({
-          car_wash_location_fk: locationID,
+      body: JSON.stringify({
+        car_wash_location_fk: locationID,
 
-          car_wash_hall_fk: availibleWashHall,
+        car_wash_hall_fk: availibleWashHall,
 
-          car_wash_price: wash.price,
+        car_wash_price: wash.price,
 
-          car_wash_type: wash.name,
+        car_wash_type: wash.name,
 
-          car_wash_started_at: startedAt,
+        car_wash_started_at: startedAt,
 
-          car_wash_ended_at: endedAt,
-        }),
-      }
-    );
+        car_wash_ended_at: endedAt,
+      }),
+    });
 
     if (!response.ok) {
-
       const errorData = await response.json();
 
       throw new Error(errorData.error || "Failed to save wash");
@@ -130,158 +113,155 @@ const postAvailableWashHall = useCallback(async ({wash, startedAt, endedAt, avai
     const data = await response.json();
 
     return data;
-  },
-  []
-);
-
-// ===========================================================
-//                  GET VENTETID FOR VASKEHAL (SIMULERING)
-// ===========================================================
-const useWashHallWaitTime = () => {
-  const [waitTime, setWaitTime] = useState<number | null>(null);
-
-  useEffect(() => {
-    const fetchWaitTime = async () => {
-      try {
-        const response = await fetch("/api/washhall/waittime", {
-          method: "GET",
-          headers: {
-            "Cache-Control": "no-store",
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch wash hall wait time");
-        }
-
-        const data = await response.json() as WashHallWaitTimeResponse;
-
-        // Beregn samlet ventetid ved at summere ventetider for alle vaskehaller
-        const totalWaitTime = resolveWaitTime(data);
-
-        setWaitTime(totalWaitTime);
-      }
-      catch (err) {
-        console.error(err instanceof Error ? err.message : "Unknown error");
-      }
-    };
-
-    void fetchWaitTime();
   }, []);
 
-  return waitTime;
-};
+  // ===========================================================
+  //                  GET VENTETID FOR VASKEHAL (SIMULERING)
+  // ===========================================================
+  const useWashHallWaitTime = () => {
+    const [waitTime, setWaitTime] = useState<number | null>(null);
 
-// ===========================================================
-//             GET NÆSTE LEDIGE VASKEHAL (SIMULERING)
-// ===========================================================
-const useAvailableWashHall = (location_pk?: string) => {
-
-  const [hall, setHall] = useState<WashingHalls | null>(null);
-
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!location_pk) return;
-
-    const fetchHall = async () => {
-      try {
-        setIsLoading(true);
-
-        const response = await fetch(
-          `/api/washhall/available?location_pk=${location_pk}`,
-          {
+    useEffect(() => {
+      const fetchWaitTime = async () => {
+        try {
+          const response = await fetch("/api/washhall/waittime", {
             method: "GET",
             headers: {
               "Cache-Control": "no-store",
             },
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to fetch wash hall wait time");
           }
-        );
+
+          const data = (await response.json()) as WashHallWaitTimeResponse;
+
+          // Beregn samlet ventetid ved at summere ventetider for alle vaskehaller
+          const totalWaitTime = resolveWaitTime(data);
+
+          setWaitTime(totalWaitTime);
+        } catch (err) {
+          console.error(err instanceof Error ? err.message : "Unknown error");
+        }
+      };
+
+      void fetchWaitTime();
+    }, []);
+
+    return waitTime;
+  };
+
+  // ===========================================================
+  //             GET NÆSTE LEDIGE VASKEHAL (SIMULERING)
+  // ===========================================================
+  const useAvailableWashHall = (location_pk?: string) => {
+    const [hall, setHall] = useState<WashingHalls | null>(null);
+
+    const [isLoading, setIsLoading] = useState(false);
+
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+      if (!location_pk) return;
+
+      const fetchHall = async () => {
+        try {
+          setIsLoading(true);
+
+          const response = await fetch(`/api/washhall/available?location_pk=${location_pk}`, {
+            method: "GET",
+            headers: {
+              "Cache-Control": "no-store",
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to fetch available washhall");
+          }
+
+          const data = await response.json();
+
+          // status på ledig vaskehal, er defineret i mocks/handlers.ts
+          setHall(data.hall);
+        } catch (err) {
+          setError(err instanceof Error ? err.message : "Unknown error");
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      // void så der ikke returneres et promise
+      void fetchHall();
+    }, [location_pk]);
+
+    return {
+      hall,
+      isLoading,
+      error,
+    };
+  };
+
+  // ===========================================================
+  //                GET INDKØRSEL I VASKEHAL (simuleret)
+  // ===========================================================
+  const useEntryToWashHall = (hallNumber?: number | null) => {
+    const [registered, setRegistered] = useState(false);
+
+    const [secondsRemaining, setSecondsRemaining] = useState<number | null>(null);
+
+    useEffect(() => {
+      if (!hallNumber) {
+        setRegistered(false);
+        setSecondsRemaining(null);
+        return;
+      }
+
+      const interval = setInterval(async () => {
+        const response = await fetch(`/api/washhall/entry?hall_number=${hallNumber}`);
 
         if (!response.ok) {
-          throw new Error(
-            "Failed to fetch available washhall"
-          );
+          return;
         }
 
         const data = await response.json();
 
-        // status på ledig vaskehal, er defineret i mocks/handlers.ts
-        setHall(data.hall);
-      }
-      catch (err) {
-        setError(err instanceof Error ? err.message : "Unknown error");
-      }
-  
-      finally {
-        setIsLoading(false);
-      }
-    };
+        // status på registrering i vaskehal, er defineret i mocks/handlers.ts
+        setRegistered(data.registered);
 
-    // void så der ikke returneres et promise
-    void fetchHall();
-  }, [location_pk]);
+        // opdater nedtælling baseret på serverens beregning af resterende tid
+        setSecondsRemaining(data.seconds_remaining);
 
-  return {
-    hall,
-    isLoading,
-    error,
-  };
-};
-
-// ===========================================================
-//                GET INDKØRSEL I VASKEHAL (simuleret)
-// ===========================================================
-const useEntryToWashHall = (hallNumber?: number | null) => {
-
-  const [registered, setRegistered] = useState(false);
-
-  const [secondsRemaining, setSecondsRemaining] = useState<number | null>(null);
-
-
-  useEffect(() => {
-
-    if (!hallNumber) {
-      setRegistered(false);
-      setSecondsRemaining(null);
-      return;
-    }
-
-  const interval = setInterval(async () => {
-
-      const response = await fetch(
-        `/api/washhall/entry?hall_number=${hallNumber}`
-      );
-
-      if (!response.ok) {
-        return;
-      }
-
-      const data = await response.json();
-
-      // status på registrering i vaskehal, er defineret i mocks/handlers.ts
-      setRegistered(data.registered);
-
-      // opdater nedtælling baseret på serverens beregning af resterende tid
-      setSecondsRemaining(data.seconds_remaining);
-
-      if (data.registered) {
-        clearInterval(interval);
-      }
+        if (data.registered) {
+          clearInterval(interval);
+        }
       }, 1000);
 
       // nulstil interval ved unmount for at undgå memory leaks
-    return () => clearInterval(interval);
+      return () => clearInterval(interval);
+    }, [hallNumber]);
 
-  }, [hallNumber]);
-
-  return {
-    registered,
-    secondsRemaining,
+    return {
+      registered,
+      secondsRemaining,
+    };
   };
-};
+
+  // ===========================================================
+  //                Vaskehistorik hook
+  // ===========================================================
+  const useWashHistory = (license_fk: string) => {
+    const [history, setHistory] = useState<any[]>([]);
+
+    useEffect(() => {
+      fetch(`http://127.0.0.1:80/car-wash-history/${license_fk}`)
+        .then((res) => res.json())
+        .then((data) => setHistory(data.car_wash_history))
+        .catch((err) => console.error("Fetch fejl:", err));
+    }, [license_fk]);
+
+    return history;
+  };
 
   return {
     getWashStepFromApi,
@@ -291,7 +271,6 @@ const useEntryToWashHall = (hallNumber?: number | null) => {
     useWashHallWaitTime,
     useAvailableWashHall,
     useEntryToWashHall,
+    useWashHistory,
   };
 }
-
-

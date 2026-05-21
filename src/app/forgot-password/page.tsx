@@ -8,7 +8,7 @@ import PrimaryButton from "@/components/global/buttons/onClick/PrimaryButton";
 import WashWorldLogo from "@/components/global/icons/grafik/WashWorldLogo";
 import Mail from "@/components/global/icons/grafik/Mail";
 import Link from "next/link";
-import { validateEmail } from "@/lib/form/validering";
+import { validateEmail, errorMessages } from "@/lib/form/validering";
 
 export default function ForgotPassword() {
   const [params, setParams] = useState<User>({} as User);
@@ -76,9 +76,7 @@ export default function ForgotPassword() {
           placeholder="navn@eksempel.com"
           value={params.user_email ?? ""}
           errorMessage={
-            emailNotFound
-              ? "Denne e-mail findes ikke i systemet"
-              : "Indtast en gyldig e-mail"
+            emailNotFound ? errorMessages.emailNotFound : errorMessages.email
           }
           onChange={(e) => {
             setParams({ ...params, user_email: e.target.value });

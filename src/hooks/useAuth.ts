@@ -83,6 +83,30 @@ export function useAuth() {
   }, []);
 
   // ===========================================================
+  //                      RESET PASSWORD
+  // ===========================================================
+
+  const resetPassword = useCallback(async (params: User, key: string) => {
+    const response = await fetch(baseUrl + `/reset-password/${key}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user_hashed_password: params.user_hashed_password,
+        confirm_password: params.user_repeat_hashed_password,
+      }),
+    });
+
+    const data = await response.json();
+    return { ok: response.ok, data };
+  }, []);
+
+  const validateResetKey = useCallback(async (key: string) => {
+    const response = await fetch(baseUrl + `/reset-password/${key}`);
+    const data = await response.json();
+    return { ok: response.ok, data };
+  }, []);
+
+  // ===========================================================
   //                          LOCATIONS
   // ===========================================================
   const getLocations = useCallback(async () => {
@@ -182,6 +206,8 @@ export function useAuth() {
     verify,
     login,
     forgotPassword,
+    resetPassword,
+    validateResetKey,
     getLocations,
     getSingleLocation,
     getFavorites,

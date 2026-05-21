@@ -16,6 +16,7 @@ import {
   validatePassword,
   validatePlateNumber,
   getBackendFieldError,
+  errorMessages,
 } from "@/lib/form/validering";
 
 export default function Signup() {
@@ -93,9 +94,7 @@ export default function Signup() {
               placeholder="navn@eksempel.com"
               value={params.user_email ?? ""}
               errorMessage={
-                emailTaken
-                  ? "Denne e-mail er allerede i brug"
-                  : "Indtast en gyldig e-mail"
+                emailTaken ? errorMessages.emailTaken : errorMessages.email
               }
               onChange={(e) => {
                 setParams({ ...params, user_email: e.target.value });
@@ -110,7 +109,7 @@ export default function Signup() {
               type="text"
               placeholder="Anders"
               value={params.user_first_name ?? ""}
-              errorMessage="Fornavn skal være mellem 2 og 20 tegn"
+              errorMessage={errorMessages.firstName}
               onChange={(e) =>
                 setParams({ ...params, user_first_name: e.target.value })
               }
@@ -123,7 +122,7 @@ export default function Signup() {
               type="text"
               placeholder="Andersen"
               value={params.user_last_name ?? ""}
-              errorMessage="Efternavn skal være mellem 2 og 20 tegn"
+              errorMessage={errorMessages.lastName}
               onChange={(e) =>
                 setParams({ ...params, user_last_name: e.target.value })
               }
@@ -136,7 +135,7 @@ export default function Signup() {
               type="password"
               placeholder="123456"
               value={params.user_hashed_password ?? ""}
-              errorMessage="Koden skal være mindst 8 tegn"
+              errorMessage={errorMessages.password}
               onChange={(e) =>
                 setParams({ ...params, user_hashed_password: e.target.value })
               }
@@ -151,7 +150,7 @@ export default function Signup() {
               type="password"
               placeholder="123456"
               value={params.user_repeat_hashed_password ?? ""}
-              errorMessage="Koderne matcher ikke"
+              errorMessage={errorMessages.repeatPassword}
               onChange={(e) =>
                 setParams({
                   ...params,
@@ -168,9 +167,7 @@ export default function Signup() {
               placeholder="AB12345"
               value={params.plate_number ?? ""}
               errorMessage={
-                plateTaken
-                  ? "Denne nummerplade er allerede i brug"
-                  : "Indtast 2 bogstaver og 5 cifre (fx AB12345)"
+                plateTaken ? errorMessages.plateTaken : errorMessages.plate
               }
               onChange={(e) => {
                 e.target.value = e.target.value.toUpperCase();

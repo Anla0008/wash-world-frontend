@@ -20,13 +20,18 @@
 //         const FieldIcon = field.icon;
 
 //         return (
-//           <div key={field.key} className={`rounded-md p-3 border transition-colors w-full ${isFieldActive ? "border-(--brand-green) bg-foreground/8" : "border-foreground/12 bg-foreground/4"}`}>
+//           <div
+//             key={field.key}
+//             className={`rounded-md p-3 border transition-colors w-full ${isFieldActive ? "border-(--brand-green) bg-foreground/8" : "border-foreground/12 bg-foreground/4"}`}
+//           >
 //             <div>
 //               {/* INPUT */}
 //               <div className="flex items-center gap-2">
 //                 {FieldIcon ? <FieldIcon size={20} /> : null}
 //                 <div className="flex flex-col gap-2">
-//                   <label className="text-sm text-foreground/65">{field.label}</label>
+//                   <label className="text-sm text-foreground/65">
+//                     {field.label}
+//                   </label>
 //                   <input
 //                     // hvis brugeren ikke er i editmode, kan der ikke skrives i input
 //                     disabled={!isFieldActive}
@@ -46,7 +51,10 @@
 //                 </div>
 
 //                 {/* EDIT TOGGLE */}
-//                 <button className="underline ml-15 text-sm text-(--gray-10)" onClick={() => editToggle(field.key as FieldKey)}>
+//                 <button
+//                   className="underline ml-15 text-sm text-(--gray-10)"
+//                   onClick={() => editToggle(field.key as FieldKey)}
+//                 >
 //                   {isFieldActive ? "Annuler" : "Rediger"}
 //                 </button>
 //               </div>

@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 
 export default function Profil() {
   const [user_pk, setUserPk] = useState(null);
+  const firstName = localStorage.getItem("user_first_name");
 
   useEffect(() => {
     // Decoder JWT token for at hente brugerens user_pk
@@ -23,11 +24,10 @@ export default function Profil() {
 
   return (
     <div>
-      <h1 className="extra-bold pb-8">Navn</h1> {/*TODO: Hent navn fra backend */}
-      <MyProfileCard></MyProfileCard>
+      <h1 className="extra-bold pb-8">Hej {firstName}</h1>
+      {/*TODO: Hent navn fra backend */}
+      <MyProfileCard />
       <h2 className="extra-bold pt-10">Abonnementer</h2>
-      <SubscriptionCard></SubscriptionCard>
-      <h2 className="extra-bold pt-10">Dine point</h2>
       <div className="mt-14 mb-20">
         <CustomerServiceCard></CustomerServiceCard>
       </div>
@@ -39,7 +39,8 @@ export default function Profil() {
           className="bg-foreground text-background relative px-5 pr-10 py-2 w-fit extra-bold"
           style={{
             clipPath: "polygon(0 0, 100% 0, calc(100% - 16px) 100%, 0 100%)",
-            boxShadow: "inset -10px -10px 20px #121212, inset 20px 20px 30px rgba(255, 255, 255, 0.25)",
+            boxShadow:
+              "inset -10px -10px 20px #121212, inset 20px 20px 30px rgba(255, 255, 255, 0.25)",
           }}
           onClick={() => {
             localStorage.removeItem("token"); // Sletter tokenet fra browseren
@@ -50,7 +51,10 @@ export default function Profil() {
         </button>
       </div>
       <div className="flex justify-center mt-18">
-        <DeleteUserButton user_pk={user_pk} onDeleted={() => (window.location.href = "/")} />
+        <DeleteUserButton
+          user_pk={user_pk}
+          onDeleted={() => (window.location.href = "/")}
+        />
       </div>
     </div>
   );

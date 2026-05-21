@@ -1,10 +1,7 @@
-import ActiveWash from "@/components/vask/ActiveWash";
+import ActiveWash from "@/components/wash/ActiveWash";
 
 const Wash = () => {
+  return <ActiveWash />;
+};
 
-    return ( 
-        <ActiveWash />
-     );
-}
- 
 export default Wash;

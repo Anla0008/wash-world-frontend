@@ -1,9 +1,7 @@
-import Reciept from "@/components/vask/Reciept";
+import Reciept from "@/components/wash/Reciept";
 
 const RecieptPage = () => {
-    return ( 
-        <Reciept />
-     );
-}
- 
+  return <Reciept />;
+};
+
 export default RecieptPage;

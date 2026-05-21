@@ -7,6 +7,7 @@ export type CardWashCardProps = {
   href: string;
   isFavorite?: boolean;
   onRemove?: () => void;
+  waitStatus?: "Kort ventetid" | "Moderat ventetid" | "Lang ventetid";
 };
 
 // Tilføj export

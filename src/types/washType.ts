@@ -62,7 +62,7 @@ export type TimerProps = {
 // ==========================================================
 
 export type WashType = {
-  id: string;
+  id: string | number;
   name: string;
   sub_title: string;
   description: string;
@@ -110,4 +110,14 @@ export type WashStore = {
   setWashDate: (date: string) => void;
 
   clearWash: () => void;
+};
+
+// ===========================================================
+//             SINGLEVIEW TIL VASKE
+// ==========================================================
+
+export type SingleViewCardProps = {
+    wash: WashType;
+    isSubscription: boolean;
+    onSelect: () => void;
 };

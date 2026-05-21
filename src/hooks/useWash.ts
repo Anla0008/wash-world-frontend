@@ -9,39 +9,29 @@ export function useWash() {
   const baseUrl = "http://127.0.0.1:80";
 
   // ===========================================================
-  //        BESTEM ROUTE EFTER SUBSCRIPTION (SIMULERET)
+  //                    KØB ABONNOMENT
   // ===========================================================
-  const getWashStepFromApi = useCallback(async (user: User): Promise<WashRoute> => {
-    const response = await fetch(`/api/wash/step?has_sub=${user.has_sub}`, {
-      method: "GET",
+const postSubscriptionStatus = useCallback(async (user: User): Promise<WashRoute> => {
+    const response = await fetch(baseUrl + "/subscription", {
+      method: "POST",
       headers: {
-        "Cache-Control": "no-store",
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store",  
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
+      body: JSON.stringify({
+        has_sub: user.has_sub
+      }),
     });
 
     if (!response.ok) {
-      throw new Error("Failed to get wash step");
+      throw new Error("Failed to determine subscription status");
     }
 
     const data = await response.json();
 
-    return data.route;
+    return data.route as WashRoute;
   }, []);
-
-  // ===========================================================
-  //            NAVIGATION TIL KORREKT WASH ROUTE (SIMULERING)
-  // ===========================================================
-
-  const navigateToWashRoute = useCallback(
-    async (navigate: (path: string) => void, user: User) => {
-      const route = await getWashStepFromApi(user);
-
-      navigate(route);
-
-      return route;
-    },
-    [getWashStepFromApi],
-  );
 
   // ===========================================================
   //                GET ENKELTVASK  (SIMULERING)
@@ -94,7 +84,7 @@ export function useWash() {
 
         car_wash_hall_fk: availibleWashHall,
 
-        car_wash_price: wash.price,
+        car_wash_price: wash.price_single || wash.price_subscription,
 
         car_wash_type: wash.name,
 
@@ -264,9 +254,8 @@ export function useWash() {
   };
 
   return {
-    getWashStepFromApi,
+    postSubscriptionStatus,
     postAvailableWashHall,
-    navigateToWashRoute,
     useSingleWash,
     useWashHallWaitTime,
     useAvailableWashHall,

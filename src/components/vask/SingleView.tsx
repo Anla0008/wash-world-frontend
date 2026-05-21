@@ -1,15 +1,9 @@
 import Checkmark from "../global/icons/grafik/Checkmark";
 import PrimaryButton from "../global/buttons/onClick/PrimaryButton";
-import { WashType } from "@/types/washType";
 import SecondaryButtonAnchorTag from "../global/buttons/anchortag/SecondaryButtonAnchorTag";
 import Swipe from "../global/buttons/onClick/Swipe";
 import Image from "next/image";
-
-type SingleViewCardProps = {
-    wash: WashType;
-    isSubscription: boolean;
-    onSelect: () => void;
-};
+import { SingleViewCardProps } from "@/types/washType";
 
 const SingleViewCard = ({ wash, isSubscription, onSelect }: SingleViewCardProps) => {
 
@@ -43,11 +37,11 @@ const SingleViewCard = ({ wash, isSubscription, onSelect }: SingleViewCardProps)
             {isSubscription ? null : <p className="text-sm">Eller for {wash.price_subscription} kr./pr. måned ubegrænset</p>}
             {isSubscription ? 
               (
-                <Swipe onComplete={onSelect}>Køb abonnoment</Swipe>
+                <Swipe onComplete={onSelect}>Køb abonnement</Swipe>
               )
             : (
             <div className="flex py-2 gap-2">
-                <SecondaryButtonAnchorTag href={`/subscription-single-view/${wash.id}`} >Køb abonnoment</SecondaryButtonAnchorTag>
+                <SecondaryButtonAnchorTag href={`/subscription-single-view/${wash.id}`} >Køb abonnement</SecondaryButtonAnchorTag>
                 <PrimaryButton onClick={onSelect}>Vælg vask</PrimaryButton>
             </div>
             )}

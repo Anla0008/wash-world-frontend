@@ -5,6 +5,7 @@ import PrimaryButton from "../global/buttons/onClick/PrimaryButton";
 import { useRouter } from "next/navigation";
 import { useWashStore } from "@/stores/useWashStore";
 import { WashType } from "@/types/washType";
+import WashWorldLoader from "../global/grafik/WashWorldLoader";
 
 export default function SingleWash() {
   const { useSingleWash } = useWash();
@@ -15,7 +16,7 @@ export default function SingleWash() {
   const router = useRouter();
 
   if (!data) {
-    return <p>Loading...</p>;
+    return <WashWorldLoader text="Henter vaskeprogrammer..." />;
   }
 
   // ===========================================================

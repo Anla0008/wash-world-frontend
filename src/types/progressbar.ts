@@ -4,3 +4,10 @@ export type ProgressBarProps = {
   totalTime?: number;
   progress?: number;
 };
+
+export type CheckMarkAnimationProps = {
+    title?: string;
+    subtitle?: string;
+  onComplete?: () => void;
+  durationMs?: number;
+};

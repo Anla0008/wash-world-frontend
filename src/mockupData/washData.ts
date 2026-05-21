@@ -2,8 +2,6 @@
 //                MOCKUP REGISTRERING AF BIL I HAL 
 // ==========================================================
 
-import { MdDescription } from "react-icons/md";
-
 export const carInWashHall = {
   registered_after_seconds: 25, // 25 sekunder
 };

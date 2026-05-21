@@ -14,7 +14,7 @@ const WaitingLine = () => {
     <div className="flex flex-col gap-5">
       <ProgressBar activeIndex={1} isWashProcess={true} />
       <h1 className="extra-bold">Følg din køstatus</h1>
-      <Timer totalTime={waitTime ?? 0} onComplete={() => router.push("/driveIn")} />
+      <Timer totalTime={waitTime ?? 0} onComplete={() => router.push("/drive-in")} />
       <AvailibleWashingHall />
     </div>
   );

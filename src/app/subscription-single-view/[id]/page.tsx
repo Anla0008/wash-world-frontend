@@ -3,16 +3,20 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 import { useWash } from "@/hooks/useWash";
 import { useWashStore } from "@/stores/useWashStore";
 import SingleViewCard from "@/components/vask/SingleView";
 import ArrowLeft from "@/components/global/icons/navigation/ArrowLeft";
+import Popup from "@/components/global/cards/PopUp";
 
 export default function SubscriptionSingleView() {
   const { useSingleWash } = useWash();
   const { setSelectedWash } = useWashStore();
+  const { postSubscriptionStatus } = useWash();
   const { data } = useSingleWash();
+  const [popUp, setPopUp] = useState(false);
 
   const { id } = useParams();
   const router = useRouter();
@@ -41,14 +45,24 @@ export default function SubscriptionSingleView() {
 
   const handleSelectWash = () => {
     setSelectedWash(wash);
-    router.push("/waiting-line");
+    setPopUp(true);
+    postSubscriptionStatus({ has_sub: true } as any);
   };
+  
   return (
     <>
      <Link href="/buy-wash" className="mt-4 underline flex items-center gap-2">
             <ArrowLeft size={20} color="var(--foreground)" />
       </Link>
     <SingleViewCard wash={wash} isSubscription={true} onSelect={handleSelectWash} />
+    {popUp && (
+      <Popup
+        title="Abonnement købt!"
+        message={`Abonnoment løber fra ${new Date().toLocaleDateString()} - ${new Date(new Date().setDate(new Date().getDate() + 31)).toLocaleDateString()}`}
+        submessage="Du vil blive trukket automatisk for enden af perioden."
+        onClose={() => setPopUp(false)}
+      />
+    )}
     </>
   );
 }

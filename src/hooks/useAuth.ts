@@ -200,6 +200,29 @@ export function useAuth() {
     return await response.json();
   }, []);
 
+  // ===========================================================
+  //                       DELETE USER
+  // ===========================================================
+  const deleteUser = useCallback(async (user_pk: string) => {
+    const response = await fetch(baseUrl + `/users/${user_pk}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+
+    const data = await response.json();
+    console.log("Status:", response.status);
+    console.log("Body:", data);
+
+    if (!response.ok) {
+      throw new Error("Failed to delete user");
+    }
+
+    return await response.json();
+  }, []);
+
   // Herunder returnerer vi ALLE routes, som vi ønsker at kunne bruge i vores komponenter
   return {
     signup,
@@ -213,6 +236,7 @@ export function useAuth() {
     getFavorites,
     addFavorite,
     removeFavorite,
+    deleteUser,
   };
 }
 

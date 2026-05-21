@@ -7,7 +7,19 @@ import CustomerServiceCard from "@/components/global/cards/CustomerServiceCard";
 import FAQ from "@/components/global/cards/FAQ";
 import DeleteUserButton from "@/components/global/buttons/onClick/DeleteUserButton";
 
+import { useEffect, useState } from "react";
+
 export default function Profil() {
+  const [user_pk, setUserPk] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const decoded = JSON.parse(atob(token.split(".")[1]));
+      setUserPk(decoded.sub);
+    }
+  }, []);
+
   return (
     <div>
       <h1 className="extra-bold pb-8">Navn</h1> {/*TODO: Hent navn fra backend */}
@@ -38,7 +50,7 @@ export default function Profil() {
         </button>
       </div>
       <div className="flex justify-center mt-18">
-        <DeleteUserButton></DeleteUserButton>
+        <DeleteUserButton user_pk={user_pk} onDeleted={() => (window.location.href = "/")} />
       </div>
     </div>
   );

@@ -10,7 +10,7 @@ import { WashRoute } from "@/types/washType";
 import { resolveWashRouteFromDistance, useNearestWash } from "@/lib/wash/resolvers";
 
 // Routes hvor navbar skal være skjult
-const hiddenRoutes = ["/", "/sign-up", "/verify", "/reset-password"];
+const hiddenRoutes = ["/", "/sign-up", "/verify", "/reset-password", "/forgot-password"];
 
 const NavBar = () => {
   const { getUserData } = getUser();
@@ -49,7 +49,7 @@ const NavBar = () => {
 
   return (
     <nav
-      className="w-full px-10 bg-foreground/80 backdrop-blur-3xl py-2 z-100"
+      className="w-full px-10 bg-foreground/80 backdrop-blur-3xl py-2 z-100 #app-shell"
       style={{
         boxShadow: "inset -5px -5px 15px #06C167, inset 30px 30px 10px #f1f1f1",
       }}

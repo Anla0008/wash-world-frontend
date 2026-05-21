@@ -104,25 +104,35 @@
    BASE – Body og app-shell
    ============================================================ */
 
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   font-family: "Gilroy";
-  background: #e0e0e0; /* grå udenfor app-shell */
+  background: #e0e0e0;
   color: var(--foreground);
   font-size: 1rem;
 }
 
 #app-shell {
-  background: var(--background);
+  width: 100%;
   max-width: 430px;
-  margin-inline: auto;
-  min-height: 100vh;
+  margin: 0 auto;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
-}
+  background: var(--background);
+  position: relative;
 
-nav {
-  position: sticky;
-  bottom: 0;
+  nav {
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+  }
 }
 
 /* ============================================================

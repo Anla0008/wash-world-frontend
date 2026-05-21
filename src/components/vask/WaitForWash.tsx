@@ -24,7 +24,7 @@ const WaitForWash = ({
 
     useEffect(() => {
       if (registered) {
-        router.push("/activeWash");
+        router.push("/active-wash");
       }
     }, [registered, router]);
 

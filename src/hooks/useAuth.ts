@@ -72,6 +72,7 @@ export function useAuth() {
     const data = await response.json();
     console.log(data);
     localStorage.setItem("token", data.access_token); // Gemmer token i localStorage ved login
+    localStorage.setItem("user_first_name", data.user_first_name); // Gemmer firstname som kan bruges på dashboard
     return data;
   }, []);
 

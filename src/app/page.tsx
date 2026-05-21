@@ -46,6 +46,7 @@ export default function Home() {
         height={129}
         style={{ width: 238, height: 129 }}
         loading="eager"
+        className="animate-[drive-in_10s_ease-in-out_infinite]"
       />
 
       <form onSubmit={handleLogin}>

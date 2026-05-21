@@ -7,4 +7,5 @@ export type PopupProps = {
   submessage?: string;
   icon?: ReactNode; // ← kan modtage <CheckIcon />, <img />, eller hvad som helst
   onClose?: () => void;
+  children?: React.ReactNode;
 };

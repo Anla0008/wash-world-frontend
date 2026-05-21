@@ -3,7 +3,7 @@
 import Cross from "../icons/navigation/Cross";
 import { PopupProps } from "@/types/popUp";
 
-const Popup = ({ title, message, subtitle, submessage, icon, onClose }: PopupProps) => {
+const Popup = ({ title, message, subtitle, submessage, icon, onClose, children }: PopupProps) => {
   return (
     /* Overlay som dækker hele skærmen */
     <div className="fixed inset-0 z-1 flex items-center justify-center bg-(--background-transparent) backdrop-blur-xs">
@@ -33,6 +33,9 @@ const Popup = ({ title, message, subtitle, submessage, icon, onClose }: PopupPro
 
         {/* Ekstra besked (valgfrit)*/}
         {submessage && <p>{submessage}</p>}
+
+        {/* Viser children hvis de er sendt med — fx knapper */}
+        {children && <div className="mt-4">{children}</div>}
       </div>
     </div>
   );

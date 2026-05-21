@@ -19,3 +19,8 @@ export type AnchorButtonProps = {
   href: string;
   target?: string;
 };
+
+export type DeleteButtonProps = {
+  user_pk: string;
+  onDeleted?: () => void;
+};

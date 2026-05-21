@@ -3,6 +3,7 @@ import "./globals.css";
 import NavBar from "@/components/global/navigation/NavBar";
 import MswInitializer from "@/components/global/MswInitializer";
 import { FavoritesInitializer } from "@/components/global/favorit/FavoritesInitializer";
+import AuthGuard from "@/components/global/navigation/AuthGuard";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -25,12 +26,14 @@ export default function RootLayout({
       </head>
       <body>
         <MswInitializer>
-          <FavoritesInitializer />
-          <div id="app-shell">
-            <div className="mb-20"></div>
-            <main className="flex flex-col mb-20 px-8">{children}</main>
-            <NavBar />
-          </div>
+          <AuthGuard>
+            <FavoritesInitializer />
+            <div id="app-shell">
+              <div className="mb-20"></div>
+              <main className="flex flex-col mb-20 px-8">{children}</main>
+              <NavBar />
+            </div>
+          </AuthGuard>
         </MswInitializer>
       </body>
     </html>

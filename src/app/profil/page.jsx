@@ -1,7 +1,7 @@
 "use client";
 
 import SubscriptionCard from "@/components/global/cards/SubscriptionCard";
-import MyProfilCard from "@/components/profil/MinProfilCard";
+import MyProfileCard from "@/components/profil/MyProfileCard";
 import PointCard from "@/components/global/cards/PointCard";
 import CustomerServiceCard from "@/components/global/cards/CustomerServiceCard";
 import FAQ from "@/components/global/cards/FAQ";
@@ -11,7 +11,7 @@ export default function Profil() {
   return (
     <div>
       <h1 className="extra-bold pb-8">Navn</h1> {/*TODO: Hent navn fra backend */}
-      <MyProfilCard></MyProfilCard>
+      <MyProfileCard></MyProfileCard>
       <h2 className="extra-bold pt-10">Abonnementer</h2>
       <SubscriptionCard></SubscriptionCard>
       <h2 className="extra-bold pt-10">Dine point</h2>

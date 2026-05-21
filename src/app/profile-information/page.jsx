@@ -17,8 +17,8 @@ export default function ProfileInformation() {
       <h1 className="extra-bold pb-8">Profiloplysninger</h1>
 
       <ProfileInformationWrapper></ProfileInformationWrapper>
-      <h2 className="extra-bold pt-8">Opdater til abonnement</h2>{/*TODO: tjek om brugeren har abonnement */}
-      <SubscriptionCard washData={washData}></SubscriptionCard>
+      <h2 className="extra-bold pt-8">Opdater til abonnement</h2> {/*TODO: tjek om brugeren har abonnement */}
+      <SubscriptionCard washData={washData} />
       <div className="flex justify-center mt-18">
         <DeleteUserButton />
       </div>

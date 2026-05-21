@@ -12,6 +12,8 @@ export default function DeleteUserButton({ user_pk, onDeleted }: Props) {
   return (
     <button
       onClick={async () => {
+        // Kalder deleteUser fra useAuth som sender DELETE request til backend
+        // og sender brugeren videre via onDeleted callback
         await deleteUser(user_pk);
         onDeleted?.();
       }}

@@ -2,7 +2,6 @@
 
 import SubscriptionCard from "@/components/global/cards/SubscriptionCard";
 import MyProfileCard from "@/components/profil/MyProfileCard";
-import PointCard from "@/components/global/cards/PointCard";
 import CustomerServiceCard from "@/components/global/cards/CustomerServiceCard";
 import FAQ from "@/components/global/cards/FAQ";
 import DeleteUserButton from "@/components/global/buttons/onClick/DeleteUserButton";
@@ -13,10 +12,12 @@ export default function Profil() {
   const [user_pk, setUserPk] = useState(null);
 
   useEffect(() => {
+    // Decoder JWT token for at hente brugerens user_pk
+    // JWT består af tre base64-dele adskilt af punktum — vi tager midterste del (payload)
     const token = localStorage.getItem("token");
     if (token) {
       const decoded = JSON.parse(atob(token.split(".")[1]));
-      setUserPk(decoded.sub);
+      setUserPk(decoded.sub); // Flask gemmer user_pk i "sub"-feltet via create_access_token
     }
   }, []);
 
@@ -27,7 +28,6 @@ export default function Profil() {
       <h2 className="extra-bold pt-10">Abonnementer</h2>
       <SubscriptionCard></SubscriptionCard>
       <h2 className="extra-bold pt-10">Dine point</h2>
-      <PointCard></PointCard>
       <div className="mt-14 mb-20">
         <CustomerServiceCard></CustomerServiceCard>
       </div>

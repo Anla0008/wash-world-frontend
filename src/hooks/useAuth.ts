@@ -31,6 +31,19 @@ export function useAuth() {
   }, []);
 
   // ===========================================================
+  //               SEND VERIFICATION EMAIL IGEN
+  // ===========================================================
+  const resendVerification = useCallback(async (params: User) => {
+    const response = await fetch(baseUrl + "/resend-verification", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(params),
+    });
+    const data = await response.json();
+    return { ok: response.ok, data };
+  }, []);
+
+  // ===========================================================
   //                          VERIFY
   // ===========================================================
   const verify = useCallback(async (key: string) => {
@@ -226,6 +239,7 @@ export function useAuth() {
   // Herunder returnerer vi ALLE routes, som vi ønsker at kunne bruge i vores komponenter
   return {
     signup,
+    resendVerification,
     verify,
     login,
     forgotPassword,

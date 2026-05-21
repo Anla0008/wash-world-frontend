@@ -4,12 +4,12 @@ import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { User } from "@/types/user";
 import { useRouter } from "next/navigation";
+import { errorMessages } from "@/lib/form/validering";
 import Input from "@/components/global/forms/Input";
 import PrimaryButton from "@/components/global/buttons/onClick/PrimaryButton";
 import WashWorldLogo from "@/components/global/icons/grafik/WashWorldLogo";
 import Image from "next/image";
 import Link from "next/link";
-import { errorMessages } from "@/lib/form/validering";
 
 export default function Home() {
   const [params, setParams] = useState<User>({} as User);

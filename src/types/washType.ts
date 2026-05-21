@@ -66,6 +66,7 @@ export type WashType = {
   name: string;
   sub_title: string;
   description: string;
+  is_popular: boolean;
   price_single: number;
   price_subscription: number;
   duration: number;

@@ -154,7 +154,7 @@ export const distanceFromWashhall = (distanceKm: number): WashRoute => {
 
   // hvis distance er større end 500 m, så returner error route 
   if (distanceKm > 0.5) {
-    return "/errorInDistance";
+    return "/error-in-distance";
 
   } else {
     return "/buyWash"; //TODO; få til at snakke sammen med abonnomentstatus eller ej funktionen resolveRoute
@@ -170,8 +170,8 @@ export const resolveWashRouteFromDistance = (distanceKm: number, hasSub: boolean
   const distanceRoute = distanceFromWashhall(distanceKm);
   
   // hvis distanceRuten er det samme som error route, så returner error route uanset abonnementstatus
-  if (distanceRoute === "/errorInDistance") {
-    return "/errorInDistance";
+  if (distanceRoute === "/error-in-distance") {
+    return "/error-in-distance";
   }
 
   // ellers returner ruten baseret på abonnementstatus

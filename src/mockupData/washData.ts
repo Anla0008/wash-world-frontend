@@ -35,6 +35,7 @@ export const washData = {
       name: "Guld",
       sub_title: "God og effektiv",
       price_single: 59,
+      is_popular: false,
       price_subscription: 139,
       duration: 300, // 5 minutter
       description: "God og hurtig bilvask som fjerner det meste løse snavs efterfulgt af en god tørring.",
@@ -54,6 +55,7 @@ export const washData = {
       sub_title: "Ekstra grundig",
       price_single: 89,
       price_subscription: 169,
+      is_popular: true,
       duration: 480, // 8 minutter
       description: "Særdeles god og grundig bilvask som fjerner alt løst snavs efterfulgt af en god tørring.",
       checkmarks: [
@@ -74,6 +76,7 @@ export const washData = {
       sub_title: "Bedste vask året rundt",
       price_single: 119,
       price_subscription: 199,
+      is_popular: false,
       description: "Luksus bilvask med Brilliant som giver dig en skinnende ren bil med alt du behøver og mere til efterfulgt af ekstra tørring",
       duration: 600, // 10 minutter
       checkmarks: [

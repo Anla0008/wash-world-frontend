@@ -35,17 +35,17 @@ export default function SingleWash() {
           <div className="flex justify-between items-center">
             <div>
               <h2 className="extra-bold">{wash.name}</h2>
-              <p>{wash.description}</p>
+              <p>{wash.sub_title}</p>
             </div>
 
             <div className="flex gap-2 items-baseline extra-bold">
-              <h1>{wash.price}</h1>
+              <h1>{wash.price_single}</h1>
               <span>kr.</span>
             </div>
           </div>
 
           <div className="flex w-full items-center justify-end gap-5">
-            <a className="underline" href="/">
+            <a className="underline" href={`/wash-single-view/${wash.id}`}>
               Læs mere
             </a>
 

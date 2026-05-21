@@ -1,6 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { WashStepResponse } from "@/types/washType";
-import { washHallWaitTime, washHallState, carInWashHall, singleWashData } from "@/mockupData/washData";
+import { washHallWaitTime, washHallState, carInWashHall, washData } from "@/mockupData/washData";
 import { initializeHallState, updateHallState, resolveRoute, resolveStep } from "@/lib/wash/resolvers";
 
 
@@ -37,7 +37,7 @@ export const handlers = [
   // ===========================================================
 
 http.get("/api/wash/single", () => {
-  return HttpResponse.json(singleWashData);
+  return HttpResponse.json(washData);
 }),
 
 // ===========================================================

@@ -2,6 +2,8 @@
 //                MOCKUP REGISTRERING AF BIL I HAL 
 // ==========================================================
 
+import { MdDescription } from "react-icons/md";
+
 export const carInWashHall = {
   registered_after_seconds: 25, // 25 sekunder
 };
@@ -26,26 +28,69 @@ export const washHallWaitTime: { [key: number]: number } = {
 //                 MOCKUP DATA FOR ENKELTVASKE
 // ==========================================================
 
-export const singleWashData = {
+export const washData = {
   types: [
     {
       id: 1,
       name: "Guld",
-      description: "God og effektiv",
-      price: 59,
+      sub_title: "God og effektiv",
+      price_single: 59,
+      price_subscription: 139,
       duration: 300, // 5 minutter
+      description: "God og hurtig bilvask som fjerner det meste løse snavs efterfulgt af en god tørring.",
+      checkmarks: [
+        "Skumforvask",
+        "Aktiv Shampoo",
+        "Hjulvask",
+        "Højtryksvask",
+        "Børstevask",
+        "Voks",
+        "Tørring"
+      ],
+      image: "guld-vask.jpg",
     },{
       id: 2,
       name: "Premium",
-      description: "Ekstra grundig",
-      price: 89,
+      sub_title: "Ekstra grundig",
+      price_single: 89,
+      price_subscription: 169,
       duration: 480, // 8 minutter
+      description: "Særdeles god og grundig bilvask som fjerner alt løst snavs efterfulgt af en god tørring.",
+      checkmarks: [
+        "Skumforvask",
+        "Aktiv Shampoo",
+        "Hjulvask",
+        "Højtryksvask",
+        "Børstevask",
+        "Voks",
+        "Tørring",
+        "Højglans",
+        "Undervognsvask"
+      ],
+      image: "premium-vask.jpg",
     },{
       id: 3,
       name: "Brilliant",
-      description: "Bedste vask året rundt",
-      price: 119,
-      duration: 600 // 10 minutter
+      sub_title: "Bedste vask året rundt",
+      price_single: 119,
+      price_subscription: 199,
+      description: "Luksus bilvask med Brilliant som giver dig en skinnende ren bil med alt du behøver og mere til efterfulgt af ekstra tørring",
+      duration: 600, // 10 minutter
+      checkmarks: [
+        "Skumforvask",
+        "Aktiv Shampoo",
+        "Hjulvask",
+        "Højtryksvask",
+        "Børstevask",
+        "Voks",
+        "Tørring",
+        "Højglans",
+        "Undervognsvask",
+        "Skumvask",
+        "Affedtning",
+        "Sæsonrens"
+      ],
+      image: "brilliant-vask.jpg",
     }
   ]
 };

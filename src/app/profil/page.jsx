@@ -30,7 +30,7 @@ export default function Profil() {
             boxShadow: "inset -10px -10px 20px #121212, inset 20px 20px 30px rgba(255, 255, 255, 0.25)",
           }}
           onClick={() => {
-            localStorage.removeItem("access_token"); // Sletter tokenet fra browseren
+            localStorage.removeItem("token"); // Sletter tokenet fra browseren
             window.location.href = "/"; // Sender brugeren til forsiden
           }}
         >

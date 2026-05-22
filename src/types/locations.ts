@@ -12,3 +12,11 @@ export type Location = {
   location_lat?: number;
   location_lng?: number;
 };
+
+export type WaitStatus = "Kort ventetid" | "Moderat ventetid" | "Lang ventetid";
+
+export type FindCarWashBottomSheetProps = {
+  locations: Location[];
+  selectedLocationPk: string | null;
+  favoriteIds: string[];
+};

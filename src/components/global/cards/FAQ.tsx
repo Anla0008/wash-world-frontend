@@ -54,7 +54,7 @@ const items: FAQItem[] = [
 
 export default function FAQ() {
   // State til hvilken FAQ der er åben
-  const [openIndex, setOpenIndex] = useState<number | null>(0); // første åben som default. Hvis alle skal være lukket til at starte med, skiftes til null i stedet for 0
+  const [openIndex, setOpenIndex] = useState<number | null>(null); // første åben som default. Hvis alle skal være lukket til at starte med, skiftes til null i stedet for 0
 
   return (
     <section className="bg-(--gray-60) p-6 mt-8 mb-8 rounded-md">

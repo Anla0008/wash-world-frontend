@@ -8,6 +8,9 @@ import { ArrowLeft, Clock, MapPin } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Location } from "@/types/locations";
 
+import { resolveWaitStatus, resolveWaitTime } from "@/lib/wash/resolvers";
+import { washHallWaitTime } from "@/mockupData/washData";
+
 import PracticInfoCarwash from "@/components/singleview/PracticInfoCarwash";
 import PracticInfoHeight from "@/components/singleview/PracticInfoHeight";
 import PracticInfoPrewash from "@/components/singleview/PracticInfoPrewash";
@@ -15,6 +18,7 @@ import PracticInfoTime from "@/components/singleview/PracticInfoTime";
 import PracticInfoVacuumCleaner from "@/components/singleview/PracticInfoVacuumCleaner";
 import PracticInfoWashSelf from "@/components/singleview/PracticInfoWashSelf";
 import BusinessGraph from "@/components/singleview/BusinessGraph";
+import { STATUS_CODES } from "node:http";
 
 export default function SingleLocationPage() {
   const { id } = useParams();
@@ -22,6 +26,10 @@ export default function SingleLocationPage() {
 
   const [location, setLocation] = useState<Location | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const waitTimeSeconds = resolveWaitTime(washHallWaitTime);
+  const isBroken = location?.is_broken ?? false;
+  const status = resolveWaitStatus(waitTimeSeconds, isBroken);
 
   useEffect(() => {
     async function loadLocation() {
@@ -95,7 +103,7 @@ export default function SingleLocationPage() {
 
       <section className="mb-20">
         <h2 className="mb-8 text-3xl font-extrabold">Travlhed i {location.location_city}</h2>
-        <BusinessGraph status="travl" /> {/* Hardcoded status for at vise grafen, skal senere være dynamisk baseret på location */}
+        <BusinessGraph status={status} /> {/* Hardcoded status for at vise grafen, skal senere være dynamisk baseret på location */}
       </section>
 
       <section className="mb-20">

@@ -11,6 +11,7 @@ export type Location = {
   location_img: string;
   location_lat?: number;
   location_lng?: number;
+  is_broken?: boolean;
 };
 
 export type WaitStatus = "Kort ventetid" | "Moderat ventetid" | "Lang ventetid";

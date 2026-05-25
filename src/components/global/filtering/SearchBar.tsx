@@ -38,7 +38,7 @@ const SearchBar = () => {
   };
 
   return (
-    <div className="flex gap-2 m-auto items-center border-2 w-fit px-5 py-2 border-foreground">
+    <div className="flex gap-2 items-center border-2 px-5 py-2 border-foreground mx-4">
       <Search />
 
       <input type="text" placeholder="Søg efter vaskehaller..." value={searchTerm} onChange={handleChange} className="bg-transparent outline-none" />

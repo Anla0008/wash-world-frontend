@@ -5,8 +5,12 @@ import VaskehalCard from "@/components/global/cards/CarWashCard";
 const NearestWashCard = () => {
   const { nearestLocation, isLoading } = useNearestWash();
 
-  if (isLoading) return <p>Indlaeser naermeste vaskehal...</p>;
-  if (!nearestLocation) return <p>Ingen lokation fundet i naerheden.</p>;
+  if (isLoading)
+    return <p>Indlæser nærmeste vaskehal...</p>;
+
+  if (!nearestLocation)
+    return <p>Ingen lokation fundet i nærheden.</p>;
+
 
   return (
     <>

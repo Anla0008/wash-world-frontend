@@ -121,3 +121,13 @@ export type SingleViewCardProps = {
     isSubscription: boolean;
     onSelect: () => void;
 };
+
+// ===========================================================
+//                   GEO LOCATION TYPES
+// ==========================================================
+
+export type GeoCoords = {
+  latitude: number;
+  longitude: number;
+  source: "gps" | "fallback";
+};

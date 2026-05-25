@@ -4,11 +4,10 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import ArrowLeft from "@/components/global/icons/navigation/ArrowLeft";
-import WashWorldLoader from "@/components/global/grafik/WashWorldLoader";
 
 import { useWash } from "@/hooks/useWash";
 import { useWashStore } from "@/stores/useWashStore";
-import SingleViewCard from "@/components/vask/SingleView";
+import SingleViewCard from "@/components/wash/SingleView";
 
 export default function WashSingleView() {
   const { useSingleWash } = useWash();
@@ -22,9 +21,7 @@ export default function WashSingleView() {
 
   if (!data) {
     return (
-      <main className="min-h-screen bg-background px-8 py-10 text-foreground">
-        <WashWorldLoader text="Henter vaskedetaljer..." />
-      </main>
+      <p>Henter vaskedetaljer...</p>
     );
   }
 

@@ -5,6 +5,7 @@ import { WashStore } from "@/types/washType";
 
 export const useWashStore = create<WashStore>((set) => ({
 
+
   // start med undefined for at tvinge eksplicit valg af vaskehal
   locationID: "undefined",
   locationName: "undefined",

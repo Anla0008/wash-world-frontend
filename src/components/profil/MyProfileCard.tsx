@@ -11,7 +11,7 @@ const MyProfileCard = () => {
           <NavArrowRight size={30} />
         </Link>
 
-        <Link href={"/vaskehistorik"} className="flex justify-between">
+        <Link href={"/wash-history"} className="flex justify-between">
           <span>Vaskehistorik</span>
           <NavArrowRight size={30} />
         </Link>

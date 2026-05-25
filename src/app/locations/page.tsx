@@ -31,8 +31,16 @@ export default function FindCarWash() {
     loadLocations();
   }, [getLocations, getFavorites]);
 
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+
   return (
-    <main className="-mx-8 relative h-dvh overflow-hidden bg-background text-foreground">
+    <main className="-mx-8 -mt-8 relative h-dvh overflow-hidden bg-background text-foreground">
       <section className="absolute inset-0 z-0 h-full w-full">
         <FindCarWashMap locations={locations} onSelectLocation={(location) => setSelectedLocationPk(location.location_pk)} />
       </section>

@@ -21,8 +21,8 @@ const FilterCard = ({
   const options = ["Højtryksforvask", "Støvsuger", "Vask selv"];
 
   return (
-    <div className="hide-scrollbar flex max-h-[50dvh] min-h-0 w-full flex-col gap-10 overflow-y-auto bg-background p-10" onClick={(e) => e.stopPropagation()}>
-      {" "}
+    // <div className="hide-scrollbar flex max-h-[50dvh] min-h-0 w-full flex-col gap-10 overflow-y-auto bg-background p-10" onClick={(e) => e.stopPropagation()}>
+    <div className="hide-scrollbar fixed inset-x-0 z-50 flex max-h-[50dvh] min-h-0 w-full flex-col gap-10 overflow-y-auto bg-background p-10 shadow-lg" onClick={(e) => e.stopPropagation()}>
       <div
         className="absolute top-5 right-5 cursor-pointer"
         onClick={(e) => {
@@ -47,12 +47,12 @@ const FilterCard = ({
         </div>
       </div>
       <div>
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col">
           <p className="extra-bold">Antal vaskehaller</p>
           <FilterProgressBar numbers={washHallNumbers} initialMinStep={washHallRange.min} initialMaxStep={washHallRange.max} onRangeChange={setWashHallRange} />{" "}
         </div>
 
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col -mt-12">
           <p className="extra-bold">Antal vask selv</p>
           <FilterProgressBar numbers={selfWashNumbers} initialMinStep={selfWashRange.min} initialMaxStep={selfWashRange.max} onRangeChange={setSelfWashRange} />{" "}
         </div>

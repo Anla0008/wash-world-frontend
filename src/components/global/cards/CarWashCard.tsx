@@ -64,7 +64,7 @@ const CarWashCard = ({ city, address, openingHours, image, href, location_pk, wa
             Læs mere
           </Link>
 
-          <div className="ml-auto">
+          <div className="ml-auto text-white">
             <PrimaryButtonAnchorTag href={googleMapsUrl} target="_blank">
               Vis vej
             </PrimaryButtonAnchorTag>

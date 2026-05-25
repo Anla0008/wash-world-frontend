@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Location } from "@/types/locations";
 import { useLocationFilterStore } from "@/stores/useLocationFilterStore";
-// import { SortDirection } from "@/types/filtering";
 
 import CarWashCard from "@/components/global/cards/CarWashCard";
 import SearchBar from "../global/filtering/SearchBar";
@@ -11,8 +10,8 @@ import FilterWrapper from "../global/filtering/FilterWrapper";
 import Sorting from "../global/filtering/Sorting";
 import type { FindCarWashBottomSheetProps, WaitStatus } from "@/types/locations";
 import type { Range, SortDirection } from "@/types/filtering";
-
-const waitStatuses: WaitStatus[] = ["Kort ventetid", "Moderat ventetid", "Lang ventetid"];
+import { resolveWaitTime, resolveWaitStatus } from "@/lib/wash/resolvers";
+import { washHallWaitTime } from "@/mockupData/washData";
 
 const waitStatusOrder: Record<WaitStatus, number> = {
   "Kort ventetid": 1,
@@ -54,12 +53,34 @@ function getSnapHeight(currentHeight: number) {
   return MAX_HEIGHT;
 }
 
+function getDistanceKm(lat1: number, lng1: number, lat2: number, lng2: number) {
+  const R = 6371; // Jordens radius i km
+  const dLat = ((lat2 - lat1) * Math.PI) / 180; // Konverter latituder fra grader til radianer
+  const dLng = ((lng2 - lng1) * Math.PI) / 180; // Konverter longituder fra grader til radianer
+  const a = Math.sin(dLat / 2) ** 2 * Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLng / 2) ** 2; // Haversine-formel: beregner luftlinjsafstand i km mellem de to koordinater
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); // Returner afstand i km
+}
+
 export default function FindCarWashBottomSheet({ locations, selectedLocationPk, favoriteIds }: FindCarWashBottomSheetProps) {
   const [height, setHeight] = useState(MID_HEIGHT);
   const [isDragging, setIsDragging] = useState(false);
 
   // State til sortering
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc"); // asc betyder laveste først
+  const [sortBy, setSortBy] = useState<"distance" | "waitTime">("distance"); // sortering efter distance eller ventetid
+
+  const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
+
+  useEffect(() => {
+    if (!navigator.geolocation) return;
+
+    navigator.geolocation.getCurrentPosition((position) => {
+      setUserCoords({
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      });
+    });
+  }, []);
 
   // Gemmer startpositionen, når brugeren begynder at trække.
   const startY = useRef(0);
@@ -75,6 +96,7 @@ export default function FindCarWashBottomSheet({ locations, selectedLocationPk, 
   const washHallRange = useLocationFilterStore((state) => state.washHallRange);
   const selfWashRange = useLocationFilterStore((state) => state.selfWashRange);
   const selectedFacilities = useLocationFilterStore((state) => state.selectedFacilities);
+  const resetFilters = useLocationFilterStore((state) => state.resetFilters);
 
   // Finder de tal, der faktisk findes i locations, så filteret matcher data.
   const washHallNumbers = getUniqueNumbers(locations.map((location) => location.car_wash_hall_number));
@@ -86,14 +108,20 @@ export default function FindCarWashBottomSheet({ locations, selectedLocationPk, 
   const minSelfWashNumber = selfWashNumbers.at(0) ?? 0;
   const maxSelfWashNumber = selfWashNumbers.at(-1) ?? 0;
 
-  // Laver én random ventestatus pr. location_pk.
-  // Det er vigtigt, at status bliver lavet her i bottomsheet, fordi listen skal sorteres efter den samme status, som cardet viser.
+  // Tjekker om der er nogen aktive filtre, så vi ved om nulstil knappen skal vises.
+  const hasFilters = selectedFacilities.length > 0 || washHallRange.min !== 1 || washHallRange.max !== maxWashHallNumber || selfWashRange.min !== minSelfWashNumber || selfWashRange.max !== maxSelfWashNumber || searchTerm.trim() !== "";
+
+  // Erstat den eksisterende waitStatusByLocationPk useMemo med:
   const waitStatusByLocationPk = useMemo(() => {
     return locations.reduce<Record<string, WaitStatus>>((acc, location) => {
-      const randomIndex = Math.floor(Math.random() * waitStatuses.length);
+      const waitTimeSeconds = resolveWaitTime(washHallWaitTime);
+      const isBroken = location.is_broken ?? false;
+      const graphStatus = resolveWaitStatus(waitTimeSeconds, isBroken);
 
-      acc[location.location_pk] = waitStatuses[randomIndex];
+      // Konverter fra graf-status til WaitStatus
+      const waitStatus: WaitStatus = graphStatus === "travl" ? "Lang ventetid" : graphStatus === "moderat" ? "Moderat ventetid" : "Kort ventetid";
 
+      acc[location.location_pk] = waitStatus;
       return acc;
     }, {});
   }, [locations]);
@@ -130,17 +158,15 @@ export default function FindCarWashBottomSheet({ locations, selectedLocationPk, 
   });
 
   const sortedLocations = [...filteredLocations].sort((a, b) => {
-    const waitStatusA = getWaitStatusForLocation(a);
-    const waitStatusB = getWaitStatusForLocation(b);
-
-    const waitValueA = waitStatusOrder[waitStatusA];
-    const waitValueB = waitStatusOrder[waitStatusB];
-
-    if (sortDirection === "asc") {
-      return waitValueA - waitValueB; // Kort ventetid først
+    if (sortBy === "distance" && userCoords && a.location_lat && a.location_lng && b.location_lat && b.location_lng) {
+      const distA = getDistanceKm(userCoords.lat, userCoords.lng, a.location_lat, a.location_lng);
+      const distB = getDistanceKm(userCoords.lat, userCoords.lng, b.location_lat, b.location_lng);
+      return distA - distB;
     }
 
-    return waitValueB - waitValueA; // Lang ventetid først
+    const waitValueA = waitStatusOrder[getWaitStatusForLocation(a)];
+    const waitValueB = waitStatusOrder[getWaitStatusForLocation(b)];
+    return sortDirection === "asc" ? waitValueA - waitValueB : waitValueB - waitValueA;
   });
 
   useEffect(() => {
@@ -206,14 +232,36 @@ export default function FindCarWashBottomSheet({ locations, selectedLocationPk, 
       <div className="mb-4 flex w-full shrink-0 flex-col gap-3">
         <SearchBar />
 
-        <FilterWrapper maxWashHallNumber={maxWashHallNumber} washHallNumbers={washHallNumbers} minSelfWashNumber={minSelfWashNumber} maxSelfWashNumber={maxSelfWashNumber} selfWashNumbers={selfWashNumbers} />
+        <div className="flex items-center gap-6 mt-6 mx-4">
+          <Sorting
+            label="Ventetid"
+            direction={sortDirection}
+            defaultDirection="desc"
+            onDirectionChange={(dir) => {
+              setSortDirection(dir);
+              setSortBy("waitTime"); // aktivér ventetid-sortering
+            }}
+          />
+
+          <FilterWrapper maxWashHallNumber={maxWashHallNumber} washHallNumbers={washHallNumbers} minSelfWashNumber={minSelfWashNumber} maxSelfWashNumber={maxSelfWashNumber} selfWashNumbers={selfWashNumbers} />
+
+          {/* Nulstil knap – vises kun når brugeren har sorteret efter ventetid */}
+          {(sortBy === "waitTime" || hasFilters) && (
+            <button
+              type="button"
+              onClick={() => {
+                setSortBy("distance");
+                resetFilters(maxWashHallNumber, minSelfWashNumber, maxSelfWashNumber);
+              }}
+              className="ml-auto text-sm text-(--gray-10) underline cursor-pointer"
+            >
+              Nulstil
+            </button>
+          )}
+        </div>
       </div>
 
-      <div className="mb-4 shrink-0">
-        <Sorting label="Ventetid" direction={sortDirection} defaultDirection="asc" onDirectionChange={setSortDirection} />
-      </div>
-
-      <div className="hide-scrollbar flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pb-24">
+      <div className="hide-scrollbar flex min-h-0 flex-1 flex-col gap-4 pb-24">
         {sortedLocations.length > 0 ? (
           sortedLocations.map((location) => {
             const isSelected = selectedLocationPk === location.location_pk;

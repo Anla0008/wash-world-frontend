@@ -11,7 +11,7 @@ const Dashboard = () => {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1>Hej {firstName}</h1>
+      <h1 className="extra-bold">Hej {firstName}</h1>
 
       <NearestWashCard />
 

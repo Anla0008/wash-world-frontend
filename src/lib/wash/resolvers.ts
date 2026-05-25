@@ -6,6 +6,7 @@ import { WashRoute, WashStep } from "@/types/washType";
 import { WashHallWaitTimeResponse } from "@/types/washType";
 import { washHallState } from "@/mockupData/washData";
 import { useWashStore } from "@/stores/useWashStore";
+import { useGeoLocation } from "@/hooks/useGeoLocation";
 
 // resolvers.ts bruges til at simulerer logikken i vores API,
 // så vi kan teste forskellige scenarier
@@ -17,101 +18,105 @@ import { useWashStore } from "@/stores/useWashStore";
 // ===========================================================
 
 // kilde: https://stackoverflow.com/questions/18883601/function-to-calculate-distance-between-two-coordinates
-function getDistanceKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
-  // latitude: nord-syd position
-  // longitude: øst-vest position
+// distance helper
+function getDistanceKm(lat1: number, lng1: number, lat2: number, lng2: number,): number {
 
-  // Jordens radius i km
+  // jordens radius i kilometer
   const R = 6371;
 
-  // Konverter latituder fra grader til radianer
+  // omkonverter grader til radianer
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
-
-  // Konverter longituder fra grader til radianer
   const dLng = ((lng2 - lng1) * Math.PI) / 180;
 
-  // Haversine-formel: beregner luftlinjsafstand i km mellem de to koordinater
-  const a = Math.sin(dLat / 2) ** 2 + Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLng / 2) ** 2;
+  // haversine formel - beregn afstand baseret på forskel i breddegrad og længdegrad
+  const a =
+      Math.sin(dLat / 2) ** 2 + Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLng / 2) ** 2;
 
-  // Returner afstand i km
+  // beregn endelig afstand i kilometer
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
 export const useNearestWash = () => {
-  // getLocations på lokationer i vores database
   const { getLocations } = useAuth();
+  const { coords, isLoading: geoLoading } = useGeoLocation();
 
-  // Location --> types/wash.ts
   const [nearestLocation, setNearestLocation] = useState<Location | null>(null);
 
   const [nearestDistanceKm, setNearestDistanceKm] = useState<number | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
 
-  const setUserLocationId = useWashStore((state) => state.setLocationID);
+  const setUserLocationId = useWashStore((state) => state.setLocationID,);
 
-  const setUserLocationName = useWashStore((state) => state.setLocationName);
+  const setUserLocationName = useWashStore((state) => state.setLocationName,);
 
-  // hvis der ikke er geolocation, så sæt loading til false
   useEffect(() => {
-    if (!navigator.geolocation) {
+    if (geoLoading || !coords) return;
+
+    const run = async () => {
+      
+    const locations: Location[] = await getLocations();
+
+      const valid = locations.filter(
+        (loc) =>
+          loc.location_lat != null &&
+          loc.location_lng != null,
+      );
+
+      if (!valid.length) {
+        setIsLoading(false);
+        return;
+      }
+
+      const nearest = valid.reduce<{
+        location: Location;
+        distance: number;
+      } | null>((closest, loc) => {
+        const distance = getDistanceKm(
+          coords.latitude,
+          coords.longitude,
+          loc.location_lat!,
+          loc.location_lng!,
+        );
+
+        if (!closest || distance < closest.distance) {
+          return {
+            location: loc,
+            distance,
+          };
+        }
+
+        return closest;
+      }, null);
+
+      if (!nearest) {
+        setIsLoading(false);
+        return;
+      }
+
+      setNearestLocation(nearest.location);
+      setNearestDistanceKm(nearest.distance);
+
+      if (nearest.location.location_pk) {
+        setUserLocationId(nearest.location.location_pk);
+        setUserLocationName(
+          nearest.location.location_name,
+        );
+      }
+
       setIsLoading(false);
-      return;
-    }
+    };
 
-    // Hent brugerens aktuelle position
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        // extract latitude og longitude fra position
-        const { latitude, longitude } = position.coords;
+    run();
+  }, [coords, geoLoading, getLocations]);
 
-        // Hent alle lokationer fra Location[] i vores database via getLocations funktionen i useAuth hooket
-        const locations: Location[] = await getLocations();
-
-        const nearest = locations
-
-          // filtrer lokationer i databasen uden gyldige koordinater fra beregningen
-          .filter((loc) => loc.location_lat !== undefined && loc.location_lng !== undefined)
-
-          // reducer listen af lokationer til den nærmeste baseret på afstand til brugerens koordinater
-          .reduce<Location | null>((closest, loc) => {
-            const dist = getDistanceKm(latitude, longitude, loc.location_lat!, loc.location_lng!);
-
-            // hvis der ikke er en nærmeste lokation endnu, så sæt den aktuelle lokation som nærmeste
-            if (!closest) return loc;
-
-            // sammenlign afstanden til den aktuelle lokation med afstanden til den nærmeste lokation, og returner den nærmeste
-            const closestDist = getDistanceKm(latitude, longitude, closest.location_lat!, closest.location_lng!);
-
-            // hvis den aktuelle lokation er tættere på end den nærmeste, så returner den aktuelle lokation, ellers returner den nærmeste
-            return dist < closestDist ? loc : closest;
-          }, null);
-
-        setNearestLocation(nearest);
-
-        // hvis der er en nærmeste lokation, så sæt den i stores/useWashStore.ts (zustand/localStorage)
-        if (nearest?.location_pk) {
-          setUserLocationId(nearest.location_pk); // sæt id (bruges i API-kald)
-          setUserLocationName(nearest.location_name); // sæt navn (bruges i reciept)
-        }
-        // hvis den nærmeste lokation har gyldige koordinater...
-        if (nearest?.location_lat !== undefined && nearest?.location_lng !== undefined) {
-          // så beregn distancen i km mellem brugerens koordinater og den nærmeste lokation
-          const distance = getDistanceKm(latitude, longitude, nearest.location_lat, nearest.location_lng);
-
-          setNearestDistanceKm(distance);
-        }
-
-        setIsLoading(false);
-      },
-
-      () => {
-        setIsLoading(false);
-      },
-    );
-  }, [getLocations]);
-
-  return { nearestLocation, nearestDistanceKm, isLoading };
+  return {
+    nearestLocation,
+    nearestDistanceKm,
+    isLoading: isLoading || geoLoading,
+  };
 };
 
 // ===========================================================

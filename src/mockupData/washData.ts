@@ -1,3 +1,4 @@
+import { GeoCoords } from "@/types/washType";
 // ===========================================================
 //                MOCKUP REGISTRERING AF BIL I HAL 
 // ==========================================================
@@ -110,3 +111,13 @@ export const washHallState = new Map<
     registeredAfterSeconds: number;
   }
 >();
+
+// ===========================================================
+//         DEFAULT FALLBACK IN CASE OF GPS FAILURE
+// ===========================================================
+
+export const DEFAULT_COORDS: GeoCoords = {
+  latitude: 55.6761, // Copenhagen fallback
+  longitude: 12.5683,
+  source: "fallback",
+};

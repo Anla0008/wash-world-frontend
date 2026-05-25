@@ -34,6 +34,29 @@ const postSubscriptionStatus = useCallback(async (user: User): Promise<WashRoute
   }, []);
 
   // ===========================================================
+  //              GET BRUGERS ABONNOMENT STATUS
+  // ===========================================================
+
+const hasSub = useCallback(async (): Promise<boolean> => {
+  const response = await fetch(baseUrl + "/subscription/status", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-store",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+
+  if (!response.ok) {
+    return false;
+  }
+
+  const data = await response.json();
+
+  return Boolean(data.has_sub);
+}, []);
+
+  // ===========================================================
   //                GET ENKELTVASK  (SIMULERING)
   // ===========================================================
 
@@ -60,7 +83,7 @@ const postSubscriptionStatus = useCallback(async (user: User): Promise<WashRoute
   // ===========================================================
   //               POST BRUGERS VASKEPROCES
   // ===========================================================
-  const postAvailableWashHall = useCallback(async ({ wash, startedAt, endedAt, availibleWashHall, locationID }: postWash) => {
+  const postAvailableWashHall = useCallback(async ({ wash, startedAt, endedAt, availibleWashHall, locationID }: postWash)  => {
     console.log("POST DATA:", {
       wash,
       startedAt,
@@ -68,6 +91,8 @@ const postSubscriptionStatus = useCallback(async (user: User): Promise<WashRoute
       availibleWashHall,
       locationID,
     });
+
+    const userHasSub = await hasSub();
 
     const response = await fetch(baseUrl + "/reciept", {
       method: "POST",
@@ -84,7 +109,7 @@ const postSubscriptionStatus = useCallback(async (user: User): Promise<WashRoute
 
         car_wash_hall_fk: availibleWashHall,
 
-        car_wash_price: wash.price_single || wash.price_subscription,
+        car_wash_price: userHasSub ? wash.price_subscription : wash.price_single,
 
         car_wash_type: wash.name,
 
@@ -255,6 +280,7 @@ const postSubscriptionStatus = useCallback(async (user: User): Promise<WashRoute
 
   return {
     postSubscriptionStatus,
+    hasSub,
     postAvailableWashHall,
     useSingleWash,
     useWashHallWaitTime,

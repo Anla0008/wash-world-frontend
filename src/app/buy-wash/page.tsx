@@ -1,6 +1,6 @@
 import Swipe from "@/components/global/buttons/onClick/Swipe";
 import ProgressBar from "@/components/global/grafik/ProgressBar";
-import SingleWash from "@/components/vask/SingleWash";
+import SingleWash from "@/components/wash/SingleWash";
 
 const BuyWash = () => {
   return (

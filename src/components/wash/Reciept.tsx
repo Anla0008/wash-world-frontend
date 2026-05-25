@@ -5,12 +5,13 @@ import { useWash } from "@/hooks/useWash";
 import { useWashStore } from "@/stores/useWashStore";
 import { useRouter } from "next/navigation";
 import ProgressBar from "../global/grafik/ProgressBar";
+import { useEffect, useState } from "react";
 
 const Reciept = () => {
 
   const router = useRouter();
 
-  const { postAvailableWashHall } = useWash();
+  const { postAvailableWashHall, hasSub } = useWash();
 
 const {
   selectedWash,
@@ -22,6 +23,8 @@ const {
   clearWash,
 } = useWashStore();
 
+
+
   // ===========================================================
   //                   AFSLUT VASK
   // ===========================================================
@@ -30,7 +33,7 @@ const {
 
     if (!selectedWash) return;
 
-   await postAvailableWashHall({
+    await postAvailableWashHall({
       wash: selectedWash,
       startedAt,
       endedAt,
@@ -38,10 +41,12 @@ const {
       locationID,
     });
 
-    clearWash();
+    setTimeout(() => {
+      clearWash();
+    }, 1000);
 
     router.push("/dashboard");
-  };
+    };
 
   // ===========================================================
   //                  DATO & TID
@@ -57,6 +62,21 @@ const {
           startedAt + selectedWash.duration * 1000
         )
       : null;
+
+// ===========================================================
+//                  ABONNOMENT STATUS
+// ===========================================================   
+
+const [userHasSub, setUserHasSub] = useState(false);
+
+useEffect(() => {
+  const checkSub = async () => {
+    const result = await hasSub();
+    setUserHasSub(result);
+  };
+
+  checkSub();
+}, [hasSub]);
 
   return (
     <div className="flex flex-col gap-10">
@@ -130,9 +150,15 @@ const {
             Pris:
           </p>
 
-          <p>
-            {selectedWash?.price} kr.
-          </p>
+            {userHasSub ? (
+              <p>
+                {selectedWash?.price_subscription} kr. / måned
+              </p>
+            ) : (
+              <p>
+                {selectedWash?.price_single} kr.
+              </p>
+            )}
         </div>
 
         <div className="flex gap-2">

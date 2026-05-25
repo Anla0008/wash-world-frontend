@@ -7,7 +7,7 @@ import { useState } from "react";
 
 import { useWash } from "@/hooks/useWash";
 import { useWashStore } from "@/stores/useWashStore";
-import SingleViewCard from "@/components/vask/SingleView";
+import SingleViewCard from "@/components/wash/SingleView";
 import ArrowLeft from "@/components/global/icons/navigation/ArrowLeft";
 import Popup from "@/components/global/cards/PopUp";
 

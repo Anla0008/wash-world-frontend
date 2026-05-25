@@ -31,6 +31,19 @@ export function useAuth() {
   }, []);
 
   // ===========================================================
+  //           SIGNUP - tjek email inden oprettelse
+  // ===========================================================
+  const checkEmail = useCallback(async (email: string) => {
+    const response = await fetch(baseUrl + "/check-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_email: email }),
+    });
+    const data = await response.json();
+    return { ok: response.ok, data };
+  }, []);
+
+  // ===========================================================
   //               SEND VERIFICATION EMAIL IGEN
   // ===========================================================
   const resendVerification = useCallback(async (params: User) => {
@@ -120,6 +133,53 @@ export function useAuth() {
     const data = await response.json();
     return { ok: response.ok, data };
   }, []);
+
+  // ===========================================================
+  //                  GET PROFILE INFORMATION
+  // ===========================================================
+  const getProfileInfo = useCallback(async () => {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(baseUrl + "/profile-information", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+    if (!response.ok) return null;
+    return data.user;
+  }, []);
+
+  // ===========================================================
+  //                 PATCH PROFILE INFORMATION
+  // ===========================================================
+  const updateProfileInfo = useCallback(
+    async (params: {
+      user_first_name: string;
+      user_last_name: string;
+      user_email: string;
+    }) => {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(baseUrl + "/profile-information", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(params),
+      });
+
+      const data = await response.json();
+      console.log("Status:", response.status);
+      console.log("Body:", data);
+      return data;
+    },
+    [],
+  );
 
   // ===========================================================
   //                          LOCATIONS
@@ -239,11 +299,14 @@ export function useAuth() {
   // Herunder returnerer vi ALLE routes, som vi ønsker at kunne bruge i vores komponenter
   return {
     signup,
+    checkEmail,
     resendVerification,
     verify,
     login,
     forgotPassword,
     resetPassword,
+    getProfileInfo,
+    updateProfileInfo,
     validateResetKey,
     getLocations,
     getSingleLocation,

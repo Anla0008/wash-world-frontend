@@ -122,7 +122,7 @@ body {
   width: 100%;
   max-width: 430px;
   margin: 0 auto;
-  min-height: 100dvh;
+  height: 100dvh; /* skift min-height → height */
   display: flex;
   flex-direction: column;
   background: var(--background);
@@ -130,9 +130,10 @@ body {
   overflow-x: hidden;
 
   nav {
+    flex-shrink: 0; /* nav må aldrig krympe */
     position: sticky;
     bottom: 0;
-    z-index: 10;
+    z-index: 100;
   }
 }
 

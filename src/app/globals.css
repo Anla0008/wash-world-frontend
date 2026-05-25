@@ -134,6 +134,9 @@ body {
     position: sticky;
     bottom: 0;
     z-index: 100;
+    box-shadow:
+      inset -5px -5px 15px #06c167,
+      inset 30px 30px 10px var(--foreground);
   }
 }
 

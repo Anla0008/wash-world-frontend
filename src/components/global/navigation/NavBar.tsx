@@ -48,12 +48,7 @@ const NavBar = () => {
   ];
 
   return (
-    <nav
-      className="w-full px-10 bg-foreground/80 backdrop-blur-3xl py-2 mt-auto"
-      style={{
-        boxShadow: "inset -5px -5px 15px #06C167, inset 30px 30px 10px #f1f1f1",
-      }}
-    >
+    <nav className="w-full px-10 bg-foreground/80 backdrop-blur-3xl py-2 mt-auto">
       <ul className="flex justify-between items-center relative">
         <li className="flex flex-col items-center justify-center">
           <a href={li[0].link}>{li[0].icon}</a>

@@ -4,7 +4,7 @@ const CustomerServiceCard = () => {
   return (
     <div className="bg-(--gray-10) text-(--foreground-reverse) p-4 rounded-md flex flex-col gap-2">
       <h3 className="extra-bold">Kundeservice</h3>
-      <a href="/skaderapportering" className="flex justify-between">
+      <a href="/damage-report" className="flex justify-between">
         <span>Skaderapportering</span>
         <NavArrowRight size={30} />
       </a>

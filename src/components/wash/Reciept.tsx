@@ -6,8 +6,11 @@ import { useWashStore } from "@/stores/useWashStore";
 import { useRouter } from "next/navigation";
 import ProgressBar from "../global/grafik/ProgressBar";
 import { useEffect, useState } from "react";
+import CheckMarkAnimation from "../global/grafik/CheckMarkAnimation";
 
 const Reciept = () => {
+  const [checkAnimation, setCheckAnimation] = useState(false);
+  const [nextRoute, setNextRoute] = useState<"/dashboard" | "/feedback">("/dashboard");
 
   const router = useRouter();
 
@@ -23,16 +26,35 @@ const {
   clearWash,
 } = useWashStore();
 
+// ===========================================================
+//                  ABONNOMENT STATUS
+// ===========================================================   
 
+const [userHasSub, setUserHasSub] = useState(false);
+
+useEffect(() => {
+  const checkSub = async () => {const result = await hasSub(); 
+    setUserHasSub(result);
+  };
+
+  checkSub();
+}, [hasSub]);
 
   // ===========================================================
-  //                   AFSLUT VASK
+  //                   AFSLUT VASK 
   // ===========================================================
+
+  // animation som trigger push route til dashboard
+  const handleCheckAnimationComplete = () => {
+    setCheckAnimation(false);
+    clearWash();
+    router.push(nextRoute);
+  };
 
   const handleClick = async () => {
-
     if (!selectedWash) return;
 
+    // post til backend
     await postAvailableWashHall({
       wash: selectedWash,
       startedAt,
@@ -41,12 +63,32 @@ const {
       locationID,
     });
 
-    setTimeout(() => {
-      clearWash();
-    }, 1000);
+    // trigger animation
+    setNextRoute("/dashboard");
+    setCheckAnimation(true);
+  };
 
-    router.push("/dashboard");
-    };
+  // ===========================================================
+  //                   AFSLUT VASK MED FEEDBACK
+  // ===========================================================
+
+  // animation som trigger push route til feedback
+   const handleClickFeedback = async () => {
+    if (!selectedWash) return;
+
+    // post til backend
+    await postAvailableWashHall({
+      wash: selectedWash,
+      startedAt,
+      endedAt,
+      availibleWashHall,
+      locationID,
+    });
+
+    // trigger animation
+    setNextRoute("/feedback");
+    setCheckAnimation(true);
+  };
 
   // ===========================================================
   //                  DATO & TID
@@ -63,22 +105,8 @@ const {
         )
       : null;
 
-// ===========================================================
-//                  ABONNOMENT STATUS
-// ===========================================================   
-
-const [userHasSub, setUserHasSub] = useState(false);
-
-useEffect(() => {
-  const checkSub = async () => {
-    const result = await hasSub();
-    setUserHasSub(result);
-  };
-
-  checkSub();
-}, [hasSub]);
-
   return (
+    <>
     <div className="flex flex-col gap-10">
       <ProgressBar
         activeIndex={3}
@@ -176,8 +204,22 @@ useEffect(() => {
       <PrimaryButton onClick={handleClick}>
         Afslut
       </PrimaryButton>
+      <button className="underline" onClick={handleClickFeedback}>Send feedback</button>
 
     </div>
+        {checkAnimation && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md px-6">
+        <div className="rounded-2xl bg-(--gray-80)/90 px-8 py-10 shadow-2xl">
+          <CheckMarkAnimation
+            title="Vask valgt!"
+            subtitle="Din vask vil faktureres når den er afsluttet"
+            durationMs={1600}
+            onComplete={handleCheckAnimationComplete}
+          />
+        </div>
+      </div>
+    )}
+    </>
   );
 };
 

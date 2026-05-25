@@ -1,4 +1,4 @@
-// import ProfileInfoCard from "../components/profil/ProfileInfoCard";
+import ProfileInfoCard from "./ProfileInfoCard";
 import PrimaryButton from "../global/buttons/onClick/PrimaryButton";
 
 const ProfileInfoWrapper = () => {

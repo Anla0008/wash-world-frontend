@@ -19,8 +19,7 @@ import { useGeoLocation } from "@/hooks/useGeoLocation";
 
 // kilde: https://stackoverflow.com/questions/18883601/function-to-calculate-distance-between-two-coordinates
 
-function getDistanceKm(lat1: number, lng1: number, lat2: number, lng2: number,): number {
-
+function getDistanceKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
   // jordens radius i kilometer
   const R = 6371;
 
@@ -29,13 +28,7 @@ function getDistanceKm(lat1: number, lng1: number, lat2: number, lng2: number,):
   const dLng = ((lng2 - lng1) * Math.PI) / 180;
 
   // haversine formel - beregn afstand baseret på forskel i breddegrad og længdegrad
-  const haversineformel =
-
-      Math.sin(dLat / 2) ** 2 + Math.cos((lat1 * Math.PI) / 180) *
-
-      Math.cos((lat2 * Math.PI) / 180) *
-
-      Math.sin(dLng / 2) ** 2;
+  const haversineformel = Math.sin(dLat / 2) ** 2 + Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLng / 2) ** 2;
 
   // beregn endelig afstand i kilometer
   return R * 2 * Math.atan2(Math.sqrt(haversineformel), Math.sqrt(1 - haversineformel));
@@ -61,10 +54,10 @@ export const useNearestWash = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   // set brugerens lokation i global state, så den kan bruges i hele appen med ID
-  const setUserLocationId = useWashStore((state) => state.setLocationID,);
+  const setUserLocationId = useWashStore((state) => state.setLocationID);
 
   // set brugerens lokationsnavn i global state, så den kan bruges i hele appen med navn
-  const setUserLocationName = useWashStore((state) => state.setLocationName,);
+  const setUserLocationName = useWashStore((state) => state.setLocationName);
 
   useEffect(() => {
     // hvis geolokation stadig loader eller ikke er tilgængelig, så gør ikke noget
@@ -72,24 +65,23 @@ export const useNearestWash = () => {
 
     // asynkron funktion til at hente lokationer og beregne nærmeste vaskehal
     const findNearestLocation = async () => {
-    
-    // Locations er defineret i mocks/handlers.ts, og getLocations er en funktion i useAuth, der henter disse lokationer
-    const locations: Location[] = await getLocations();
+      // Locations er defineret i mocks/handlers.ts, og getLocations er en funktion i useAuth, der henter disse lokationer
+      const locations: Location[] = await getLocations();
 
-    // valide lokationer er dem, der har både latitude og longitude defineret, så man kan beregne afstanden til dem
-    const valid = locations.filter((loc) => loc.location_lat != null && loc.location_lng != null,);
+      // valide lokationer er dem, der har både latitude og longitude defineret, så man kan beregne afstanden til dem
+      const valid = locations.filter((loc) => loc.location_lat != null && loc.location_lng != null);
 
       // hvis der ikke er nogen valide lokationer, så stop loading og returner tidligt
-      if (!valid.length) {setIsLoading(false);
+      if (!valid.length) {
+        setIsLoading(false);
         return;
       }
-       
-      ////////////////////////// find nærmeste vaskehal ///////////////////////////
-      const nearest = valid.reduce<{location: Location; distance: number;} | null>((closest, loc) => {
 
+      ////////////////////////// find nærmeste vaskehal ///////////////////////////
+      const nearest = valid.reduce<{ location: Location; distance: number } | null>((closest, loc) => {
         // beregn afstanden i kilometer mellem brugerens koordinater og lokationens koordinater
         // getDistanceKm er en helperfunktion defineret øverst i komponentet (haversine-formlen)
-        const distance = getDistanceKm(coords.latitude, coords.longitude, loc.location_lat!, loc.location_lng!,);
+        const distance = getDistanceKm(coords.latitude, coords.longitude, loc.location_lat!, loc.location_lng!);
 
         // opdater nærmeste vaskehal, hvis denne lokation er tættere på end den tidligere nærmeste
         if (!closest || distance < closest.distance) {
@@ -115,10 +107,11 @@ export const useNearestWash = () => {
       setNearestDistanceKm(nearest.distance);
 
       // hvis nærmeste vaskehal har en location_pk, så sæt denne i global state, så den kan bruges i hele appen
-      if (nearest.location.location_pk) {setUserLocationId(nearest.location.location_pk);
+      if (nearest.location.location_pk) {
+        setUserLocationId(nearest.location.location_pk);
 
         // set lokationsnavn i global state, så det kan bruges i hele appen ved navn
-        setUserLocationName(nearest.location.location_name,);
+        setUserLocationName(nearest.location.location_name);
       }
 
       // stop loading når alt er færdigt
@@ -265,3 +258,15 @@ export const resolveWaitTime = (waitTime: WashHallWaitTimeResponse): number => {
   // Brug korteste ventetid blandt hallerne som den næste forventede indkørselstid.
   return Math.min(...values);
 };
+
+// ===========================================================
+//   KONVERTER VENTETID TIL STATUS (deles mellem bottomsheet og travhedsgraf)
+// ===========================================================
+
+export function resolveWaitStatus(waitTimeSeconds: number, isBroken: boolean): "travl" | "moderat" | "rolig" {
+  if (isBroken) return "travl"; // hvis hallen er i stykker, vis altid travl
+
+  if (waitTimeSeconds > 300) return "travl"; // over 5 min
+  if (waitTimeSeconds > 120) return "moderat"; // 2-5 min
+  return "rolig"; // under 2 min
+}

@@ -69,7 +69,7 @@ const postSubscriptionStatus = useCallback(async (user: User): Promise<WashRoute
       locationID,
     });
 
-    const response = await fetch(baseUrl + "/car-wash-history", {
+    const response = await fetch(baseUrl + "/reciept", {
       method: "POST",
 
       headers: {
@@ -244,7 +244,7 @@ const postSubscriptionStatus = useCallback(async (user: User): Promise<WashRoute
     const [history, setHistory] = useState<any[]>([]);
 
     useEffect(() => {
-      fetch(`http://127.0.0.1:80/car-wash-history/${license_fk}`)
+      fetch(`http://127.0.0.1:80/reciept/${license_fk}`)
         .then((res) => res.json())
         .then((data) => setHistory(data.car_wash_history))
         .catch((err) => console.error("Fetch fejl:", err));

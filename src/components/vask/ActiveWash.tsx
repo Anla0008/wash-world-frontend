@@ -31,7 +31,7 @@ const ActiveWash = () => {
 
       <h1 className="extra-bold">Følg din vask</h1>
 
-      <Timer totalTime={selectedWash?.duration ?? 0} onComplete={() => router.push("/car-wash-history")} />
+      <Timer totalTime={selectedWash?.duration ?? 0} onComplete={() => router.push("/reciept")} />
     </div>
   );
 };

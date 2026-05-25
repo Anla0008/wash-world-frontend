@@ -18,7 +18,7 @@ export default function WashHistory() {
       <h1 className="extra-bold">Vaskehistorik</h1>
       <div className="flex flex-col gap-3">
         {history.map((wash: any) => (
-          <HistorikCard key={wash.car_wash_history_pk} location={wash.location_name} date={new Date(wash.date_of_wash).toLocaleDateString("da-DK")} description={wash.car_wash_type} price={wash.car_wash_price} points={wash.car_wash_price} href="/car-wash-history" />
+          <HistorikCard key={wash.car_wash_history_pk} location={wash.location_name} date={new Date(wash.date_of_wash).toLocaleDateString("da-DK")} description={wash.car_wash_type} price={wash.car_wash_price} points={wash.car_wash_price} href="/reciept" />
         ))}
       </div>
     </div>

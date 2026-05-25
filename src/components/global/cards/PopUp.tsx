@@ -11,7 +11,7 @@ const Popup = ({ title, message, subtitle, submessage, icon, onClose, children }
       {onClose && <div className="absolute inset-0" onClick={() => onClose?.()} />}
 
       {/* Popup container */}
-      <div className="z-10 rounded-md bg-(--gray-10) p-8 text-center text-(--foreground-reverse) shadow-md">
+      <div className="z-10 rounded-md bg-(--gray-10) p-2 py-8 text-center text-(--foreground-reverse) shadow-md w-90">
         {/* Luk-knap */}
         {onClose && (
           <button onClick={() => onClose?.()} className="ml-auto flex">

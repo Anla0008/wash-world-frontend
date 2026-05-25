@@ -4,6 +4,7 @@ import { useState, useEffect, use } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { User } from "@/types/user";
 import Input from "@/components/global/forms/Input";
+import Lock from "@/components/global/icons/grafik/Lock";
 import PrimaryButton from "@/components/global/buttons/onClick/PrimaryButton";
 import WashWorldLogo from "@/components/global/icons/grafik/WashWorldLogo";
 import Link from "next/link";
@@ -72,42 +73,49 @@ export default function ResetPassword({
   }
 
   return (
-    <section>
+    <section className="grid gap-10">
       <WashWorldLogo />
       <h2 className="text-center">Nulstil adgangskode</h2>
 
-      <form onSubmit={handleSubmit}>
-        <Input
-          label="Kode*"
-          error={!!params2.user_hashed_password && !passwordValid}
-          validated={passwordValid}
-          type="password"
-          placeholder="123456"
-          value={params2.user_hashed_password ?? ""}
-          errorMessage={errorMessages.password}
-          onChange={(e) =>
-            setParams({ ...params2, user_hashed_password: e.target.value })
-          }
-        />
-        <Input
-          label="Gentag kode*"
-          error={
-            (!!params2.user_repeat_hashed_password && !repeatPasswordValid) ||
-            passwordsNoMatch
-          }
-          validated={repeatPasswordValid}
-          type="password"
-          placeholder="123456"
-          value={params2.user_repeat_hashed_password ?? ""}
-          errorMessage={errorMessages.repeatPassword}
-          onChange={(e) => {
-            setParams({
-              ...params2,
-              user_repeat_hashed_password: e.target.value,
-            });
-            setPasswordsNoMatch(false);
-          }}
-        />
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+        <div className="flex items-center gap-4">
+          <Lock color={"white"} size={40} />
+          <Input
+            label="Kode*"
+            error={!!params2.user_hashed_password && !passwordValid}
+            validated={passwordValid}
+            type="password"
+            placeholder="123456"
+            value={params2.user_hashed_password ?? ""}
+            errorMessage={errorMessages.password}
+            onChange={(e) =>
+              setParams({ ...params2, user_hashed_password: e.target.value })
+            }
+          />
+        </div>
+
+        <div className="flex items-center gap-4">
+          <Lock color={"white"} size={40} />
+          <Input
+            label="Gentag kode*"
+            error={
+              (!!params2.user_repeat_hashed_password && !repeatPasswordValid) ||
+              passwordsNoMatch
+            }
+            validated={repeatPasswordValid}
+            type="password"
+            placeholder="123456"
+            value={params2.user_repeat_hashed_password ?? ""}
+            errorMessage={errorMessages.repeatPassword}
+            onChange={(e) => {
+              setParams({
+                ...params2,
+                user_repeat_hashed_password: e.target.value,
+              });
+              setPasswordsNoMatch(false);
+            }}
+          />
+        </div>
 
         <div className="text-center mt-10 mb-4">
           <PrimaryButton disabled={!formValid}>

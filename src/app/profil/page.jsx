@@ -23,18 +23,24 @@ export default function Profil() {
   }, []);
 
   return (
-    <div>
-      <h1 className="extra-bold pb-8">Hej {firstName}</h1>
+    <div className="flex flex-col gap-8">
+      <h1 className="extra-bold">Hej {firstName}</h1>
+
       {/*TODO: Hent navn fra backend */}
       <MyProfileCard />
-      <h2 className="extra-bold pt-10">Abonnementer</h2>
-      <div className="mt-14 mb-20">
-        <CustomerServiceCard></CustomerServiceCard>
+
+      <div className="flex flex-col gap-2">
+        <h2 className="extra-bold">Abonnementer</h2>
+        <SubscriptionCard />
       </div>
-      <FAQ></FAQ>
-      <div className="flex justify-center mt-18">
-        {/* Button stylet om tertriary button, men med log ud logik op – bruges KUN her */}
-        {/* JWT er stateless – log ud sker ved at slette tokenet lokalt */}
+
+      <CustomerServiceCard />
+
+      <FAQ />
+
+      {/* Button stylet om tertriary button, men med log ud logik op – bruges KUN her */}
+      {/* JWT er stateless – log ud sker ved at slette tokenet lokalt */}
+      <div className="flex justify-center">
         <button
           className="bg-foreground text-background relative px-5 pr-10 py-2 w-fit extra-bold"
           style={{
@@ -50,6 +56,7 @@ export default function Profil() {
           Log ud
         </button>
       </div>
+
       <div className="flex justify-center mt-18">
         <DeleteUserButton
           user_pk={user_pk}

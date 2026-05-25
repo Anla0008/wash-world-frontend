@@ -1,68 +1,168 @@
 "use client";
-import { useState } from "react";
-import { FieldKey } from "@/types/user";
 
-const ProfileInfoCard = ({ section }: { section: SectionType }) => {
-  const [activeField, setActiveField] = useState<FieldKey | null>(null);
+// Her hentes ikoner fra grafik
+import User from "@/components/global/icons/grafik/User";
+import ProfileCard from "@/components/global/icons/grafik/ProfileCard";
+import Mail from "@/components/global/icons/grafik/Mail";
+import Card from "@/components/global/icons/grafik/Card";
+import Checkmark from "@/components/global/icons/grafik/Checkmark";
 
-  // fieldkey gør at ikke alle inputs ændrer state ved activefield - tages fra types
+// Her hentes globale komponenter
+import Input from "@/components/global/forms/Input";
+import PrimaryButton from "@/components/global/buttons/onClick/PrimaryButton";
+import Popup from "@/components/global/cards/PopUp";
+import { useAuth } from "@/hooks/useAuth";
+import { useState, useEffect } from "react";
+import {
+  validateEmail,
+  validateName,
+  errorMessages,
+} from "@/lib/form/validering";
 
-  const editToggle = (fieldKey: FieldKey) => {
-    setActiveField((current) => (current === fieldKey ? null : fieldKey));
+export default function ProfileInfoCard() {
+  const { getProfileInfo, updateProfileInfo } = useAuth();
+
+  // State til formfelter som forudfyldes med brugerens eksisterende data
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [plateNumber, setPlateNumber] = useState("");
+  const [emailTaken, setEmailTaken] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false); // Styrer success popup
+
+  // Henter brugerens eksisterende oplysninger fra backend når komponenten loader
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getProfileInfo();
+      if (!data) return;
+      setFirstName(data.user_first_name ?? "");
+      setLastName(data.user_last_name ?? "");
+      setEmail(data.user_email ?? "");
+      setPlateNumber(data.plate_number ?? "");
+    };
+    fetchData();
+  }, []);
+
+  // Validering som udregnes direkte fra state, ingen ekstra state nødvendig
+  const firstNameValid = validateName(firstName);
+  const lastNameValid = validateName(lastName);
+  const emailValid = validateEmail(email);
+  const formValid = firstNameValid && lastNameValid && emailValid;
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formValid) return; // Returner/submit kun hvis formen er valid
+
+    // Sender PATCH request til backend med opdaterede oplysninger
+    const result = await updateProfileInfo({
+      user_first_name: firstName,
+      user_last_name: lastName,
+      user_email: email,
+    });
+
+    // Hvis backenden returnerer email_taken, vises fejl på email-feltet
+    if (result?.error_code === "email_taken") {
+      setEmailTaken(true);
+    }
+
+    // Opdaterer localStorage med det opdaterede fornavn (bruges på dashboard og profil)
+    localStorage.setItem("user_first_name", firstName);
+    setShowSuccess(true);
   };
 
   return (
-    <div className="flex flex-col gap-5">
-      {/* mapping af fields kommer fra editmode.js under mockupData */}
-      {edit[section].fields.map((field) => {
-        const isFieldActive = activeField === field.key;
-        const FieldIcon = field.icon;
+    <section className="bg-(--gray-80) px-4 py-4 flex flex-col gap-5 rounded-md">
+      <h3>Opdater oplysninger</h3>
 
-        return (
-          <div
-            key={field.key}
-            className={`rounded-md p-3 border transition-colors w-full ${isFieldActive ? "border-(--brand-green) bg-foreground/8" : "border-foreground/12 bg-foreground/4"}`}
-          >
-            <div>
-              {/* INPUT */}
-              <div className="flex items-center gap-2">
-                {FieldIcon ? <FieldIcon size={20} /> : null}
-                <div className="flex flex-col gap-2">
-                  <label className="text-sm text-foreground/65">
-                    {field.label}
-                  </label>
-                  <input
-                    // hvis brugeren ikke er i editmode, kan der ikke skrives i input
-                    disabled={!isFieldActive}
-                    placeholder={field.placeholder}
-                    className={`px-3 py-2 rounded-sm border w-full ${isFieldActive ? "border-(--brand-green) bg-(--gray-80)" : "border-foreground/20 bg-(--gray-80)/60"}`}
-                    // toggle af farve på input efter activeMode
-                  />
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+        <div className="flex items-center gap-4">
+          <User color={"white"} size={40} />
+          <Input
+            label="Fornavn"
+            error={!!firstName && !firstNameValid}
+            validated={firstNameValid}
+            type="text"
+            placeholder="Anders"
+            value={firstName}
+            errorMessage={errorMessages.firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+          />
+        </div>
 
-                  {field.hasMultiple ? (
-                    <button
-                      // TODO: sørg for onclick mapper dette card under sig selv
-                      className="text-sm text-foreground/70 light"
-                    >
-                      + Tilføj
-                    </button>
-                  ) : null}
-                </div>
+        <div className="flex items-center gap-4">
+          <User color={"white"} size={40} />
+          <Input
+            label="Efternavn"
+            error={!!lastName && !lastNameValid}
+            validated={lastNameValid}
+            type="text"
+            placeholder="Andersen"
+            value={lastName}
+            errorMessage={errorMessages.lastName}
+            onChange={(e) => setLastName(e.target.value)}
+          />
+        </div>
 
-                {/* EDIT TOGGLE */}
-                <button
-                  className="underline ml-15 text-sm text-(--gray-10)"
-                  onClick={() => editToggle(field.key as FieldKey)}
-                >
-                  {isFieldActive ? "Annuler" : "Rediger"}
-                </button>
-              </div>
-            </div>
-          </div>
-        );
-      })}
-    </div>
+        <div className="flex items-center gap-4">
+          <Mail color={"white"} size={40} />
+          <Input
+            label="E-mail"
+            error={(!!email && !emailValid) || emailTaken}
+            validated={emailValid && !emailTaken}
+            type="email"
+            placeholder="navn@eksempel.com"
+            value={email}
+            errorMessage={
+              emailTaken ? errorMessages.emailTaken : errorMessages.email
+            }
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setEmailTaken(false);
+            }}
+          />
+        </div>
+
+        {/* Betalingskort og nummerplade er disabled da de ikke kan ændres her */}
+        <div className="flex items-center gap-4">
+          <Card color={"white"} size={40} />
+          <Input
+            label="Betalingskort"
+            error={false}
+            validated={false}
+            type="text"
+            placeholder="xxxx xxxx xxxx 0000"
+            value=""
+            disabled={true}
+          />
+        </div>
+
+        <div className="flex items-center gap-4">
+          <ProfileCard color={"white"} size={40} />
+          <Input
+            label="Nummerplade"
+            error={false}
+            validated={false}
+            type="text"
+            placeholder="AB12345"
+            value={plateNumber}
+            disabled={true}
+          />
+        </div>
+
+        <div className="text-center">
+          <PrimaryButton disabled={!formValid}>Gem ændringer</PrimaryButton>
+        </div>
+      </form>
+
+      {/* Success popup vises når oplysninger er gemt */}
+      {showSuccess && (
+        <Popup
+          title="Oplysninger opdateret!"
+          message="Dine ændringer er gemt."
+          icon={<Checkmark color={"var(--brand-green)"} size={50} />}
+          onClose={() => setShowSuccess(false)}
+        />
+      )}
+    </section>
   );
-};
-
-export default ProfileInfoCard;
+}

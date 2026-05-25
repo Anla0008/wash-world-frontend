@@ -8,6 +8,11 @@ import Input from "@/components/global/forms/Input";
 import ProgressBar from "@/components/global/grafik/ProgressBar";
 import ArrowLeft from "@/components/global/icons/navigation/ArrowLeft";
 import Mail from "@/components/global/icons/grafik/Mail";
+import Userr from "@/components/global/icons/grafik/User";
+import Clock from "@/components/global/icons/grafik/Clock";
+import Lock from "@/components/global/icons/grafik/Lock";
+import ProfileCard from "@/components/global/icons/grafik/ProfileCard";
+import Card from "@/components/global/icons/grafik/Card";
 import WashWorldLogo from "@/components/global/icons/grafik/WashWorldLogo";
 import Link from "next/link";
 import {
@@ -22,7 +27,7 @@ import {
 export default function Signup() {
   const [params, setParams] = useState<User>({} as User);
   const [step, setStep] = useState(1);
-  const { signup } = useAuth();
+  const { signup, checkEmail } = useAuth();
 
   // Backend-fejl - sættes hvis email eller nummerplade allerede er i brug
   const [emailTaken, setEmailTaken] = useState(false);
@@ -46,10 +51,17 @@ export default function Signup() {
     repeatPasswordValid &&
     plateNumberValid;
 
-  // Step 1 → Step 2: bare valider og gå videre, INTET API-kald
-  const handleStep1Submit = (e: any) => {
+  // Step 1 → Step 2: tjek om email er ledig i db
+  const handleStep1Submit = async (e: any) => {
     e.preventDefault();
     if (!step1Valid) return;
+
+    const response = await checkEmail(params.user_email);
+    if (!response.ok) {
+      setEmailTaken(true);
+      return;
+    }
+
     setStep(2);
   };
 
@@ -83,100 +95,120 @@ export default function Signup() {
           <WashWorldLogo />
           <ProgressBar activeIndex={1} />
 
-          <form onSubmit={handleStep1Submit}>
+          <form onSubmit={handleStep1Submit} className="flex flex-col gap-6">
             <h1 className="text-center">Opret bruger</h1>
 
-            <Input
-              label="E-mail*"
-              error={(!!params.user_email && !emailValid) || emailTaken}
-              validated={emailValid}
-              type="email"
-              placeholder="navn@eksempel.com"
-              value={params.user_email ?? ""}
-              errorMessage={
-                emailTaken ? errorMessages.emailTaken : errorMessages.email
-              }
-              onChange={(e) => {
-                setParams({ ...params, user_email: e.target.value });
-                setEmailTaken(false);
-              }}
-            />
+            <div className="flex items-center gap-4">
+              <Mail color={"white"} size={40} />
+              <Input
+                label="E-mail*"
+                error={(!!params.user_email && !emailValid) || emailTaken}
+                validated={emailValid}
+                type="email"
+                placeholder="navn@eksempel.com"
+                value={params.user_email ?? ""}
+                errorMessage={
+                  emailTaken ? errorMessages.emailTaken : errorMessages.email
+                }
+                onChange={(e) => {
+                  setParams({ ...params, user_email: e.target.value });
+                  setEmailTaken(false);
+                }}
+              />
+            </div>
 
-            <Input
-              label="Fornavn*"
-              error={!!params.user_first_name && !firstNameValid}
-              validated={firstNameValid}
-              type="text"
-              placeholder="Anders"
-              value={params.user_first_name ?? ""}
-              errorMessage={errorMessages.firstName}
-              onChange={(e) =>
-                setParams({ ...params, user_first_name: e.target.value })
-              }
-            />
+            <div className="flex items-center gap-4">
+              <Userr color={"white"} size={40} />
+              <Input
+                label="Fornavn*"
+                error={!!params.user_first_name && !firstNameValid}
+                validated={firstNameValid}
+                type="text"
+                placeholder="Anders"
+                value={params.user_first_name ?? ""}
+                errorMessage={errorMessages.firstName}
+                onChange={(e) =>
+                  setParams({ ...params, user_first_name: e.target.value })
+                }
+              />
+            </div>
 
-            <Input
-              label="Efternavn*"
-              error={!!params.user_last_name && !lastNameValid}
-              validated={lastNameValid}
-              type="text"
-              placeholder="Andersen"
-              value={params.user_last_name ?? ""}
-              errorMessage={errorMessages.lastName}
-              onChange={(e) =>
-                setParams({ ...params, user_last_name: e.target.value })
-              }
-            />
+            <div className="flex items-center gap-4">
+              <Userr color={"white"} size={40} />
+              <Input
+                label="Efternavn*"
+                error={!!params.user_last_name && !lastNameValid}
+                validated={lastNameValid}
+                type="text"
+                placeholder="Andersen"
+                value={params.user_last_name ?? ""}
+                errorMessage={errorMessages.lastName}
+                onChange={(e) =>
+                  setParams({ ...params, user_last_name: e.target.value })
+                }
+              />
+            </div>
 
-            <Input
-              label="Kode*"
-              error={!!params.user_hashed_password && !passwordValid}
-              validated={passwordValid}
-              type="password"
-              placeholder="123456"
-              value={params.user_hashed_password ?? ""}
-              errorMessage={errorMessages.password}
-              onChange={(e) =>
-                setParams({ ...params, user_hashed_password: e.target.value })
-              }
-            />
+            <div className="flex items-center gap-4">
+              <Lock color={"white"} size={40} />
+              <Input
+                label="Kode*"
+                error={!!params.user_hashed_password && !passwordValid}
+                validated={passwordValid}
+                type="password"
+                placeholder="123456"
+                value={params.user_hashed_password ?? ""}
+                errorMessage={errorMessages.password}
+                onChange={(e) =>
+                  setParams({ ...params, user_hashed_password: e.target.value })
+                }
+              />
+            </div>
 
-            <Input
-              label="Gentag kode*"
-              error={
-                !!params.user_repeat_hashed_password && !repeatPasswordValid
-              }
-              validated={repeatPasswordValid}
-              type="password"
-              placeholder="123456"
-              value={params.user_repeat_hashed_password ?? ""}
-              errorMessage={errorMessages.repeatPassword}
-              onChange={(e) =>
-                setParams({
-                  ...params,
-                  user_repeat_hashed_password: e.target.value,
-                })
-              }
-            />
+            <div className="flex items-center gap-4">
+              <Lock color={"white"} size={40} />
+              <Input
+                label="Gentag kode*"
+                error={
+                  !!params.user_repeat_hashed_password && !repeatPasswordValid
+                }
+                validated={repeatPasswordValid}
+                type="password"
+                placeholder="123456"
+                value={params.user_repeat_hashed_password ?? ""}
+                errorMessage={errorMessages.repeatPassword}
+                onChange={(e) =>
+                  setParams({
+                    ...params,
+                    user_repeat_hashed_password: e.target.value,
+                  })
+                }
+              />
+            </div>
 
-            <Input
-              label="Nummerplade*"
-              error={(!!params.plate_number && !plateNumberValid) || plateTaken}
-              validated={plateNumberValid}
-              type="text"
-              placeholder="AB12345"
-              value={params.plate_number ?? ""}
-              errorMessage={
-                plateTaken ? errorMessages.plateTaken : errorMessages.plate
-              }
-              onChange={(e) => {
-                e.target.value = e.target.value.toUpperCase();
-                setParams({ ...params, plate_number: e.target.value });
-                setPlateTaken(false);
-              }}
-            />
+            <div className="flex items-center gap-4">
+              <ProfileCard color={"white"} size={40} />
+              <Input
+                label="Nummerplade*"
+                error={
+                  (!!params.plate_number && !plateNumberValid) || plateTaken
+                }
+                validated={plateNumberValid}
+                type="text"
+                placeholder="AB12345"
+                value={params.plate_number ?? ""}
+                errorMessage={
+                  plateTaken ? errorMessages.plateTaken : errorMessages.plate
+                }
+                onChange={(e) => {
+                  e.target.value = e.target.value.toUpperCase();
+                  setParams({ ...params, plate_number: e.target.value });
+                  setPlateTaken(false);
+                }}
+              />
+            </div>
 
-            <div className="text-center mt-10">
+            <div className="text-center mt-4">
               <PrimaryButton disabled={!step1Valid}>Gå videre</PrimaryButton>
             </div>
           </form>
@@ -197,49 +229,59 @@ export default function Signup() {
           <ArrowLeft onClick={() => setStep(1)} size={30} />
           <ProgressBar activeIndex={2} />
 
-          <h1 className="text-center">Opret bruger</h1>
-          <form onSubmit={handleSubmitSignup}>
-            <h3>Kortoplysninger</h3>
-            <Input
-              label="Kortnummer*"
-              error={false}
-              validated={false}
-              type="text"
-              value=""
-              placeholder="1234 5678 9012 3456"
-              disabled={true}
-            />
-            <Input
-              label="Navn på kort*"
-              error={false}
-              validated={false}
-              type="text"
-              value=""
-              placeholder="Anders Andersen"
-              disabled={true}
-            />
-            <div className="flex flex-row gap-6">
+          <h1 className="text-center">Kortoplysninger</h1>
+          <form onSubmit={handleSubmitSignup} className="flex flex-col gap-6">
+            <div className="flex items-center gap-4">
+              <Card color={"white"} size={40} />
               <Input
-                label="Udløbsdato*"
+                label="Kortnummer*"
                 error={false}
                 validated={false}
                 type="text"
                 value=""
-                placeholder="01/01/2000"
-                disabled={true}
-              />
-              <Input
-                label="CVC*"
-                error={false}
-                validated={false}
-                type="text"
-                value=""
-                placeholder="1234"
+                placeholder="1234 5678 9012 3456"
                 disabled={true}
               />
             </div>
 
-            <div className="text-center mt-10">
+            <div className="flex items-center gap-4">
+              <Userr color={"white"} size={40} />
+              <Input
+                label="Navn på kort*"
+                error={false}
+                validated={false}
+                type="text"
+                value=""
+                placeholder="Anders Andersen"
+                disabled={true}
+              />
+            </div>
+
+            <div className="flex items-center gap-4">
+              <Clock color={"white"} size={40} />
+              <div className="flex flex-row gap-6">
+                <Input
+                  label="Udløbsdato*"
+                  error={false}
+                  validated={false}
+                  type="text"
+                  value=""
+                  placeholder="01/01/2000"
+                  disabled={true}
+                />
+                <Input
+                  label="CVC*"
+                  error={false}
+                  validated={false}
+                  type="text"
+                  value=""
+                  placeholder="1234"
+                  disabled={true}
+                />
+              </div>
+            </div>
+
+            <div className="text-center mt-4">
               <PrimaryButton>Opret bruger</PrimaryButton>
             </div>
           </form>

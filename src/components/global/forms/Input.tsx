@@ -17,9 +17,9 @@ const Input = ({
   const [charCount, setCharCount] = useState(0);
 
   return (
-    <div className="relative w-full mt-10">
+    <div className="relative w-full">
       <input
-        className={`border-3 border-foreground w-full py-2 px-6 ${error ? "border-(--error-red)" : validated ? "border-(--brand-green)" : ""}`}
+        className={`border-3 border-foreground w-full py-2 px-2 ${error ? "border-(--error-red)" : validated ? "border-(--brand-green)" : ""}`}
         type={type}
         placeholder={placeholder}
         onChange={(e) => {
@@ -31,7 +31,7 @@ const Input = ({
       />
 
       <p
-        className={`${error ? "text-(--error-red)" : validated ? "text-(--brand-green)" : ""} px-7 light`}
+        className={`${error ? "text-(--error-red)" : validated ? "text-(--brand-green)" : ""} light`}
       >
         {error && errorMessage}
       </p>
@@ -46,7 +46,7 @@ const Input = ({
         <p className="light">{label}</p>
       </div>
       {/* #TODO: gør så error og validated først kommer frem hvis charArt er over 0 - dette tages fra backenden */}
-      <div className="absolute top-2.5">
+      <div className="absolute top-2.5 right-3">
         {error ? <Error /> : validated ? <Validated /> : null}
       </div>
     </div>

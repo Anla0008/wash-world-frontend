@@ -68,21 +68,24 @@ export default function ForgotPassword() {
       </div>
 
       <form onSubmit={handleSubmit}>
-        <Input
-          label="E-mail*"
-          error={(!!params.user_email && !emailValid) || emailNotFound}
-          validated={emailValid}
-          type="email"
-          placeholder="navn@eksempel.com"
-          value={params.user_email ?? ""}
-          errorMessage={
-            emailNotFound ? errorMessages.emailNotFound : errorMessages.email
-          }
-          onChange={(e) => {
-            setParams({ ...params, user_email: e.target.value });
-            setEmailNotFound(false);
-          }}
-        />
+        <div className="flex items-center gap-4">
+          <Mail color={"white"} size={40} />
+          <Input
+            label="E-mail*"
+            error={(!!params.user_email && !emailValid) || emailNotFound}
+            validated={emailValid}
+            type="email"
+            placeholder="navn@eksempel.com"
+            value={params.user_email ?? ""}
+            errorMessage={
+              emailNotFound ? errorMessages.emailNotFound : errorMessages.email
+            }
+            onChange={(e) => {
+              setParams({ ...params, user_email: e.target.value });
+              setEmailNotFound(false);
+            }}
+          />
+        </div>
 
         <div className="text-center mt-10 mb-4">
           <PrimaryButton disabled={!emailValid}>Send email</PrimaryButton>

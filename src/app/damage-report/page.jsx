@@ -7,6 +7,7 @@ import PrimaryButton from "@/components/global/buttons/onClick/PrimaryButton";
 import Popup from "@/components/global/cards/PopUp";
 import Checkmark from "@/components/global/icons/grafik/Checkmark";
 import ArrowLeft from "@/components/global/icons/navigation/ArrowLeft";
+import Link from "next/link";
 
 export default function DamageReport() {
   const [error, setError] = useState("");
@@ -30,8 +31,11 @@ export default function DamageReport() {
 
     setError(""); // Ryd gammel fejl
 
+    // Henter brugerens email fra localStorage, som blev gemt ved login.
+    const userEmail = localStorage.getItem("user_email") || "";
+
     try {
-      await sendDamageReport(description, "test@test.dk");
+      await sendDamageReport(description, userEmail);
       setShowSuccess(true);
       setTimeout(() => router.push("/dashboard"), 5000);
     } catch {
@@ -51,15 +55,14 @@ export default function DamageReport() {
           <PrimaryButton type="submit">Indsend</PrimaryButton>
         </div>
       </form>
-
       <div className="small text-(--gray-60) pt-8 flex gap-1">
-        <a className="underline" href="https://forms.washworld.dk/f4a4d96f?lang=da" target="_blank" rel="noopener noreferrer">
+        <Link className="underline" href="https://forms.washworld.dk/f4a4d96f?lang=da" target="_blank" rel="noopener noreferrer">
           Klik her
-        </a>
+        </Link>
         <p>for yderligere spørgsmål til skaderapportering</p>
       </div>
       {/* Success popup */}
-      {showSuccess && <Popup title="Tak for din feedback!" message="Du bliver sendt videre om 5 sekunder..." icon={<Checkmark color={"var(--brand-green)"} size={50} />} />}
+      {showSuccess && <Popup title="Skaderapport er blevet indsendt" message="Du hører fra os indenfor 5 hverdage" submessage="Du bliver sendt videre om 5 sekunder..." icon={<Checkmark color={"var(--brand-green)"} size={50} />} />}
     </div>
   );
 }

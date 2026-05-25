@@ -7,11 +7,12 @@ export function useDamageReport() {
 
   // Sends a damage report to the backend, which forwards it as an email to Washworld
   const sendDamageReport = useCallback(async (description: string, user_email: string) => {
-    const response = await fetch(baseUrl + "/skaderapportering", {
+    const response = await fetch(baseUrl + "/damage-report", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Cache-Control": "no-store",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify({ description, user_email }),
     });

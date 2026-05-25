@@ -12,7 +12,7 @@ const Dashboard = () => {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1>Hej {firstName}</h1>
+        <h1 className="extra-bold">Hej {firstName}</h1>
       </div>
 
       <div>
@@ -24,7 +24,7 @@ const Dashboard = () => {
       </div>
 
       <div>
-        <h2>Abonnementer</h2>
+        <h2 className="extra-bold">Abonnementer</h2>
         {/* <SubscriptionCard /> */}
       </div>
 

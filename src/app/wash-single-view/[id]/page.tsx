@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import ArrowLeft from "@/components/global/icons/navigation/ArrowLeft";
-
 import { useWash } from "@/hooks/useWash";
 import { useWashStore } from "@/stores/useWashStore";
 import SingleViewCard from "@/components/wash/SingleView";
@@ -20,9 +19,7 @@ export default function WashSingleView() {
   const wash = data?.types.find((wash) => String(wash.id) === String(id));
 
   if (!data) {
-    return (
-      <p>Henter vaskedetaljer...</p>
-    );
+    return <p>Henter vaskedetaljer...</p>;
   }
 
   if (!wash) {

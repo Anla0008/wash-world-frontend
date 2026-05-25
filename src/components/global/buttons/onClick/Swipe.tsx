@@ -11,10 +11,7 @@ const Swipe = ({ children, onComplete, disabled }: SwipeProps) => {
 
   const knobOffset = 4;
   const knobSize = 54;
-  const progressWidth = useTransform(
-    x,
-    (latestX) => latestX + knobOffset + knobSize,
-  );
+  const progressWidth = useTransform(x, (latestX) => latestX + knobOffset + knobSize);
 
   const [isDragging, setIsDragging] = useState(false);
 
@@ -47,8 +44,7 @@ const Swipe = ({ children, onComplete, disabled }: SwipeProps) => {
       ref={constraintsRef}
       className={`relative m-auto w-70 h-15.5 rounded-full bg-(--brand-green) overflow-hidden ${disabled ? "opacity-50 bg-(--gray-80) pointer-events-none" : ""}`}
       style={{
-        boxShadow:
-          "inset -20px -20px 30px #00170B, inset 20px 20px 30px rgba(255, 255, 255, 0.25)",
+        boxShadow: "inset -20px -20px 30px #00170B, inset 20px 20px 30px rgba(255, 255, 255, 0.25)",
       }}
     >
       {/* Text */}
@@ -76,9 +72,9 @@ const Swipe = ({ children, onComplete, disabled }: SwipeProps) => {
           handleDragEnd();
         }}
         style={{ x }}
-        className="absolute left-1 top-1 w-13.5 h-13.5 rounded-full bg-foreground flex items-center justify-center cursor-grab active:cursor-grabbing z-10"
+        className="absolute left-1 top-1 w-13.5 h-13.5 rounded-full bg-foreground flex items-center justify-center cursor-grab active:cursor-grabbing z-10 text-background"
       >
-        <ArrowRight color={"black"} size={25} />
+        <ArrowRight color={"currentColor"} size={25} />
       </motion.div>
     </div>
   );

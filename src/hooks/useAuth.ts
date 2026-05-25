@@ -73,6 +73,7 @@ export function useAuth() {
     console.log(data);
     localStorage.setItem("token", data.access_token); // Gemmer token i localStorage ved login
     localStorage.setItem("user_first_name", data.user_first_name); // Gemmer firstname som kan bruges på dashboard
+    localStorage.setItem("user_email", data.user_email); // Gemmer email som kan bruges til skaderapportering
     return data;
   }, []);
 

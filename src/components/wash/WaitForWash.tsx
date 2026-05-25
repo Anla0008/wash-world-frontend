@@ -34,19 +34,11 @@ const WaitForWash = ({
 
   return (
     <div>
-      <ProgressBar
-        activeIndex={activeIndex}
-        isWashProcess={true}
-      />
+      <ProgressBar activeIndex={activeIndex} isWashProcess={true}/>
 
-      <h1 className="extra-bold">
-        Kør ind i hal {availibleWashHall}
-      </h1>
+      <h1 className="extra-bold">Kør ind i hal {availibleWashHall}</h1>
 
-      <p>
-        Vasken starter når du er kørt ind i
-        vaskehallen.
-      </p>
+      <p>Vasken starter når du er kørt ind i vaskehallen.</p>
 
       <Image
         src={"/icons/vaskehal.svg"}
@@ -55,9 +47,7 @@ const WaitForWash = ({
         height={500}
       />
 
-      <p>
-        Registrerer bil i vaskehal...
-      </p>
+      <p>Registrerer bil i vaskehal...</p>
 
     </div>
   );

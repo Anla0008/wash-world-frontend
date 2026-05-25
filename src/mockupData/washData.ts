@@ -116,8 +116,8 @@ export const washHallState = new Map<
 //         DEFAULT FALLBACK IN CASE OF GPS FAILURE
 // ===========================================================
 
-export const DEFAULT_COORDS: GeoCoords = {
-  latitude: 55.6761, // Copenhagen fallback
+export const fallbackCords: GeoCoords = {
+  latitude: 55.6761, // København fallback
   longitude: 12.5683,
   source: "fallback",
 };

@@ -5,7 +5,9 @@ import PrimaryButton from "../global/buttons/onClick/PrimaryButton";
 import { useRouter } from "next/navigation";
 import { useWashStore } from "@/stores/useWashStore";
 import { WashType } from "@/types/washType";
-import WashWorldLoader from "../global/grafik/WashWorldLoader";
+import Swipe from "../global/buttons/onClick/Swipe";
+import { useState } from "react";
+import CheckMarkAnimation from "../global/grafik/CheckMarkAnimation";
 
 export default function SingleWash() {
   const { useSingleWash } = useWash();

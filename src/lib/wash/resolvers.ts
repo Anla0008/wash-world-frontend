@@ -18,7 +18,6 @@ import { useGeoLocation } from "@/hooks/useGeoLocation";
 // ===========================================================
 
 // kilde: https://stackoverflow.com/questions/18883601/function-to-calculate-distance-between-two-coordinates
-
 function getDistanceKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
   // jordens radius i kilometer
   const R = 6371;
@@ -129,51 +128,44 @@ export const useNearestWash = () => {
   };
 };
 
-// ===========================================================
-//  BESTEM RUTE EFTER SUBSCRIPTION (SIMULERET)
-// ===========================================================
-export const resolveRoute = (hasSub: boolean): WashRoute => {
-  return hasSub ? "/active-wash" : "/buy-wash";
-};
 
 // ===========================================================
-//              BESTEM STEP EFTER RUTE (SIMULERET)
+//           BESTEM RUTE EFTER SUBSCRIPTION
 // ===========================================================
-
-export const resolveStep = (route: WashRoute): WashStep => {
-  return route === "/active-wash" ? "active-wash" : "buy-wash";
-};
-
-// ===========================================================
-//           DEFINER BRUG AF VASK  EFTER DISTANCE
-// ===========================================================
-
-export const distanceFromWashhall = (distanceKm: number): WashRoute => {
-  // hvis distance er større end 500 m, så returner error route
-  if (distanceKm > 0.5) {
-    return "/error-in-distance";
-  } else {
-    return "/buy-wash"; //TODO; få til at snakke sammen med abonnomentstatus eller ej funktionen resolveRoute
-  }
+export const resolveRoute = (userHasSub: boolean): WashRoute => {
+  return userHasSub ? "/active-wash" : "/buy-wash";
 };
 
 // ===========================================================
 //    Bestem rute baseret på både distance og abonnement
 // ===========================================================
 
-export const resolveWashRouteFromDistance = (distanceKm: number, hasSub: boolean): WashRoute => {
-  const distanceRoute = distanceFromWashhall(distanceKm);
+export const resolveWashRouteFromDistance = (distanceKm: number, userHasSub: boolean): WashRoute => {
+  const distanceRoute = distanceFromWashhall(distanceKm, userHasSub);
 
   // hvis distanceRuten er det samme som error route, så returner error route uanset abonnementstatus
   if (distanceRoute === "/error-in-distance") {
     return "/error-in-distance";
   }
 
-  // ellers returner ruten baseret på abonnementstatus
-  return resolveRoute(hasSub);
+  // ellers returner resolveRoute() baseret på subscription
+  return resolveRoute(userHasSub);
 };
 
-// kilde: https://stackoverflow.com/questions/18883601/function-to-calculate-distance-between-two-coordinates
+// ===========================================================
+//           DEFINER BRUG AF VASK  EFTER DISTANCE
+// ===========================================================
+
+export const distanceFromWashhall = (distanceKm: number, userHasSub: boolean): WashRoute => {
+  // hvis distance er større end 500 m, så returner error route
+  if (distanceKm > 0.5) {
+    return "/error-in-distance";
+  } else {
+    // ellers returner rute baseret på abonnementstatus
+    return userHasSub ? "/active-wash" : "/buy-wash"; 
+  }
+};
+
 // ===========================================================
 //       omkonveter varighed til minutter og sekunder
 // ===========================================================

@@ -8,7 +8,6 @@ export type WashStep = "buy-wash" | "active-wash";
 // ==========================================================
 
 export type WashStepResponse = {
-  step: WashStep;
   route: WashRoute;
   has_sub: boolean;
 };
@@ -101,7 +100,7 @@ export type WashStore = {
 
   setAvailibleWashHall: (hallNumber: number) => void;
 
-  setSelectedWash: (wash: WashType) => void;
+  setSelectedWash: (wash: WashType | null) => void;
 
   setStartedAt: (time: number) => void;
 

@@ -1,15 +1,13 @@
 "use client";
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { ButtonProps } from "@/types/button";
 
 const PrimaryButton = ({
   children,
   onClick,
+  isActive = false,
   disabled = false,
 }: ButtonProps) => {
-  const [isActive, setIsActive] = useState(false);
-
   return (
     <div className="relative m-auto">
       <button
@@ -20,7 +18,6 @@ const PrimaryButton = ({
         disabled={disabled}
         onClick={() => {
           if (disabled) return;
-          setIsActive((prev) => !prev);
           onClick?.();
         }}
         style={{

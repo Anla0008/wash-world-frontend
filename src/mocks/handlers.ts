@@ -1,36 +1,13 @@
+"use client";
 import { http, HttpResponse } from "msw";
 import { WashStepResponse } from "@/types/washType";
 import { washHallWaitTime, washHallState, carInWashHall, washData } from "@/mockupData/washData";
-import { initializeHallState, updateHallState, resolveRoute, resolveStep } from "@/lib/wash/resolvers";
-
+import { initializeHallState, updateHallState, resolveRoute } from "@/lib/wash/resolvers";
 
 const baseUrl = "http://127.0.0.1";
 let currentAvailableHallNumber: number | null = null;
 
 export const handlers = [
-  // ===========================================================
-  //                    GET WASH STEP
-  // ===========================================================
-
-  http.get("/api/wash/step", ({ request }) => {
-    const url = new URL(request.url);
-
-    // Henter has_sub parameteren fra query string og konverterer den til boolean
-    const hasSub = url.searchParams.get("has_sub") === "true";
-
-    // Bestemmer ruten baseret på abonnementsstatus
-    const route = resolveRoute(hasSub);
-
-    const response: WashStepResponse = {
-      // Konstruerer response objektet
-      step: resolveStep(route),
-      route,
-      has_sub: hasSub,
-    };
-
-    // Returnerer response som JSON
-    return HttpResponse.json(response);
-  }),
 
   // ===========================================================
   //                  GET SINGLEVASK DATA

@@ -12,7 +12,6 @@ import CheckMarkAnimation from "../global/grafik/CheckMarkAnimation";
 export default function SingleWash() {
   const { useSingleWash } = useWash();
   const { setSelectedWash } = useWashStore();
-  const [active, setActive] = useState(false);
   const [selectedWashId, setSelectedWashId] = useState<WashType["id"] | null>(null);
   const [checkAnimation, setCheckAnimation] = useState(false);
 
@@ -27,19 +26,18 @@ export default function SingleWash() {
   const toggleActiveSwipe = (wash: WashType) => {
     const isSameWash = selectedWashId === wash.id;
 
-    if (isSameWash && active) {
-      setActive(false);
+    if (isSameWash) {
+      setSelectedWash(null);
       setSelectedWashId(null);
       return;
     }
 
     setSelectedWash(wash);
     setSelectedWashId(wash.id);
-    setActive(true);
   };
 
   const handleSwipeComplete = () => {
-    setActive(false);
+    setSelectedWashId(null);
     setCheckAnimation(true);
   };
 
@@ -53,6 +51,7 @@ export default function SingleWash() {
         <ul className="flex flex-col gap-5">
           {data.types.map((wash) => (
             <li className="flex flex-col gap-5 bg-(--gray-80) rounded-lg p-4" key={wash.id}>
+              {/** Brug én valgt id til at styre toggle på tværs af alle kort */}
               <div className="flex justify-between items-center">
                 <div>
                   <h2 className="extra-bold">{wash.name}</h2>
@@ -70,13 +69,15 @@ export default function SingleWash() {
                   Læs mere
                 </a>
 
-                <PrimaryButton onClick={() => toggleActiveSwipe(wash)}>Vælg</PrimaryButton>
+                <PrimaryButton isActive={selectedWashId === wash.id} onClick={() => toggleActiveSwipe(wash)}>
+                  {selectedWashId === wash.id ? "Valgt" : "Vælg"}
+                </PrimaryButton>
               </div>
             </li>
           ))}
         </ul>
 
-        <Swipe disabled={!active} onComplete={handleSwipeComplete}>
+        <Swipe disabled={!selectedWashId} onComplete={handleSwipeComplete}>
           Vask
         </Swipe>
       </div>

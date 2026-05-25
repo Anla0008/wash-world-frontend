@@ -57,7 +57,7 @@ const hasSub = useCallback(async (): Promise<boolean> => {
 }, []);
 
   // ===========================================================
-  //                GET ENKELTVASK  (SIMULERING)
+  //                GET ENKELTVASK  (MOCKUPDATA)
   // ===========================================================
 
   const useSingleWash = () => {
@@ -81,54 +81,13 @@ const hasSub = useCallback(async (): Promise<boolean> => {
   };
 
   // ===========================================================
-  //               POST BRUGERS VASKEPROCES
+  //      NAVIGER TIL RUTE BASERET PÅ STATUS (SIMULERING)
   // ===========================================================
-  const postAvailableWashHall = useCallback(async ({ wash, startedAt, endedAt, availibleWashHall, locationID }: postWash)  => {
-    console.log("POST DATA:", {
-      wash,
-      startedAt,
-      endedAt,
-      availibleWashHall,
-      locationID,
-    });
-
+  const navigateBasedOnStatus = useCallback(async (): Promise<WashRoute> => {
     const userHasSub = await hasSub();
 
-    const response = await fetch(baseUrl + "/reciept", {
-      method: "POST",
-
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-store",
-
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-
-      body: JSON.stringify({
-        car_wash_location_fk: locationID,
-
-        car_wash_hall_fk: availibleWashHall,
-
-        car_wash_price: userHasSub ? wash.price_subscription : wash.price_single,
-
-        car_wash_type: wash.name,
-
-        car_wash_started_at: startedAt,
-
-        car_wash_ended_at: endedAt,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-
-      throw new Error(errorData.error || "Failed to save wash");
-    }
-
-    const data = await response.json();
-
-    return data;
-  }, []);
+    return userHasSub ? "/active-wash" : "/buy-wash";
+  }, [hasSub]);
 
   // ===========================================================
   //                  GET VENTETID FOR VASKEHAL (SIMULERING)
@@ -247,6 +206,7 @@ const hasSub = useCallback(async (): Promise<boolean> => {
         // opdater nedtælling baseret på serverens beregning af resterende tid
         setSecondsRemaining(data.seconds_remaining);
 
+        // hvis bilen er registreret i vaskehallen, stop interval
         if (data.registered) {
           clearInterval(interval);
         }
@@ -261,6 +221,56 @@ const hasSub = useCallback(async (): Promise<boolean> => {
       secondsRemaining,
     };
   };
+
+  // ===========================================================
+  //               POST BRUGERS VASKEPROCES
+  // ===========================================================
+  const postAvailableWashHall = useCallback(async ({ wash, startedAt, endedAt, availibleWashHall, locationID }: postWash)  => {
+    console.log("POST DATA:", {
+      wash,
+      startedAt,
+      endedAt,
+      availibleWashHall,
+      locationID,
+    });
+
+    const userHasSub = await hasSub();
+
+    const response = await fetch(baseUrl + "/reciept", {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store",
+
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+
+      body: JSON.stringify({
+        car_wash_location_fk: locationID,
+
+        car_wash_hall_fk: availibleWashHall,
+
+        car_wash_price: userHasSub ? wash.price_subscription : wash.price_single,
+
+        car_wash_type: wash.name,
+
+        car_wash_started_at: startedAt,
+
+        car_wash_ended_at: endedAt,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+
+      throw new Error(errorData.error || "Failed to save wash");
+    }
+
+    const data = await response.json();
+
+    return data;
+  }, []);
 
   // ===========================================================
   //                Vaskehistorik hook
@@ -280,6 +290,7 @@ const hasSub = useCallback(async (): Promise<boolean> => {
 
   return {
     postSubscriptionStatus,
+    navigateBasedOnStatus,
     hasSub,
     postAvailableWashHall,
     useSingleWash,

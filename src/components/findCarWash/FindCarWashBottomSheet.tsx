@@ -261,7 +261,7 @@ export default function FindCarWashBottomSheet({ locations, selectedLocationPk, 
         </div>
       </div>
 
-      <div className="hide-scrollbar flex min-h-0 flex-1 flex-col gap-4 pb-24">
+      <div className="hide-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto gap-4 pb-24">
         {sortedLocations.length > 0 ? (
           sortedLocations.map((location) => {
             const isSelected = selectedLocationPk === location.location_pk;

@@ -84,6 +84,7 @@ export default function Feedback() {
           placeholder="Her kan du uddybe din feedback..."
           type="text"
           onTextAreaChange={handleCommentChange}
+          value=""
         />
 
         <div className="mt-12 text-right">

@@ -293,10 +293,13 @@ export function useWash() {
         },
       })
         .then((res) => {
-          if (!res.ok) throw new Error("Fetch fejl");
+          if (!res.ok) return null; // returner null i stedet for at kaste fejl
           return res.json();
         })
-        .then((data) => setHistory(data.car_wash_history ?? [])) // fallback til tom array
+        .then((data) => {
+          if (!data) return; // ignorer hvis null (ingen vask endnu)
+          setHistory(data.car_wash_history ?? []);
+        })
         .catch((err) => console.error("Fetch fejl:", err));
     }, []);
 
@@ -320,7 +323,7 @@ export function useWash() {
           if (!res.ok) throw new Error("Ikke fundet");
           return res.json();
         })
-        .then((data) => setWash(data ?? null)) // fallback til null
+        .then((data) => setWash(data))
         .catch((err) => console.error(err));
     }, [id]);
 

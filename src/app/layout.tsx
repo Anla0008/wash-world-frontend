@@ -3,7 +3,7 @@ import "./globals.css";
 import NavBar from "@/components/global/navigation/NavBar";
 import MswInitializer from "@/components/global/MswInitializer";
 import { FavoritesInitializer } from "@/components/global/favorit/FavoritesInitializer";
-import AuthGuard from "@/components/global/navigation/AuthGuard";
+import AuthGuard from "@/components/global/AuthGuard";
 
 export const metadata: Metadata = {
   title: "Create Next App",

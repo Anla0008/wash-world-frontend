@@ -13,11 +13,7 @@ import PrimaryButton from "@/components/global/buttons/onClick/PrimaryButton";
 import Popup from "@/components/global/cards/PopUp";
 import { useAuth } from "@/hooks/useAuth";
 import { useState, useEffect } from "react";
-import {
-  validateEmail,
-  validateName,
-  errorMessages,
-} from "@/lib/form/validering";
+import { validateEmail, validateName, errorMessages } from "@/lib/form/validering";
 
 export default function ProfileInfoCard() {
   const { getProfileInfo, updateProfileInfo } = useAuth();
@@ -77,30 +73,12 @@ export default function ProfileInfoCard() {
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <div className="flex items-center gap-4">
           <User color={"foreground"} size={40} />
-          <Input
-            label="Fornavn"
-            error={!!firstName && !firstNameValid}
-            validated={firstNameValid}
-            type="text"
-            placeholder="Anders"
-            value={firstName}
-            errorMessage={errorMessages.firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-          />
+          <Input label="Fornavn" error={!!firstName && !firstNameValid} validated={firstNameValid} type="text" placeholder="Anders" value={firstName} errorMessage={errorMessages.firstName} onChange={(e) => setFirstName(e.target.value)} labelBg="var(--gray-80)" />
         </div>
 
         <div className="flex items-center gap-4">
           <User color={"foreground"} size={40} />
-          <Input
-            label="Efternavn"
-            error={!!lastName && !lastNameValid}
-            validated={lastNameValid}
-            type="text"
-            placeholder="Andersen"
-            value={lastName}
-            errorMessage={errorMessages.lastName}
-            onChange={(e) => setLastName(e.target.value)}
-          />
+          <Input label="Efternavn" error={!!lastName && !lastNameValid} validated={lastNameValid} type="text" placeholder="Andersen" value={lastName} errorMessage={errorMessages.lastName} onChange={(e) => setLastName(e.target.value)} labelBg="var(--gray-80)" />
         </div>
 
         <div className="flex items-center gap-4">
@@ -112,41 +90,24 @@ export default function ProfileInfoCard() {
             type="email"
             placeholder="navn@eksempel.com"
             value={email}
-            errorMessage={
-              emailTaken ? errorMessages.emailTaken : errorMessages.email
-            }
+            errorMessage={emailTaken ? errorMessages.emailTaken : errorMessages.email}
             onChange={(e) => {
               setEmail(e.target.value);
               setEmailTaken(false);
             }}
+            labelBg="var(--gray-80)"
           />
         </div>
 
         {/* Betalingskort og nummerplade er disabled da de ikke kan ændres her */}
         <div className="flex items-center gap-4">
           <Card color={"foreground"} size={40} />
-          <Input
-            label="Betalingskort"
-            error={false}
-            validated={false}
-            type="text"
-            placeholder="xxxx xxxx xxxx 0000"
-            value=""
-            disabled={true}
-          />
+          <Input label="Betalingskort" error={false} validated={false} type="text" placeholder="xxxx xxxx xxxx 0000" value="" disabled={true} labelBg="var(--gray-80)" />
         </div>
 
         <div className="flex items-center gap-4">
           <ProfileCard color={"foreground"} size={40} />
-          <Input
-            label="Nummerplade"
-            error={false}
-            validated={false}
-            type="text"
-            placeholder="AB12345"
-            value={plateNumber}
-            disabled={true}
-          />
+          <Input label="Nummerplade" error={false} validated={false} type="text" placeholder="AB12345" value={plateNumber} disabled={true} labelBg="var(--gray-80)" />
         </div>
 
         <div className="text-center">
@@ -155,14 +116,7 @@ export default function ProfileInfoCard() {
       </form>
 
       {/* Success popup vises når oplysninger er gemt */}
-      {showSuccess && (
-        <Popup
-          title="Oplysninger opdateret!"
-          message="Dine ændringer er gemt."
-          icon={<Checkmark color={"var(--brand-green)"} size={50} />}
-          onClose={() => setShowSuccess(false)}
-        />
-      )}
+      {showSuccess && <Popup title="Oplysninger opdateret!" message="Dine ændringer er gemt." icon={<Checkmark color={"var(--brand-green)"} size={50} />} onClose={() => setShowSuccess(false)} />}
     </section>
   );
 }

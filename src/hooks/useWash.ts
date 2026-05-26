@@ -1,10 +1,5 @@
 "use client";
-import {
-  WashRoute,
-  SingleWashType,
-  WashingHalls,
-  WashHallWaitTimeResponse,
-} from "@/types/washType";
+import { WashRoute, SingleWashType, WashingHalls, WashHallWaitTimeResponse } from "@/types/washType";
 import { User } from "@/types/user";
 import { useCallback, useEffect, useState } from "react";
 import { resolveWaitTime } from "@/lib/wash/resolvers";
@@ -14,134 +9,108 @@ import { useWashStore } from "@/stores/useWashStore";
 export function useWash() {
   const baseUrl = "http://127.0.0.1:80";
 
-  type SubscriptionStatus = {
-    has_sub: boolean;
-    sub_type: string | null;
-  };
-
-  const { hasSub, subType, setSubscription, clearSubscription } =
-    useWashStore();
-
   // ===========================================================
   //                    KØB ABONNOMENT
   // ===========================================================
-  const postSubscriptionStatus = useCallback(
-    async (user: User, wash: { name: string }): Promise<WashRoute> => {
-      const response = await fetch(baseUrl + "/subscription", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-store",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          has_sub: user.has_sub,
-          sub_type: wash.name,
-        }),
-      });
+const postSubscriptionStatus = useCallback(async (user: User, wash: { name: string }): Promise<WashRoute> => {
+    const response = await fetch(baseUrl + "/subscription", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store",  
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({
+        has_sub: user.has_sub,
+        sub_type: wash.name,
+      }),
+    });
 
-      if (!response.ok) {
-        throw new Error("Failed to determine subscription status");
-      }
+    if (!response.ok) {
+      throw new Error("Failed to determine subscription status");
+    }
 
-      const data = await response.json();
+    const data = await response.json();
 
-      // GLOBAL UPDATE
-      setSubscription(true, wash.name);
+    return data
+  }, []);
 
-      return data;
-    },
-    [setSubscription],
-  );
   // ===========================================================
   //              GET BRUGERS ABONNOMENT STATUS
   // ===========================================================
-  const getSubscriptionStatus =
-    useCallback(async (): Promise<SubscriptionStatus | null> => {
-      try {
-        const response = await fetch(baseUrl + "/subscription/status", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Cache-Control": "no-store",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+const hasSub = useCallback(async () => {
+  const response = await fetch(baseUrl + "/subscription", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-store",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
 
-        if (!response.ok) {
-          clearSubscription();
-          return null;
-        }
+  if (!response.ok) {
+    return {
+      has_sub: false,
+      sub_type: null,
+    };
+  }
 
-        const data: SubscriptionStatus = await response.json();
+  const data = await response.json();
 
-        setSubscription(Boolean(data.has_sub), data.sub_type ?? null);
+  return data;
+}, []);
 
-        return data;
-      } catch (error) {
-        console.error(error);
-
-        clearSubscription();
-
-        return null;
-      }
-    }, [setSubscription, clearSubscription]);
   // ===========================================================
   //                   UPDATE ABONNOMENT
   // ===========================================================
-  const updateSubscription = useCallback(
-    async (hasSub: boolean, subType: string | null) => {
-      const response = await fetch(baseUrl + "/subscription", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-store",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          has_sub: hasSub,
-          sub_type: subType,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to update subscription status");
-      }
-
-      const data = await response.json();
-
-      // GLOBAL UPDATE
-      setSubscription(hasSub, subType);
-
-      return data;
-    },
-    [setSubscription],
-  );
-
-  // ===========================================================
-  //                   DELETE ABONNOMENT
-  // ===========================================================
-  const deleteSubscription = useCallback(async () => {
+const updateSubscription = useCallback(
+  async (hasSub: boolean, subType: string | null) => {
     const response = await fetch(baseUrl + "/subscription", {
-      method: "DELETE",
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         "Cache-Control": "no-store",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
+      body: JSON.stringify({
+        has_sub: hasSub,
+        sub_type: subType,
+      }),
     });
 
     if (!response.ok) {
-      throw new Error("Failed to delete subscription");
+      throw new Error("Failed to update subscription status");
     }
-
+    
     const data = await response.json();
 
-    // GLOBAL RESET
-    clearSubscription();
+    return data ;
 
-    return data;
-  }, [clearSubscription]);
+  },
+  []
+);
+
+  // ===========================================================
+  //                   DELETE ABONNOMENT
+  // ===========================================================
+const deleteSubscription = useCallback(async () => {
+  const response = await fetch(baseUrl + "/subscription", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-store",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete subscription");
+  }
+
+  const data = await response.json();
+
+  return data;
+}, []);
 
   // ===========================================================
   //                GET ENKELTVASK  (MOCKUPDATA)
@@ -171,9 +140,7 @@ export function useWash() {
   //      NAVIGER TIL RUTE BASERET PÅ STATUS (SIMULERING)
   // ===========================================================
   const navigateBasedOnStatus = useCallback(async (): Promise<WashRoute> => {
-    const userHasSub = await hasSub().then(
-      (status) => status?.has_sub ?? false,
-    );
+    const userHasSub = await hasSub().then((status) => status?.has_sub ?? false);
 
     return userHasSub ? "/drive-in" : "/buy-wash";
   }, [hasSub]);
@@ -232,15 +199,12 @@ export function useWash() {
         try {
           setIsLoading(true);
 
-          const response = await fetch(
-            `/api/washhall/available?location_pk=${location_pk}`,
-            {
-              method: "GET",
-              headers: {
-                "Cache-Control": "no-store",
-              },
+          const response = await fetch(`/api/washhall/available?location_pk=${location_pk}`, {
+            method: "GET",
+            headers: {
+              "Cache-Control": "no-store",
             },
-          );
+          });
 
           if (!response.ok) {
             throw new Error("Failed to fetch available washhall");
@@ -274,9 +238,7 @@ export function useWash() {
   const useEntryToWashHall = (hallNumber?: number | null) => {
     const [registered, setRegistered] = useState(false);
 
-    const [secondsRemaining, setSecondsRemaining] = useState<number | null>(
-      null,
-    );
+    const [secondsRemaining, setSecondsRemaining] = useState<number | null>(null);
 
     useEffect(() => {
       if (!hallNumber) {
@@ -286,9 +248,7 @@ export function useWash() {
       }
 
       const interval = setInterval(async () => {
-        const response = await fetch(
-          `/api/washhall/entry?hall_number=${hallNumber}`,
-        );
+        const response = await fetch(`/api/washhall/entry?hall_number=${hallNumber}`);
 
         if (!response.ok) {
           return;
@@ -321,63 +281,52 @@ export function useWash() {
   // ===========================================================
   //               POST BRUGERS VASKEPROCES
   // ===========================================================
-  const postAvailableWashHall = useCallback(
-    async ({
+  const postAvailableWashHall = useCallback(async ({ wash, startedAt, endedAt, availibleWashHall, locationID }: postWash)  => {
+    console.log("POST DATA:", {
       wash,
       startedAt,
       endedAt,
       availibleWashHall,
       locationID,
-    }: postWash) => {
-      console.log("POST DATA:", {
-        wash,
-        startedAt,
-        endedAt,
-        availibleWashHall,
-        locationID,
-      });
+    });
 
-      const userHasSub = hasSub;
+    const userHasSub = await hasSub().then((status) => status?.has_sub ?? false);
 
-      const response = await fetch(baseUrl + "/reciept", {
-        method: "POST",
+    const response = await fetch(baseUrl + "/reciept", {
+      method: "POST",
 
-        headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-store",
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store",
 
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
 
-        body: JSON.stringify({
-          car_wash_location_fk: locationID,
+      body: JSON.stringify({
+        car_wash_location_fk: locationID,
 
-          car_wash_hall_fk: availibleWashHall,
+        car_wash_hall_fk: availibleWashHall,
 
-          car_wash_price: userHasSub
-            ? wash.price_subscription
-            : wash.price_single,
+        car_wash_price: userHasSub ? wash.price_subscription : wash.price_single,
 
-          car_wash_type: wash.name,
+        car_wash_type: wash.name,
 
-          car_wash_started_at: startedAt,
+        car_wash_started_at: startedAt,
 
-          car_wash_ended_at: endedAt,
-        }),
-      });
+        car_wash_ended_at: endedAt,
+      }),
+    });
 
-      if (!response.ok) {
-        const errorData = await response.json();
+    if (!response.ok) {
+      const errorData = await response.json();
 
-        throw new Error(errorData.error || "Failed to save wash");
-      }
+      throw new Error(errorData.error || "Failed to save wash");
+    }
 
-      const data = await response.json();
+    const data = await response.json();
 
-      return data;
-    },
-    [hasSub],
-  );
+    return data;
+  }, [hasSub ]);
 
   // ===========================================================
   //                Vaskehistorik hooks
@@ -434,20 +383,18 @@ export function useWash() {
     return wash;
   };
 
-  return {
-    hasSub,
-    subType,
-
-    postSubscriptionStatus,
-    navigateBasedOnStatus,
-    deleteSubscription,
-    getSubscriptionStatus,
-    postAvailableWashHall,
-    updateSubscription,
-    useSingleWash,
-    useWashHallWaitTime,
-    useAvailableWashHall,
-    useEntryToWashHall,
-    useWashHistory,
-  };
+return {
+  useWashDetail,
+  postSubscriptionStatus,
+  navigateBasedOnStatus,
+  deleteSubscription,
+  hasSub,
+  postAvailableWashHall,
+  updateSubscription,
+  useSingleWash,
+  useWashHallWaitTime,
+  useAvailableWashHall,
+  useEntryToWashHall,
+  useWashHistory,
+};
 }

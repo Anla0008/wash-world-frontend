@@ -7,7 +7,7 @@ const PrimaryButton = ({ children, onClick, isActive = false, disabled = false }
     <div className="relative m-auto">
       <button
         type="submit"
-        className={`bg-(--brand-green) relative px-5 pr-10 py-2 w-fit extra-bold text-white ${disabled ? "cursor-not-allowed bg-(--gray-80) text-(--gray-60)" : ""}`}
+        className={`relative px-5 pr-10 py-2 w-fit extra-bold ${disabled ? "cursor-not-allowed bg-(--gray-80) text-(--gray-60)" : "bg-(--brand-green) text-white"}`}
         disabled={disabled}
         onClick={() => {
           if (disabled) return;
@@ -15,7 +15,7 @@ const PrimaryButton = ({ children, onClick, isActive = false, disabled = false }
         }}
         style={{
           clipPath: "polygon(0 0, 100% 0, calc(100% - 16px) 100%, 0 100%)",
-          boxShadow: disabled ? "none" : "inset -20px -20px 30px #00170B, inset 20px 20px 30px rgba(255, 255, 255, 0.25)",
+          boxShadow: "inset -20px -20px 30px #00170B, inset 20px 20px 30px rgba(255, 255, 255, 0.25)",
         }}
       >
         {children}

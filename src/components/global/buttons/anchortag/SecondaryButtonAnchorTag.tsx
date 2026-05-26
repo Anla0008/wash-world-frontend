@@ -9,11 +9,10 @@ const SecondaryButtonAnchorTag = ({ children, href }: AnchorButtonProps) => {
   return (
     <a
       href={href}
-      className={`bg-(--gray-60) relative m-auto px-5 pr-10 py-2 w-fit extra-bold ${isDisabled ? "cursor-not-allowed bg-(--gray-80) text-(--gray-60)" : ""}`}
+      className={`bg-(--gray-60) relative m-auto px-5 pr-10 py-2 w-fit extra-bold text-white ${isDisabled ? "cursor-not-allowed bg-(--gray-80) text-(--gray-60)" : ""}`}
       style={{
         clipPath: "polygon(0 0, 100% 0, calc(100% - 16px) 100%, 0 100%)",
-        boxShadow:
-          "inset -15px -15px 20px #00170B, inset 20px 20px 30px rgba(255, 255, 255, 0.25)",
+        boxShadow: "inset -15px -15px 20px #00170B, inset 20px 20px 30px rgba(255, 255, 255, 0.25)",
       }}
     >
       {children}

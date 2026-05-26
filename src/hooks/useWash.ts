@@ -296,7 +296,7 @@ export function useWash() {
           if (!res.ok) throw new Error("Fetch fejl");
           return res.json();
         })
-        .then((data) => setHistory(data.car_wash_history))
+        .then((data) => setHistory(data.car_wash_history ?? [])) // fallback til tom array
         .catch((err) => console.error("Fetch fejl:", err));
     }, []);
 
@@ -320,7 +320,7 @@ export function useWash() {
           if (!res.ok) throw new Error("Ikke fundet");
           return res.json();
         })
-        .then((data) => setWash(data))
+        .then((data) => setWash(data ?? null)) // fallback til null
         .catch((err) => console.error(err));
     }, [id]);
 

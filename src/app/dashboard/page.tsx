@@ -4,7 +4,6 @@ import NearestWashCard from "@/components/dashboard/NearestWash";
 import FAQ from "@/components/global/cards/FAQ";
 import CustomerServiceCard from "@/components/global/cards/CustomerServiceCard";
 import SubscriptionCard from "@/components/global/cards/SubscriptionCard";
-import { washData } from "@/mockupData/washData";
 
 const Dashboard = () => {
   const firstName = localStorage.getItem("user_first_name");
@@ -17,9 +16,9 @@ const Dashboard = () => {
 
       <FAQ />
 
-      <div>
+      <div className="flex flex-col -mr-8">
         <h2 className="extra-bold">Abonnementer</h2>
-        {/* <SubscriptionCard /> */}
+        <SubscriptionCard />
       </div>
 
       <CustomerServiceCard />

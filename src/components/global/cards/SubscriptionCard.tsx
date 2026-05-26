@@ -1,11 +1,10 @@
 import PrimaryButtonAnchorTag from "../buttons/anchortag/PrimaryButtonAnchorTag";
-import { WashType } from "@/types/washType";
 import { useWash } from "@/hooks/useWash";
 import Checkmark from "../icons/grafik/Checkmark";
 
-const SubscriptionCard = ({ washData }: { washData: WashType[] }) => {
+// Henter wash data fra useWash hook og viser abonnementskort
+const SubscriptionCard = () => {
   const { useSingleWash } = useWash();
-
   const { data } = useSingleWash();
 
   if (!data) return null;

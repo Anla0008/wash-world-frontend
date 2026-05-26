@@ -20,7 +20,6 @@ export default function SubscriptionSingleView() {
   const { data } = useSingleWash();
   const [popUp, setPopUp] = useState(false);
   const [checkAnimation, setCheckAnimation] = useState(false);
-  const userHasSub = useSubscriptionStatus();
 
   const { id } = useParams();
   const router = useRouter();

@@ -11,7 +11,8 @@ import Sorting from "../global/filtering/Sorting";
 import type { FindCarWashBottomSheetProps, WaitStatus } from "@/types/locations";
 import type { Range, SortDirection } from "@/types/filtering";
 import { resolveWaitTime, resolveWaitStatus } from "@/lib/wash/resolvers";
-import { washHallWaitTime } from "@/mockupData/washData";
+import { useWaitTime } from "@/hooks/useWaitTime";
+import { getWaitStatusFromState, washHallState } from "@/lib/wash/waitTimeResolver";
 
 const waitStatusOrder: Record<WaitStatus, number> = {
   "Kort ventetid": 1,
@@ -115,24 +116,36 @@ export default function FindCarWashBottomSheet({ locations, selectedLocationPk, 
   const hasFilters = selectedFacilities.length > 0 || washHallRange.min !== 1 || washHallRange.max !== maxWashHallNumber || selfWashRange.min !== minSelfWashNumber || selfWashRange.max !== maxSelfWashNumber || searchTerm.trim() !== "";
 
   // Erstat den eksisterende waitStatusByLocationPk useMemo med:
+  // const waitStatusByLocationPk = useMemo(() => {
+  //   return locations.reduce<Record<string, WaitStatus>>((acc, location) => {
+  //     const waitTimeSeconds = resolveWaitTime(washHallWaitTime);
+  //     const isBroken = location.is_broken ?? false;
+  //     const graphStatus = resolveWaitStatus(waitTimeSeconds, isBroken);
+
+  //     // Konverter fra graf-status til WaitStatus
+  //     const waitStatus: WaitStatus = graphStatus === "travl" ? "Lang ventetid" : graphStatus === "moderat" ? "Moderat ventetid" : "Kort ventetid";
+
+  //     acc[location.location_pk] = waitStatus;
+  //     return acc;
+  //   }, {});
+  // }, [locations]);
+
   const waitStatusByLocationPk = useMemo(() => {
-    return locations.reduce<Record<string, WaitStatus>>((acc, location) => {
-      const waitTimeSeconds = resolveWaitTime(washHallWaitTime);
-      const isBroken = location.is_broken ?? false;
-      const graphStatus = resolveWaitStatus(waitTimeSeconds, isBroken);
+  return locations.reduce<Record<string, WaitStatus>>((acc, location) => {
+    const state = washHallState.get(String(location.location_pk));
 
-      // Konverter fra graf-status til WaitStatus
-      const waitStatus: WaitStatus = graphStatus === "travl" ? "Lang ventetid" : graphStatus === "moderat" ? "Moderat ventetid" : "Kort ventetid";
+    const status = getWaitStatusFromState(state);
+    
+    acc[location.location_pk] = status;
 
-      acc[location.location_pk] = waitStatus;
-      return acc;
-    }, {});
-  }, [locations]);
+    return acc;
+  }, {});
+}, [locations]);
 
   // Finder ventestatus for en bestemt vaskehal.
-  function getWaitStatusForLocation(location: Location) {
-    return waitStatusByLocationPk[location.location_pk] ?? "Kort ventetid";
-  }
+function getWaitStatusForLocation(location: Location) {
+  return waitStatusByLocationPk[location.location_pk] ?? "Kort ventetid";
+}
 
   const filteredLocations = locations.filter((location) => {
     const searchValue = searchTerm.toLowerCase().trim();

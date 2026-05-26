@@ -1,8 +1,6 @@
 "use client";
 import { http, HttpResponse } from "msw";
-import { WashStepResponse } from "@/types/washType";
-import { washHallWaitTime, washHallState, carInWashHall, washData } from "@/mockupData/washData";
-import { initializeHallState, updateHallState, resolveRoute } from "@/lib/wash/resolvers";
+import { carInWashHall, washData } from "@/mockupData/washData";
 
 const baseUrl = "http://127.0.0.1";
 let currentAvailableHallNumber: number | null = null;
@@ -24,14 +22,6 @@ http.get("/api/wash/single", () => {
 http.post("/api/wash/single", () => {
 return HttpResponse.json();
 }),
-
-  // ===========================================================
-  //              GET WASH HALL WAIT TIME
-  // ===========================================================
-
-  http.get("/api/washhall/waittime", () => {
-  return HttpResponse.json(washHallWaitTime);
-  }),
 
 
   // ===========================================================
@@ -62,64 +52,8 @@ http.get("/api/washhall/available", async ({ request }) => {
 
     const data = await response.json();
 
-    // Initialiser wash hall state for alle vaskehaller ved lokationen
-    const washHalls: { car_wash_hall_number: number }[] = data.wash_halls;
-
-    initializeHallState(washHalls);
-
-    // map over alle vaskehaller
-    const resolvedHalls = washHalls.map((hall) => {
-
-      // Hent den aktuelle state for vaskehallen (state angivet i lib/wash/resolvers.ts)
-      const currentState = washHallState.get(String(hall.car_wash_hall_number));
-
-      // hvis der ikke er en state for denne vaskehal, så returner null (den vil blive filtreret fra i næste step)
-        if (!currentState) return null;
-
-        // Opdater state baseret på hvor lang tid der er gået siden sidste opdatering
-        const updatedState = updateHallState(currentState);
-
-        // Gem den opdaterede state tilbage i washHallState
-        washHallState.set(String(hall.car_wash_hall_number), updatedState);
-
-        // spread både vaskehallens statiske data og den opdaterede state i det endelige objekt der returneres
-        return {
-          ...hall,
-          ...updatedState,
-        };
-      });
-
-    // Filtrer vaskehaller, der er markeret som optaget fra den opdaterede liste af vaskehaller eller som er null
-    const availableHalls = resolvedHalls.filter((hall: any) => hall && !hall.occupied || null);
-
-    // vælg hal, der har kortest ventetid blandt de ledige vaskehaller. Hvis alle er optaget: vælg den med kortest ventetid
-    const selectedHall = availableHalls[0] ?? resolvedHalls.sort((a: any, b: any) => a.waitTime - b.waitTime)[0];
-
-    // hvis der er en valgt vaskehal, så start registrering af bil i vaskehal
-    if (selectedHall) { currentAvailableHallNumber = selectedHall.car_wash_hall_number;
-
-      // get den valgte hal og dens tilsvarende nummer/name
-      const hallKey = String( selectedHall.car_wash_hall_number);
-
-      // Hent den aktuelle state for den valgte vaskehal - (state angivet i mocks/resolvers.ts)
-      const hallState = washHallState.get(hallKey);
-
-      // hvis der ikke allerede er oprettet en entryCreatedAt for denne vaskehal...
-      if (hallState && !hallState.entryCreatedAt) {
-
-        // så opret den nu for at starte registrering af bil i vaskehal
-       hallState.entryCreatedAt = Date.now();
-
-       // og sæt registeredAfterSeconds baseret på det simulerede tidspunkt for registrering i vaskehal
-        hallState.registeredAfterSeconds = carInWashHall.registered_after_seconds;
-
-        // gem den opdaterede state tilbage i washHallState
-        washHallState.set(hallKey, hallState);
-      }
-    }
-
-    return HttpResponse.json({hall: selectedHall,});}
-),
+    return data;
+  }),
 
   // ===========================================================
   //              GET INDKØRSEL I VASKEHAL
@@ -139,52 +73,6 @@ http.get("/api/washhall/available", async ({ request }) => {
         { status: 400 }
       );
     }
-
-    // Valider at hall_number matcher den aktuelle ledige vaskehal
-    if (Number(hallNumber) !== currentAvailableHallNumber) {
-      return HttpResponse.json(
-        { error: "hall_number is not the selected available hall" },
-        { status: 409 }
-      );
-    }
-
-    // Hent den aktuelle state for vaskehallen (state angivet i mocks/wash/resolvers.ts)
-    const hallState = washHallState.get(String(currentAvailableHallNumber));
-
-    // Hvis der ikke findes en state for denne vaskehal, eller entryCreatedAt ikke er sat...
-    if (!hallState || !hallState.entryCreatedAt) {
-      return HttpResponse.json(
-        {
-          // ... returner ikke registreret bil
-          registered: false,
-          // simuler tiden det tager for bilen at blive registreret i vaskehallen (registered_after_seconds)
-          seconds_remaining: carInWashHall.registered_after_seconds,
-        }
-      );
-    }
-
-    // opdater registrering
-    const now = Date.now();
-
-    // simuler registrering baseret på hvor lang tid der er gået siden entryCreatedAt...
-    const registeredAfterSeconds = hallState.registeredAfterSeconds;
-
-    // / 1000 for at konvertere til sekunder 
-    const secondsPassed = (now - hallState.entryCreatedAt) / 1000;
-
-   // og den tid det tager for bilen at blive registreret i vaskehallen (registered_after_seconds)
-    const registered = secondsPassed >= registeredAfterSeconds;
-
-    // math.ceil for at runde op til nærmeste hele sekund, og Math.max for at sikre at det ikke bliver negativt
-    return HttpResponse.json({ registered, seconds_remaining: Math.max(0, Math.ceil(registeredAfterSeconds - secondsPassed))});
-  }),
-
-
-  // ===========================================================
-  //              GET VENTETID FOR VASKEHAL
-  // ===========================================================
-  http.get("/api/washhall/waittime", () => {
-    return HttpResponse.json(washHallWaitTime);
   }),
 ];
 

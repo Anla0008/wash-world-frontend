@@ -171,9 +171,11 @@ export function useWash() {
   //      NAVIGER TIL RUTE BASERET PÅ STATUS (SIMULERING)
   // ===========================================================
   const navigateBasedOnStatus = useCallback(async (): Promise<WashRoute> => {
-    const userHasSub = hasSub;
+    const userHasSub = await hasSub().then(
+      (status) => status?.has_sub ?? false,
+    );
 
-    return userHasSub ? "/active-wash" : "/buy-wash";
+    return userHasSub ? "/drive-in" : "/buy-wash";
   }, [hasSub]);
 
   // ===========================================================
@@ -447,6 +449,5 @@ export function useWash() {
     useAvailableWashHall,
     useEntryToWashHall,
     useWashHistory,
-    useWashDetail,
   };
 }

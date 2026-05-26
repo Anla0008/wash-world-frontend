@@ -1,7 +1,14 @@
 import { Location } from "./locations";
-export type WashRoute = "/buy-wash" | "/active-wash" | "/error-in-distance";
+export type WashRoute = "/buy-wash" | "/drive-in" | "/error-in-distance";
 
-export type WashStep = "buy-wash" | "active-wash";
+// ===========================================================
+//               GET SUBSCRIPTION STATES
+// ==========================================================
+
+export type useSubWashType = {
+  has_sub: boolean;
+  sub_type: string | null;
+};
 
 // ===========================================================
 //                 NAVIGATION TIL STEP
@@ -90,8 +97,6 @@ export type WashStore = {
   locationName: Location["location_name"];
   availibleWashHall: number | null;
   selectedWash: WashType | null;
-  hasSub: boolean;
-  subType: string | null;
 
   startedAt: number | null;
   endedAt: number | null;
@@ -103,7 +108,6 @@ export type WashStore = {
   setAvailibleWashHall: (hallNumber: number) => void;
 
   setSelectedWash: (wash: WashType | null) => void;
-  setSubscription: (hasSub: boolean, subType: string | null) => void;
 
   setStartedAt: (time: number) => void;
 
@@ -112,8 +116,6 @@ export type WashStore = {
   setWashDate: (date: string) => void;
 
   clearWash: () => void;
-  
-  clearSubscription: () => void;
 };
 
 // ===========================================================

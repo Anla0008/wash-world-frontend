@@ -157,30 +157,23 @@ export function useAuth() {
   // ===========================================================
   //                 PATCH PROFILE INFORMATION
   // ===========================================================
-  const updateProfileInfo = useCallback(
-    async (params: {
-      user_first_name: string;
-      user_last_name: string;
-      user_email: string;
-    }) => {
-      const token = localStorage.getItem("token");
+  const updateProfileInfo = useCallback(async (params: { user_first_name: string; user_last_name: string; user_email: string }) => {
+    const token = localStorage.getItem("token");
 
-      const response = await fetch(baseUrl + "/profile-information", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(params),
-      });
+    const response = await fetch(baseUrl + "/profile-information", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(params),
+    });
 
-      const data = await response.json();
-      console.log("Status:", response.status);
-      console.log("Body:", data);
-      return data;
-    },
-    [],
-  );
+    const data = await response.json();
+    console.log("Status:", response.status);
+    console.log("Body:", data);
+    return data;
+  }, []);
 
   // ===========================================================
   //                          LOCATIONS

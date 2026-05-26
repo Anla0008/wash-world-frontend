@@ -97,9 +97,11 @@ export default function LocationSingle() {
     <div className="flex flex-col gap-20">
       {/* ================== HERO SECTION =================== */}
       <section>
-        <Link href="/locations" aria-label="Tilbage til kortet">
-          <ArrowLeft size={24} />
-        </Link>
+        
+         <Link href="/locations" className="flex items-center gap-2 mb-4">
+            <ArrowLeft size={24} />
+              Kort
+            </Link>
 
         <h1 className="my-8 extra-bold">{location.location_city}</h1>
 

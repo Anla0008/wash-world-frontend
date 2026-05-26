@@ -226,7 +226,12 @@ export default function Signup() {
       {step === 2 && (
         <section className="grid gap-10">
           <WashWorldLogo />
+          
+        <div className="flex items-center gap-2 mb-4">
           <ArrowLeft onClick={() => setStep(1)} size={30} />
+              Tilbage
+          </div>
+
           <ProgressBar activeIndex={2} />
 
           <h1 className="text-center">Kortoplysninger</h1>

@@ -6,12 +6,12 @@ import { PopupProps } from "@/types/popUp";
 const Popup = ({ title, message, subtitle, submessage, icon, onClose, children }: PopupProps) => {
   return (
     /* Overlay som dækker hele skærmen */
-    <div className="fixed inset-0 z-1 flex items-center justify-center bg-(--background-transparent) backdrop-blur-xs">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-(--background-transparent) backdrop-blur-xs">
       {/* Klik udenfor popup lukker den. Lav et usynligt lag over hele skærmen, som lukker popup når man klikker udenfor */}
       {onClose && <div className="absolute inset-0" onClick={() => onClose?.()} />}
 
       {/* Popup container */}
-      <div className="z-10 rounded-md bg-(--gray-10) p-2 py-8 text-center text-(--foreground-reverse) shadow-md w-90">
+      <div className="z-60 rounded-md bg-(--gray-10) p-2 py-8 text-center text-(--foreground-reverse) shadow-md w-90">
         {/* Luk-knap */}
         {onClose && (
           <button onClick={() => onClose?.()} className="ml-auto flex">

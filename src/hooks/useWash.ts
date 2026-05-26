@@ -1,10 +1,9 @@
 "use client";
-import { WashRoute, SingleWashType, WashingHalls, WashHallWaitTimeResponse } from "@/types/washType";
+import { WashRoute, SingleWashType, WashingHalls, WashHallWaitTimeResponse, SubscriptionResponse } from "@/types/washType";
 import { User } from "@/types/user";
 import { useCallback, useEffect, useState } from "react";
 import { resolveWaitTime } from "@/lib/wash/resolvers";
 import { postWash } from "@/types/washType";
-import { useWashStore } from "@/stores/useWashStore";
 
 export function useWash() {
   const baseUrl = "http://127.0.0.1:80";
@@ -38,7 +37,7 @@ const postSubscriptionStatus = useCallback(async (user: User, wash: { name: stri
   // ===========================================================
   //              GET BRUGERS ABONNOMENT STATUS
   // ===========================================================
-const hasSub = useCallback(async () => {
+const hasSub = useCallback(async (): Promise<{ hasSub: boolean; subType: string | null }> => {
   const response = await fetch(baseUrl + "/subscription", {
     method: "GET",
     headers: {
@@ -49,15 +48,15 @@ const hasSub = useCallback(async () => {
   });
 
   if (!response.ok) {
-    return {
-      has_sub: false,
-      sub_type: null,
-    };
+    return { hasSub: false, subType: null };
   }
 
-  const data = await response.json();
+  const data: SubscriptionResponse = await response.json();
 
-  return data;
+  return {
+  hasSub: data.has_sub,
+  subType: data.sub_type,
+};
 }, []);
 
   // ===========================================================
@@ -140,7 +139,7 @@ const deleteSubscription = useCallback(async () => {
   //      NAVIGER TIL RUTE BASERET PÅ STATUS (SIMULERING)
   // ===========================================================
   const navigateBasedOnStatus = useCallback(async (): Promise<WashRoute> => {
-    const userHasSub = await hasSub().then((status) => status?.has_sub ?? false);
+    const userHasSub = await hasSub();
 
     return userHasSub ? "/drive-in" : "/buy-wash";
   }, [hasSub]);
@@ -290,7 +289,7 @@ const deleteSubscription = useCallback(async () => {
       locationID,
     });
 
-    const userHasSub = await hasSub().then((status) => status?.has_sub ?? false);
+    const userHasSub = await hasSub();
 
     const response = await fetch(baseUrl + "/reciept", {
       method: "POST",

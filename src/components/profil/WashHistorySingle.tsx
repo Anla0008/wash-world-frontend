@@ -5,6 +5,7 @@ import ArrowLeft from "@/components/global/icons/navigation/ArrowLeft";
 import { useWash } from "@/hooks/useWash";
 import { useRouter } from "next/navigation";
 import { use } from "react";
+import Link from "next/link";
 
 export default function WashHistorySingle({
   params,
@@ -24,7 +25,10 @@ export default function WashHistorySingle({
 
   return (
     <div className="flex flex-col gap-10">
-      <ArrowLeft onClick={() => router.push("/wash-history")} size={30} />
+       <Link href="/profil" className="flex items-center gap-2 mb-4">
+            <ArrowLeft size={24} />
+              Vaskehistorik
+            </Link>
 
       <div className="flex flex-col">
         <h1 className="extra-bold">{startDate.toLocaleDateString("da-DK")}</h1>

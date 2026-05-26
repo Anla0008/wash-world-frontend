@@ -1,24 +1,7 @@
-"use client";
+import WashHistory from "@/components/profil/WashHistory";
 
-import HistorikCard from "@/components/profil/HistoryCard";
-import { useWash } from "@/hooks/useWash";
-import ArrowLeft from "@/components/global/icons/navigation/ArrowLeft";
-import { useRouter } from "next/navigation";
+const WashHistoryPage = () => {
+  return <WashHistory />;
+};
 
-export default function WashHistory() {
-  const { useWashHistory } = useWash();
-  const router = useRouter();
-
-  const token = localStorage.getItem("token");
-  const userID = token ? JSON.parse(atob(token.split(".")[1])).sub : null;
-
-  const history = useWashHistory();
-
-  return (
-    <div>
-      <ArrowLeft onClick={() => router.push("/profil")} size={30} />
-      <h1 className="extra-bold">Vaskehistorik</h1>
-      <div className="flex flex-col gap-3">{history?.length > 0 ? history.map((wash: any) => <HistorikCard key={wash.car_wash_history_pk} location={wash.location_name} date={new Date(wash.date_of_wash).toLocaleDateString("da-DK")} description={wash.car_wash_type} price={wash.car_wash_price} points={wash.car_wash_price} href={`/wash-history/${wash.car_wash_history_pk}`} />) : <p>Du har endnu ikke foretaget nogen vask</p>}</div>
-    </div>
-  );
-}
+export default WashHistoryPage;

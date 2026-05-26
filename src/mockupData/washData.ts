@@ -24,7 +24,7 @@ export const washHallWaitTime: { [key: number]: number } = {
 };
 
 // ===========================================================
-//                 MOCKUP DATA FOR ENKELTVASKE
+//                 MOCKUP DATA FOR VASKE
 // ==========================================================
 
 export const washData = {

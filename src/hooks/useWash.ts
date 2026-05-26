@@ -11,7 +11,7 @@ export function useWash() {
   // ===========================================================
   //                    KØB ABONNOMENT
   // ===========================================================
-const postSubscriptionStatus = useCallback(async (user: User): Promise<WashRoute> => {
+const postSubscriptionStatus = useCallback(async (user: User, wash: { name: string }): Promise<WashRoute> => {
     const response = await fetch(baseUrl + "/subscription", {
       method: "POST",
       headers: {
@@ -20,7 +20,8 @@ const postSubscriptionStatus = useCallback(async (user: User): Promise<WashRoute
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify({
-        has_sub: user.has_sub
+        has_sub: user.has_sub,
+        sub_type: wash.name,
       }),
     });
 
@@ -30,14 +31,13 @@ const postSubscriptionStatus = useCallback(async (user: User): Promise<WashRoute
 
     const data = await response.json();
 
-    return data.route as WashRoute;
+    return data
   }, []);
 
   // ===========================================================
   //              GET BRUGERS ABONNOMENT STATUS
   // ===========================================================
-
-const hasSub = useCallback(async (): Promise<boolean> => {
+const hasSub = useCallback(async () => {
   const response = await fetch(baseUrl + "/subscription/status", {
     method: "GET",
     headers: {
@@ -48,12 +48,15 @@ const hasSub = useCallback(async (): Promise<boolean> => {
   });
 
   if (!response.ok) {
-    return false;
+    return {
+      has_sub: false,
+      sub_type: null,
+    };
   }
 
   const data = await response.json();
 
-  return Boolean(data.has_sub);
+  return data;
 }, []);
 
   // ===========================================================

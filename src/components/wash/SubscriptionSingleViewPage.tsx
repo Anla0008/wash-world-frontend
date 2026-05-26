@@ -14,9 +14,9 @@ type SubscriptionSingleViewPageProps = {
 };
 
 export default function SubscriptionSingleViewPage({ id }: SubscriptionSingleViewPageProps) {
-  const { useSingleWash, postSubscriptionStatus, updateSubscription } = useWash();
+  const { useSingleWash, postSubscriptionStatus, updateSubscription, getSubscriptionStatus } = useWash();
 
-  const { setSelectedWash, setSubscription, hasSub } = useWashStore();
+  const { setSelectedWash } = useWashStore();
 
   const { data } = useSingleWash();
 
@@ -46,10 +46,9 @@ export default function SubscriptionSingleViewPage({ id }: SubscriptionSingleVie
 
   const handleSelectWash = async () => {
     setSelectedWash(wash);
-    setSubscription(true, wash.name);
     setPopUp(true);
 
-    const alreadyHasSubscription = hasSub;
+    const alreadyHasSubscription = await getSubscriptionStatus().then((status) => status?.has_sub ?? false);
 
     if (alreadyHasSubscription) {
       await updateSubscription(true, wash.name);

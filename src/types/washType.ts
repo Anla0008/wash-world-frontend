@@ -13,6 +13,7 @@ export type SubscriptionResponse = {
 export type SubscriptionStatus = {
   hasSub: boolean;
   subType: string | null;
+  isLoading: boolean;
 };
 
 // ===========================================================
@@ -91,6 +92,20 @@ export type WashType = {
 
 export type SingleWashType = {
   types: WashType[];
+};
+
+// ===========================================================
+//                    VENTETID STATE
+// ==========================================================
+
+export type WashHallRuntimeState = {
+  occupied: boolean;
+  broken: boolean;
+  carsInQueue: number;
+  waitTime: number;
+  updatedAt: number;
+  entryCreatedAt: number | null;
+  registeredAfterSeconds: number;
 };
 
 // ===========================================================

@@ -141,7 +141,7 @@ const deleteSubscription = useCallback(async () => {
   const navigateBasedOnStatus = useCallback(async (): Promise<WashRoute> => {
     const userHasSub = await hasSub();
 
-    return userHasSub ? "/drive-in" : "/buy-wash";
+    return userHasSub.hasSub ? "/drive-in" : "/buy-wash";
   }, [hasSub]);
 
   // ===========================================================
@@ -306,7 +306,7 @@ const deleteSubscription = useCallback(async () => {
 
         car_wash_hall_fk: availibleWashHall,
 
-        car_wash_price: userHasSub ? wash.price_subscription : wash.price_single,
+        car_wash_price: userHasSub.hasSub ? wash.price_subscription : wash.price_single,
 
         car_wash_type: wash.name,
 

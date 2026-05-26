@@ -9,27 +9,15 @@ import { useWashStore } from "@/stores/useWashStore";
 export function useWash() {
   const baseUrl = "http://127.0.0.1:80";
 
-  type SubscriptionStatus = {
-    has_sub: boolean;
-    sub_type: string | null;
-  };
-
-    const [has_sub, set_has_sub] = useState<boolean>(false);
-    const [sub_type, set_sub_type] = useState<string | null>(null);
-
   // ===========================================================
   //                    KØB ABONNOMENT
   // ===========================================================
-const postSubscriptionStatus = useCallback(
-  async (
-    user: User,
-    wash: { name: string }
-  ): Promise<WashRoute> => {
+const postSubscriptionStatus = useCallback(async (user: User, wash: { name: string }): Promise<WashRoute> => {
     const response = await fetch(baseUrl + "/subscription", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Cache-Control": "no-store",
+        "Cache-Control": "no-store",  
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify({
@@ -44,44 +32,34 @@ const postSubscriptionStatus = useCallback(
 
     const data = await response.json();
 
-    set_has_sub(Boolean(user.has_sub));
-    set_sub_type(wash.name ?? null);
+    return data
+  }, []);
 
-    return data;
-  },
-  []
-);
   // ===========================================================
   //              GET BRUGERS ABONNOMENT STATUS
   // ===========================================================
-const getSubscriptionStatus = useCallback(async (): Promise<SubscriptionStatus | null> => {
-  try {
-    const response = await fetch(baseUrl + "/subscription", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-store",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
+const hasSub = useCallback(async () => {
+  const response = await fetch(baseUrl + "/subscription", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-store",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
 
-    if (!response.ok) {
-      return null;
-    }
-
-    const data: SubscriptionStatus = await response.json();
-
-    set_has_sub(Boolean(data.has_sub));
-    set_sub_type(data.sub_type ?? null);
-
-    return data;
-  } catch (error) {
-    console.error(error);
-
-
-    return null;
+  if (!response.ok) {
+    return {
+      has_sub: false,
+      sub_type: null,
+    };
   }
+
+  const data = await response.json();
+
+  return data;
 }, []);
+
   // ===========================================================
   //                   UPDATE ABONNOMENT
   // ===========================================================
@@ -103,12 +81,6 @@ const updateSubscription = useCallback(
     if (!response.ok) {
       throw new Error("Failed to update subscription status");
     }
-
-    const handleUpdateState = () => {
-      set_has_sub(hasSub);
-      set_sub_type(subType);
-    };
-    handleUpdateState();
     
     const data = await response.json();
 
@@ -136,10 +108,6 @@ const deleteSubscription = useCallback(async () => {
   }
 
   const data = await response.json();
-
-  set_has_sub(false);
-  set_sub_type(null);
-
 
   return data;
 }, []);
@@ -172,10 +140,10 @@ const deleteSubscription = useCallback(async () => {
   //      NAVIGER TIL RUTE BASERET PÅ STATUS (SIMULERING)
   // ===========================================================
   const navigateBasedOnStatus = useCallback(async (): Promise<WashRoute> => {
-    const userHasSub = await getSubscriptionStatus().then((status) => status?.has_sub ?? false);
+    const userHasSub = await hasSub().then((status) => status?.has_sub ?? false);
 
     return userHasSub ? "/drive-in" : "/buy-wash";
-  }, [getSubscriptionStatus]);
+  }, [hasSub]);
 
   // ===========================================================
   //                  GET VENTETID FOR VASKEHAL (SIMULERING)
@@ -322,7 +290,7 @@ const deleteSubscription = useCallback(async () => {
       locationID,
     });
 
-    const userHasSub = await getSubscriptionStatus().then((status) => status?.has_sub ?? false);
+    const userHasSub = await hasSub().then((status) => status?.has_sub ?? false);
 
     const response = await fetch(baseUrl + "/reciept", {
       method: "POST",
@@ -358,7 +326,7 @@ const deleteSubscription = useCallback(async () => {
     const data = await response.json();
 
     return data;
-  }, [getSubscriptionStatus ]);
+  }, [hasSub ]);
 
   // ===========================================================
   //                Vaskehistorik hooks
@@ -416,13 +384,11 @@ const deleteSubscription = useCallback(async () => {
   };
 
 return {
-  has_sub,
-  sub_type,
   useWashDetail,
   postSubscriptionStatus,
   navigateBasedOnStatus,
   deleteSubscription,
-  getSubscriptionStatus,
+  hasSub,
   postAvailableWashHall,
   updateSubscription,
   useSingleWash,

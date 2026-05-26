@@ -10,13 +10,8 @@ export default function WashHistoryDetail({ params }: { params: Promise<{ id: st
   const { id } = use(params);
   const router = useRouter();
 
-  const { useWashHistory } = useWash();
-
-  const token = localStorage.getItem("token");
-  const userID = token ? JSON.parse(atob(token.split(".")[1])).sub : null;
-
-  const history = useWashHistory(userID);
-  const wash = history.find((w: any) => w.car_wash_history_pk === id);
+  const { useWashDetail } = useWash();
+  const wash = useWashDetail(id);
 
   if (!wash) return <p>Indlæser...</p>;
 

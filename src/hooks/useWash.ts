@@ -11,16 +11,16 @@ export function useWash() {
   // ===========================================================
   //                    KØB ABONNOMENT
   // ===========================================================
-const postSubscriptionStatus = useCallback(async (user: User): Promise<WashRoute> => {
+  const postSubscriptionStatus = useCallback(async (user: User): Promise<WashRoute> => {
     const response = await fetch(baseUrl + "/subscription", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Cache-Control": "no-store",  
+        "Cache-Control": "no-store",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify({
-        has_sub: user.has_sub
+        has_sub: user.has_sub,
       }),
     });
 
@@ -37,24 +37,24 @@ const postSubscriptionStatus = useCallback(async (user: User): Promise<WashRoute
   //              GET BRUGERS ABONNOMENT STATUS
   // ===========================================================
 
-const hasSub = useCallback(async (): Promise<boolean> => {
-  const response = await fetch(baseUrl + "/subscription/status", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      "Cache-Control": "no-store",
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  });
+  const hasSub = useCallback(async (): Promise<boolean> => {
+    const response = await fetch(baseUrl + "/subscription/status", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
 
-  if (!response.ok) {
-    return false;
-  }
+    if (!response.ok) {
+      return false;
+    }
 
-  const data = await response.json();
+    const data = await response.json();
 
-  return Boolean(data.has_sub);
-}, []);
+    return Boolean(data.has_sub);
+  }, []);
 
   // ===========================================================
   //                GET ENKELTVASK  (MOCKUPDATA)
@@ -225,7 +225,7 @@ const hasSub = useCallback(async (): Promise<boolean> => {
   // ===========================================================
   //               POST BRUGERS VASKEPROCES
   // ===========================================================
-  const postAvailableWashHall = useCallback(async ({ wash, startedAt, endedAt, availibleWashHall, locationID }: postWash)  => {
+  const postAvailableWashHall = useCallback(async ({ wash, startedAt, endedAt, availibleWashHall, locationID }: postWash) => {
     console.log("POST DATA:", {
       wash,
       startedAt,
@@ -273,19 +273,55 @@ const hasSub = useCallback(async (): Promise<boolean> => {
   }, []);
 
   // ===========================================================
-  //                Vaskehistorik hook
+  //                Vaskehistorik hooks
   // ===========================================================
-  const useWashHistory = (license_fk: string) => {
+  const useWashHistory = () => {
     const [history, setHistory] = useState<any[]>([]);
 
     useEffect(() => {
-      fetch(`http://127.0.0.1:80/reciept/${license_fk}`)
-        .then((res) => res.json())
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const userPk = JSON.parse(atob(token.split(".")[1])).sub;
+
+      fetch(`${baseUrl}/car-wash-history/user/${userPk}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Fetch fejl");
+          return res.json();
+        })
         .then((data) => setHistory(data.car_wash_history))
         .catch((err) => console.error("Fetch fejl:", err));
-    }, [license_fk]);
+    }, []);
 
     return history;
+  };
+
+  const useWashDetail = (id: string) => {
+    const [wash, setWash] = useState<any | null>(null);
+
+    useEffect(() => {
+      if (!id) return;
+
+      const token = localStorage.getItem("token");
+
+      fetch(`${baseUrl}/car-wash-history/detail/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Ikke fundet");
+          return res.json();
+        })
+        .then((data) => setWash(data))
+        .catch((err) => console.error(err));
+    }, [id]);
+
+    return wash;
   };
 
   return {
@@ -298,5 +334,6 @@ const hasSub = useCallback(async (): Promise<boolean> => {
     useAvailableWashHall,
     useEntryToWashHall,
     useWashHistory,
+    useWashDetail,
   };
 }

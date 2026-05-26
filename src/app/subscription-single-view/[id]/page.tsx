@@ -13,7 +13,7 @@ import Popup from "@/components/global/cards/PopUp";
 
 export default function SubscriptionSingleView() {
   const { useSingleWash } = useWash();
-  const { setSelectedWash } = useWashStore();
+  const { setSelectedWash, setSubscription } = useWashStore();
   const { postSubscriptionStatus } = useWash();
   const { data } = useSingleWash();
   const [popUp, setPopUp] = useState(false);
@@ -45,8 +45,9 @@ export default function SubscriptionSingleView() {
 
   const handleSelectWash = () => {
     setSelectedWash(wash);
+    setSubscription(true, wash.name);
     setPopUp(true);
-    postSubscriptionStatus({ has_sub: true } as any);
+    postSubscriptionStatus({ has_sub: true } as any, wash);
   };
   
   return (

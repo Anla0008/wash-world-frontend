@@ -157,23 +157,30 @@ export function useAuth() {
   // ===========================================================
   //                 PATCH PROFILE INFORMATION
   // ===========================================================
-  const updateProfileInfo = useCallback(async (params: { user_first_name: string; user_last_name: string; user_email: string }) => {
-    const token = localStorage.getItem("token");
+  const updateProfileInfo = useCallback(
+    async (params: {
+      user_first_name: string;
+      user_last_name: string;
+      user_email: string;
+    }) => {
+      const token = localStorage.getItem("token");
 
-    const response = await fetch(baseUrl + "/profile-information", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(params),
-    });
+      const response = await fetch(baseUrl + "/profile-information", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(params),
+      });
 
-    const data = await response.json();
-    console.log("Status:", response.status);
-    console.log("Body:", data);
-    return data;
-  }, []);
+      const data = await response.json();
+      console.log("Status:", response.status);
+      console.log("Body:", data);
+      return data;
+    },
+    [],
+  );
 
   // ===========================================================
   //                          LOCATIONS
@@ -272,8 +279,8 @@ export function useAuth() {
   // ===========================================================
   //                       DELETE USER
   // ===========================================================
-  const deleteUser = useCallback(async (user_pk: string) => {
-    const response = await fetch(baseUrl + `/users/${user_pk}`, {
+  const deleteUser = useCallback(async () => {
+    const response = await fetch(baseUrl + "/users", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -281,13 +288,8 @@ export function useAuth() {
       },
     });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || "Failed to delete user");
-    }
-
-    return data;
+    localStorage.removeItem("token");
+    return response.json();
   }, []);
 
   // Herunder returnerer vi ALLE routes, som vi ønsker at kunne bruge i vores komponenter

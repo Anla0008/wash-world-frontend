@@ -36,7 +36,7 @@ const Input = ({
         {error && errorMessage}
       </p>
 
-      {/* // styling for at give input 60 graders snit */}
+      {/* Styling for at give input 60 graders snit */}
       <div
         className="absolute bg-background -top-3 w-fit px-4"
         style={{
@@ -45,7 +45,7 @@ const Input = ({
       >
         <p className="light">{label}</p>
       </div>
-      {/* #TODO: gør så error og validated først kommer frem hvis charArt er over 0 - dette tages fra backenden */}
+      {/* Gør så error og validated først kommer frem hvis charArt er over 0 - dette tages fra backenden */}
       <div className="absolute top-2.5 right-3">
         {error ? <Error /> : validated ? <Validated /> : null}
       </div>

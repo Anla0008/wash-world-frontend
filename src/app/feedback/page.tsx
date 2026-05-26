@@ -69,9 +69,23 @@ export default function Feedback() {
         <Smileys onSelect={handleRatingSelect} />
 
         {/* Validation/API fejl */}
-        <div className="h-5">{error && <p className={` text-red-500 small ${error ? "opacity-100" : "opacity-0"}`}>{error}</p>}</div>
+        <div className="h-5">
+          {error && (
+            <p
+              className={` text-red-500 small ${error ? "opacity-100" : "opacity-0"}`}
+            >
+              {error}
+            </p>
+          )}
+        </div>
 
-        <TextArea label="Feedback" placeholder="Her kan du uddybe din feedback..." type="text" onTextAreaChange={handleCommentChange} />
+        <TextArea
+          label="Feedback"
+          placeholder="Her kan du uddybe din feedback..."
+          type="text"
+          onTextAreaChange={handleCommentChange}
+          value=""
+        />
 
         <div className="mt-12 text-right">
           <PrimaryButton>Indsend</PrimaryButton>
@@ -79,7 +93,13 @@ export default function Feedback() {
       </form>
 
       {/* Success popup */}
-      {showSuccess && <Popup title="Tak for din feedback!" message="Du bliver sendt videre om 5 sekunder..." icon={<Checkmark color={"var(--brand-green)"} size={50} />} />}
+      {showSuccess && (
+        <Popup
+          title="Tak for din feedback!"
+          message="Du bliver sendt videre om 5 sekunder..."
+          icon={<Checkmark color={"var(--brand-green)"} size={50} />}
+        />
+      )}
     </section>
   );
 }

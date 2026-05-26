@@ -5,12 +5,14 @@ import MyProfileCard from "@/components/profil/MyProfileCard";
 import CustomerServiceCard from "@/components/global/cards/CustomerServiceCard";
 import FAQ from "@/components/global/cards/FAQ";
 import DeleteUserButton from "@/components/global/buttons/onClick/DeleteUserButton";
-
+import { useWash } from "@/hooks/useWash";
 import { useEffect, useState } from "react";
+import { Link } from "lucide-react";
 
 export default function Profil() {
   const [user_pk, setUserPk] = useState(null);
   const firstName = localStorage.getItem("user_first_name");
+  const { hasSub, deleteSubscription } = useWash();
 
   useEffect(() => {
     // Decoder JWT token for at hente brugerens user_pk
@@ -21,6 +23,10 @@ export default function Profil() {
       setUserPk(decoded.sub); // Flask gemmer user_pk i "sub"-feltet via create_access_token
     }
   }, []);
+
+  const handleCancelSubscription = () => {
+    deleteSubscription();
+  }
 
   return (
     <div className="flex flex-col gap-8">

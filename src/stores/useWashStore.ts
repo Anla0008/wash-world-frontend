@@ -16,6 +16,19 @@ export const useWashStore = create<WashStore>((set) => ({
   endedAt: null,
   washDate: null,
 
+  setSubscription: (hasSub, subType) =>
+    set({
+      hasSub,
+      subType,
+    }),
+
+  clearSubscription: () =>
+    set({
+      hasSub: false,
+      subType: null,
+    }),
+
+
 // set alle state funktioner til at opdatere den relevante del af state i zustand store
 setLocationID: (locationID) =>
     set({
@@ -37,39 +50,6 @@ setLocationName: (locationName) =>
       selectedWash: wash,
     }),
 
-  setSubscription: (hasSub, subType) =>
-    set({
-      hasSub,
-      subType,
-    }),
-
-  hydrateSubscription: async () => {
-    try {
-      const response = await fetch("http://127.0.0.1:80/subscription/status", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-store",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-
-      if (!response.ok) {
-        set({ hasSub: false, subType: null });
-        return;
-      }
-
-      const data = await response.json();
-
-      set({
-        hasSub: Boolean(data.has_sub),
-        subType: data.sub_type ?? null,
-      });
-    } catch {
-      set({ hasSub: false, subType: null });
-    }
-  },
-
     setWashDate: (date) =>
     set({
       washDate: date,
@@ -80,7 +60,7 @@ setLocationName: (locationName) =>
       startedAt: time,
     }),
 
-    setEndedAt: (time) =>
+setEndedAt: (time) =>
   set((state) => ({
     endedAt:
       time +

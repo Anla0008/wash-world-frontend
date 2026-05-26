@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 export default function ProfileInformation() {
   const router = useRouter();
 
+
   return (
     <div>
       <ArrowLeft onClick={() => router.push("/profil")} size={30} />

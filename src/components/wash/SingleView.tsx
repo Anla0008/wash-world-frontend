@@ -1,11 +1,19 @@
+"use client";
+
 import Checkmark from "../global/icons/grafik/Checkmark";
 import PrimaryButton from "../global/buttons/onClick/PrimaryButton";
 import SecondaryButtonAnchorTag from "../global/buttons/anchortag/SecondaryButtonAnchorTag";
 import Swipe from "../global/buttons/onClick/Swipe";
 import Image from "next/image";
 import { SingleViewCardProps } from "@/types/washType";
+import { useWash } from "@/hooks/useWash";
 
 const SingleViewCard = ({ wash, isSubscription, onSelect }: SingleViewCardProps) => {
+    const { hasSub, subType } = useWash();
+
+    const matchSubType = hasSub && wash.name === subType;
+
+    const subscriptionLabel = hasSub && matchSubType ? "Nuværende abonnement" : hasSub ? "Opdater abonnement" : "Køb abonnement";
 
     return (
         <div className="space-y-6">
@@ -35,13 +43,14 @@ const SingleViewCard = ({ wash, isSubscription, onSelect }: SingleViewCardProps)
                 <span>kr.</span>
             </div>
             {isSubscription ? null : <p className="text-sm">Eller for {wash.price_subscription} kr./pr. måned ubegrænset</p>}
+
             {isSubscription ? 
               (
-                <Swipe onComplete={onSelect}>Køb abonnement</Swipe>
+                <Swipe onComplete={onSelect} disabled={matchSubType}>{subscriptionLabel}</Swipe>
               )
             : (
             <div className="flex py-2 gap-2">
-                <SecondaryButtonAnchorTag href={`/subscription-single-view/${wash.id}`} >Køb abonnement</SecondaryButtonAnchorTag>
+                                <SecondaryButtonAnchorTag href={`/subscription-single-view/${wash.id}`}>{subscriptionLabel}</SecondaryButtonAnchorTag>
                 <PrimaryButton onClick={onSelect}>Vælg vask</PrimaryButton>
             </div>
             )}

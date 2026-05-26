@@ -17,14 +17,28 @@ const ActiveWash = () => {
   //                DURATION EFTER SUB
   // ===========================================================
 
-  const { hasSub, subType } = useWash();
+  const { hasSub } = useWash();
 
+  const [subscriptionType, setSubscriptionType] = useState<string | null>(null);
+
+  const [userHasSub, setUserHasSub] = useState(false);
+
+
+  // tjekker om bruger har sub og hvilken type
+  useEffect(() => {
+    const checkSub = async () => {const result = await hasSub(); 
+      setUserHasSub(result.has_sub);
+      setSubscriptionType(result.sub_type);
+    };
+  
+    checkSub();
+  }, [hasSub]);
 
   // finder den valgte vask i mockup data for at få duration til timer
-  const subscriptionWash = washData.types.find((wash) => wash.name === subType);
+  const subscriptionWash = washData.types.find((wash) => wash.name === subscriptionType);
 
   // hvis bruger har sub, brug duration fra sub, ellers brug duration fra valgt vask
-  const timerDuration = hasSub ? subscriptionWash?.duration : selectedWash?.duration;
+  const timerDuration = userHasSub ? subscriptionWash?.duration : selectedWash?.duration;
 
   // ===========================================================
   //                  START TIDSPUNKT FOR VASK

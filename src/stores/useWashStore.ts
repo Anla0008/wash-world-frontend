@@ -10,24 +10,9 @@ export const useWashStore = create<WashStore>((set) => ({
   locationName: "undefined",
   availibleWashHall: null,
   selectedWash: null,
-  hasSub: false,
-  subType: null,
   startedAt: null,
   endedAt: null,
   washDate: null,
-
-  setSubscription: (hasSub, subType) =>
-    set({
-      hasSub,
-      subType,
-    }),
-
-  clearSubscription: () =>
-    set({
-      hasSub: false,
-      subType: null,
-    }),
-
 
 // set alle state funktioner til at opdatere den relevante del af state i zustand store
 setLocationID: (locationID) =>
@@ -75,8 +60,6 @@ setEndedAt: (time) =>
       startedAt: null,
       endedAt: null,
       washDate: null,
-      hasSub: false,
-      subType: null,
       locationID: undefined,
       locationName: undefined,
     }),

@@ -67,13 +67,13 @@ const NavBar = () => {
       ),
     },
     {
-      name: "Favoritter",
-      link: "/favoritter",
+      name: "Favorites",
+      link: "/favorites",
       icon: (
         <Favourites
           size={40}
           color={
-            pathname === "/favoritter"
+            pathname === "/favorites"
               ? "var(--brand-green-reverse)"
               : "var(--background)"
           }

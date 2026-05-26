@@ -9,21 +9,21 @@ const PointCard = ({ points }: PointProps) => {
       type: "Vask selv",
       antal: 15,
       fyldetekst: null,
-      href: "/favoritter",
+      href: "/favorites",
     },
     {
       rabat: "-20%",
       type: "Premium Vask",
       antal: 200,
       fyldetekst: "på næste",
-      href: "/favoritter",
+      href: "/favorites",
     },
     {
       rabat: "Gratis",
       type: "Guldabonnement i en måned",
       antal: 1500,
       fyldetekst: null,
-      href: "/favoritter",
+      href: "/favorites",
     },
   ];
 

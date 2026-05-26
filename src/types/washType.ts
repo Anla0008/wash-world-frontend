@@ -104,7 +104,6 @@ export type WashStore = {
 
   setSelectedWash: (wash: WashType | null) => void;
   setSubscription: (hasSub: boolean, subType: string | null) => void;
-  hydrateSubscription: () => Promise<void>;
 
   setStartedAt: (time: number) => void;
 
@@ -113,6 +112,8 @@ export type WashStore = {
   setWashDate: (date: string) => void;
 
   clearWash: () => void;
+  
+  clearSubscription: () => void;
 };
 
 // ===========================================================

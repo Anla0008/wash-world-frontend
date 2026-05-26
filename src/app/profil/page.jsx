@@ -5,12 +5,14 @@ import MyProfileCard from "@/components/profil/MyProfileCard";
 import CustomerServiceCard from "@/components/global/cards/CustomerServiceCard";
 import FAQ from "@/components/global/cards/FAQ";
 import DeleteUserButton from "@/components/global/buttons/onClick/DeleteUserButton";
-
+import { useWash } from "@/hooks/useWash";
 import { useEffect, useState } from "react";
+import { Link } from "lucide-react";
 
 export default function Profil() {
   const [user_pk, setUserPk] = useState(null);
   const firstName = localStorage.getItem("user_first_name");
+  const { hasSub, deleteSubscription } = useWash();
 
   useEffect(() => {
     // Decoder JWT token for at hente brugerens user_pk
@@ -22,6 +24,10 @@ export default function Profil() {
     }
   }, []);
 
+  const handleCancelSubscription = () => {
+    deleteSubscription();
+  }
+
   return (
     <div className="flex flex-col gap-8">
       <h1 className="extra-bold">Hej {firstName}</h1>
@@ -29,7 +35,7 @@ export default function Profil() {
       {/*TODO: Hent navn fra backend */}
       <MyProfileCard />
 
-      <div className="flex flex-col -mr-8">
+      <div className="flex flex-col -mr-8 mt-14">
         <h2 className="extra-bold">Abonnementer</h2>
         <SubscriptionCard />
       </div>

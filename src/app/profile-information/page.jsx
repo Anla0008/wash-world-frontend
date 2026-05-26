@@ -4,11 +4,11 @@ import ProfileInfoCard from "@/components/profil/ProfileInfoCard";
 import SubscriptionCard from "@/components/global/cards/SubscriptionCard";
 import DeleteUserButton from "@/components/global/buttons/onClick/DeleteUserButton";
 import ArrowLeft from "@/components/global/icons/navigation/ArrowLeft";
-import { washData } from "@/mockupData/washData";
 import { useRouter } from "next/navigation";
 
 export default function ProfileInformation() {
   const router = useRouter();
+
 
   return (
     <div>
@@ -18,11 +18,12 @@ export default function ProfileInformation() {
 
       <ProfileInfoCard />
 
-      {/*TODO: tjek om brugeren har abonnement */}
-      <h2 className="extra-bold pt-8">Opdater til abonnement</h2>
-      <SubscriptionCard washData={washData} />
+      <div className="flex flex-col -mr-8 mt-14">
+        <h2 className="extra-bold">Abonnementer</h2>
+        <SubscriptionCard />
+      </div>
 
-      <div className="flex justify-center mt-18">
+      <div className="flex justify-center mt-14">
         <DeleteUserButton />
       </div>
     </div>

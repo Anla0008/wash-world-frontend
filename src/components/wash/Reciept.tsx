@@ -33,11 +33,7 @@ const {
 const [userHasSub, setUserHasSub] = useState(false);
 
 useEffect(() => {
-  const checkSub = async () => {const result = await hasSub(); 
-    setUserHasSub(result);
-  };
-
-  checkSub();
+  setUserHasSub(hasSub);
 }, [hasSub]);
 
   // ===========================================================

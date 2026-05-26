@@ -8,6 +8,22 @@ export const carInWashHall = {
 };
 
 // ===========================================================
+//              MOCKUP FOR VENTETID I HAL
+// ==========================================================
+
+ const washHallRandomizer = {
+  1: Math.floor(Math.random() * 60), // op til 1 min
+  2: Math.floor(Math.random() * 300), // op til 5 min
+  3: Math.floor(Math.random() * 600), // op til 10 min
+};
+
+export const washHallWaitTime: { [key: number]: number } = {
+    1: washHallRandomizer[1],
+    2: washHallRandomizer[2],
+    3: washHallRandomizer[3],
+};
+
+// ===========================================================
 //                 MOCKUP DATA FOR VASKE
 // ==========================================================
 
@@ -81,6 +97,20 @@ export const washData = {
   ]
 };
 
+// ===========================================================
+//               MAP OVER HALLS OG DERES STATUS
+// ===========================================================
+
+export const washHallState = new Map<
+  string,
+  {
+    occupied: boolean;
+    waitTime: number;
+    updatedAt: number;
+    entryCreatedAt: number | null;
+    registeredAfterSeconds: number;
+  }
+>();
 
 // ===========================================================
 //         DEFAULT FALLBACK IN CASE OF GPS FAILURE

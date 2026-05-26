@@ -3,6 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useState } from "react";
 import { Location } from "@/types/locations";
 import { WashRoute, WashHallWaitTimeResponse, SubscriptionStatus } from "@/types/washType";
+import { washHallState } from "@/mockupData/washData";
 import { useWashStore } from "@/stores/useWashStore";
 import { useGeoLocation } from "@/hooks/useGeoLocation";
 import { useWash } from "@/hooks/useWash";
@@ -137,7 +138,6 @@ export const useSubscriptionStatus = () => {
   const [userSub, setUserSub] = useState<SubscriptionStatus>({
     hasSub: false,
     subType: null,
-    isLoading: true,
   });
 
   useEffect(() => {
@@ -147,10 +147,7 @@ export const useSubscriptionStatus = () => {
       const subscription = await hasSub();
 
       if (isMounted) {
-        setUserSub({
-          ...subscription,
-          isLoading: false,
-        });
+        setUserSub(subscription);
       }
     };
 
@@ -162,6 +159,13 @@ export const useSubscriptionStatus = () => {
   }, [hasSub]);
 
   return userSub;
+};
+
+// ===========================================================
+//           BESTEM RUTE EFTER SUBSCRIPTION
+// ===========================================================
+export const resolveRoute = (userHasSub: boolean): WashRoute => {
+  return userHasSub ? "/drive-in" : "/buy-wash";
 };
 
 // ===========================================================
@@ -177,7 +181,7 @@ export const resolveWashRouteFromDistance = (distanceKm: number, userHasSub: boo
   }
 
   // ellers returner resolveRoute() baseret på subscription
-  return userHasSub ? "/drive-in" : "/buy-wash";
+  return resolveRoute(userHasSub);
 };
 
 // ===========================================================
@@ -213,6 +217,59 @@ export const resolveDurationToMinutesSeconds = (durationInSeconds: number) => {
 };
 
 // ===========================================================
+//            INITIALISER VASKEHALL STATE
+// ==========================================================
+
+export function initializeHallState(halls: { car_wash_hall_number: number }[]) {
+  halls.forEach((hall) => {
+    // Brug vaskehalens nummer som nøgle
+    const key = String(hall.car_wash_hall_number);
+
+    // Hvis der ikke allerede er en state for denne vaskehal, så opret en ny
+    if (!washHallState.has(key)) {
+      washHallState.set(key, {
+        // simuler 30% chance for at vaskehallen er optaget ved initialisering
+        occupied: Math.random() > 0.3,
+
+        // simuler ventetid mellem 0 og 10 minutter
+        waitTime: Math.floor(Math.random() * 600),
+
+        // opdateringstidspunkt sættes til nu
+        updatedAt: Date.now(),
+
+        // sættes først når en specifik hal bliver valgt
+        entryCreatedAt: null,
+        registeredAfterSeconds: 0,
+      });
+    }
+  });
+}
+
+// ===========================================================
+//            OPDATER VASKEHALL STATE
+// ==========================================================
+export function updateHallState(state: { occupied: boolean; waitTime: number; updatedAt: number; entryCreatedAt: number | null; registeredAfterSeconds: number }) {
+  const now = Date.now();
+
+  // Beregn hvor lang tid der er gået siden sidste opdatering
+  const secondsPassed = (now - state.updatedAt) / 1000;
+
+  // Opdater ventetiden baseret på hvor lang tid der er gået
+  const nextWaitTime = Math.max(0, state.waitTime - secondsPassed);
+
+  // Simuler at vaskehallen bliver optaget eller ledig baseret på ventetiden og tilfældighed
+  const occupied = nextWaitTime > 0 ? true : Math.random() > 0.8;
+
+  return {
+    occupied,
+    waitTime: nextWaitTime,
+    updatedAt: now,
+    entryCreatedAt: state.entryCreatedAt,
+    registeredAfterSeconds: state.registeredAfterSeconds,
+  };
+}
+
+// ===========================================================
 //   RESOLVE WAIT TIME (baseret på antal ledige vaskehaller)
 // ===========================================================
 export const resolveWaitTime = (waitTime: WashHallWaitTimeResponse): number => {
@@ -230,17 +287,10 @@ export const resolveWaitTime = (waitTime: WashHallWaitTimeResponse): number => {
 //   KONVERTER VENTETID TIL STATUS (deles mellem bottomsheet og travhedsgraf)
 // ===========================================================
 
-export function resolveWaitStatus(
-  waitTimeSeconds: number,
-  isBroken: boolean
-): "travl" | "moderat" | "rolig" {
+export function resolveWaitStatus(waitTimeSeconds: number, isBroken: boolean): "travl" | "moderat" | "rolig" {
+  if (isBroken) return "travl"; // hvis hallen er i stykker, vis altid travl
 
-  if (isBroken) return "travl";
-
-  if (waitTimeSeconds > 600) return "travl";
-
-  if (waitTimeSeconds > 180) return "moderat";
-
-  return "rolig";
+  if (waitTimeSeconds > 300) return "travl"; // over 5 min
+  if (waitTimeSeconds > 120) return "moderat"; // 2-5 min
+  return "rolig"; // under 2 min
 }
-

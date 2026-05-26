@@ -2,11 +2,11 @@
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useState } from "react";
 import { Location } from "@/types/locations";
-import { WashRoute, WashStep } from "@/types/washType";
-import { WashHallWaitTimeResponse } from "@/types/washType";
+import { WashRoute, WashHallWaitTimeResponse, SubscriptionStatus } from "@/types/washType";
 import { washHallState } from "@/mockupData/washData";
 import { useWashStore } from "@/stores/useWashStore";
 import { useGeoLocation } from "@/hooks/useGeoLocation";
+import { useWash } from "@/hooks/useWash";
 
 // resolvers.ts bruges til at simulerer logikken i vores API,
 // så vi kan teste forskellige scenarier
@@ -130,10 +130,42 @@ export const useNearestWash = () => {
 
 
 // ===========================================================
+//             RESOLVE ABONNOMENT STATUS
+// ===========================================================
+export const useSubscriptionStatus = () => {
+  const { hasSub } = useWash();
+
+  const [userSub, setUserSub] = useState<SubscriptionStatus>({
+    hasSub: false,
+    subType: null,
+  });
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadSubscriptionStatus = async () => {
+      const subscription = await hasSub();
+
+      if (isMounted) {
+        setUserSub(subscription);
+      }
+    };
+
+    void loadSubscriptionStatus();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [hasSub]);
+
+  return userSub;
+};
+
+// ===========================================================
 //           BESTEM RUTE EFTER SUBSCRIPTION
 // ===========================================================
 export const resolveRoute = (userHasSub: boolean): WashRoute => {
-  return userHasSub ? "/active-wash" : "/buy-wash";
+  return userHasSub ? "/drive-in" : "/buy-wash";
 };
 
 // ===========================================================
@@ -162,7 +194,7 @@ export const distanceFromWashhall = (distanceKm: number, userHasSub: boolean): W
     return "/error-in-distance";
   } else {
     // ellers returner rute baseret på abonnementstatus
-    return userHasSub ? "/active-wash" : "/buy-wash"; 
+    return userHasSub ? "/drive-in" : "/buy-wash"; 
   }
 };
 
@@ -262,3 +294,4 @@ export function resolveWaitStatus(waitTimeSeconds: number, isBroken: boolean): "
   if (waitTimeSeconds > 120) return "moderat"; // 2-5 min
   return "rolig"; // under 2 min
 }
+

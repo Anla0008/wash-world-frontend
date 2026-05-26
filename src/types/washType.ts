@@ -5,9 +5,14 @@ export type WashRoute = "/buy-wash" | "/drive-in" | "/error-in-distance";
 //               GET SUBSCRIPTION STATES
 // ==========================================================
 
-export type useSubWashType = {
+export type SubscriptionResponse = {
   has_sub: boolean;
   sub_type: string | null;
+};
+
+export type SubscriptionStatus = {
+  hasSub: boolean;
+  subType: string | null;
 };
 
 // ===========================================================

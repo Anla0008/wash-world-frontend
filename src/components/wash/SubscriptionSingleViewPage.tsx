@@ -1,79 +1,89 @@
 "use client";
 
 import Link from "next/link";
+import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import Popup from "@/components/global/cards/PopUp";
-import ArrowLeft from "@/components/global/icons/navigation/ArrowLeft";
-import SingleViewCard from "@/components/wash/SingleView";
 import { useWash } from "@/hooks/useWash";
 import { useWashStore } from "@/stores/useWashStore";
+import SingleViewCard from "@/components/wash/SingleView";
+import ArrowLeft from "@/components/global/icons/navigation/ArrowLeft";
+import Popup from "@/components/global/cards/PopUp";
+import CheckMarkAnimation from "@/components/global/grafik/CheckMarkAnimation";
+import { useSubscriptionStatus } from "@/lib/wash/resolvers";
 
-type SubscriptionSingleViewPageProps = {
-  id: string;
-};
-
-export default function SubscriptionSingleViewPage({ id }: SubscriptionSingleViewPageProps) {
-  const { useSingleWash, postSubscriptionStatus, updateSubscription, getSubscriptionStatus } = useWash();
-
+export default function SubscriptionSingleView() {
+  const { useSingleWash } = useWash();
   const { setSelectedWash } = useWashStore();
-
+  const { postSubscriptionStatus } = useWash();
   const { data } = useSingleWash();
-
   const [popUp, setPopUp] = useState(false);
+  const [checkAnimation, setCheckAnimation] = useState(false);
+  const userHasSub = useSubscriptionStatus();
 
-  const wash = data?.types.find((item) => String(item.id) === String(id));
+  const { id } = useParams();
+  const router = useRouter();
+
+  const wash = data?.types.find((wash) => String(wash.id) === String(id));
 
   if (!data) {
     return (
-      <main className="min-h-screen bg-background px-8 py-10 text-foreground">
         <p>Indlæser vask...</p>
-      </main>
     );
   }
 
   if (!wash) {
     return (
-      <main className="min-h-screen bg-background px-8 py-10 text-foreground">
         <p>Vasken blev ikke fundet.</p>
-
-        <Link href="/buy-wash" className="mt-4 inline-block underline">
-          Tilbage til oversigt
-        </Link>
-      </main>
     );
   }
 
-  const handleSelectWash = async () => {
+  const handleSelectWash = () => {
     setSelectedWash(wash);
-    setPopUp(true);
-
-    const alreadyHasSubscription = await getSubscriptionStatus().then((status) => status?.has_sub ?? false);
-
-    if (alreadyHasSubscription) {
-      await updateSubscription(true, wash.name);
-      return;
-    }
-
-    await postSubscriptionStatus({ has_sub: true } as any, wash);
+    setCheckAnimation(true);
   };
 
+  const handleCheckAnimationComplete = () => {
+    setCheckAnimation(false);
+    setPopUp(true);
+    postSubscriptionStatus({ has_sub: true } as any, wash);
+  };
+
+  const handleClosePopup = () => {
+    setPopUp(false);
+    router.push("/profil");
+  }
+  
   return (
     <>
-      <Link href="/buy-wash" className="mt-4 underline flex items-center gap-2">
-        <ArrowLeft size={20} color="var(--foreground)" />
-      </Link>
+    <Link href="/profile-information" className="flex items-center gap-2 mb-4">
+       <ArrowLeft size={20} color="var(--foreground)" />
+       Abonnementer
+    </Link>
+    <SingleViewCard wash={wash} isSubscription={true} onSelect={handleSelectWash} />
 
-      <SingleViewCard wash={wash} isSubscription={true} onSelect={handleSelectWash} />
+      {checkAnimation && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md px-6">
 
-      {popUp && (
-        <Popup
-          title="Abonnement købt!"
-          message={`${"Abonnement løber fra"} ${new Date().toLocaleDateString()} - ${new Date(new Date().setDate(new Date().getDate() + 31)).toLocaleDateString()}`}
-          submessage="Du vil blive trukket automatisk for enden af perioden."
-          onClose={() => setPopUp(false)}
-        />
-      )}
+        <div className="rounded-2xl bg-(--gray-80)/90 px-8 py-10 shadow-2xl">
+          <CheckMarkAnimation
+            title="Abonnement valgt!"
+            durationMs={1600}
+            onComplete={handleCheckAnimationComplete}
+          />
+        </div>
+      </div>
+    )}
+
+    {popUp && (
+      <Popup
+        title="Abonnement købt!"
+        message={`Abonnoment løber fra ${new Date().toLocaleDateString()} - ${new Date(new Date().setDate(new Date().getDate() + 31)).toLocaleDateString()}`}
+        submessage="Du vil blive trukket automatisk for enden af perioden."
+        onClose={handleClosePopup}
+      />
+    )}
     </>
   );
 }

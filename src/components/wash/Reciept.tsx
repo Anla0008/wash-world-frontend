@@ -5,16 +5,19 @@ import { useWash } from "@/hooks/useWash";
 import { useWashStore } from "@/stores/useWashStore";
 import { useRouter } from "next/navigation";
 import ProgressBar from "../global/grafik/ProgressBar";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import CheckMarkAnimation from "../global/grafik/CheckMarkAnimation";
+import { useSubscriptionStatus } from "@/lib/wash/resolvers";
 
 const Reciept = () => {
   const [checkAnimation, setCheckAnimation] = useState(false);
   const [nextRoute, setNextRoute] = useState<"/dashboard" | "/feedback">("/dashboard");
+  const userHasSub = useSubscriptionStatus();
 
   const router = useRouter();
 
-  const { postAvailableWashHall, hasSub } = useWash();
+  const { postAvailableWashHall } = useWash();
+
 
 const {
   selectedWash,
@@ -26,15 +29,6 @@ const {
   clearWash,
 } = useWashStore();
 
-// ===========================================================
-//                  ABONNOMENT STATUS
-// ===========================================================   
-
-const [userHasSub, setUserHasSub] = useState(false);
-
-useEffect(() => {
-  setUserHasSub(hasSub);
-}, [hasSub]);
 
   // ===========================================================
   //                   AFSLUT VASK 
@@ -174,7 +168,7 @@ useEffect(() => {
         <div className="rounded-2xl bg-(--gray-80)/90 px-8 py-10 shadow-2xl">
           <CheckMarkAnimation
             title="Vask valgt!"
-            subtitle="Din vask vil faktureres når den er afsluttet"
+            subtitle="Din vask er betalt!"
             durationMs={1600}
             onComplete={handleCheckAnimationComplete}
           />

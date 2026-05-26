@@ -5,7 +5,8 @@ import { WashStore } from "@/types/washType";
 
 export const useWashStore = create<WashStore>((set) => ({
 
-  // initial state for wash store
+
+  // start med undefined for at tvinge eksplicit valg af vaskehal
   locationID: "undefined",
   locationName: "undefined",
   availibleWashHall: null,
@@ -14,7 +15,8 @@ export const useWashStore = create<WashStore>((set) => ({
   endedAt: null,
   washDate: null,
 
-// set alle state funktioner til at opdatere den relevante del af state i zustand store
+  // set alle state funktioner til at opdatere den relevante del af state i zustand store
+
 setLocationID: (locationID) =>
     set({
       locationID: locationID  ,
@@ -45,7 +47,7 @@ setLocationName: (locationName) =>
       startedAt: time,
     }),
 
-setEndedAt: (time) =>
+    setEndedAt: (time) =>
   set((state) => ({
     endedAt:
       time +

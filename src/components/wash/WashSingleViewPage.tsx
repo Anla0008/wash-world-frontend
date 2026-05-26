@@ -48,9 +48,10 @@ const WashSingleViewPage = () => {
 
   return (
     <>
-      <Link href="/buy-wash" className="mt-4 underline flex items-center gap-2">
-        <ArrowLeft size={20} color="var(--foreground)" />
-      </Link>
+       <Link href="/buy-wash" className="flex items-center gap-2 mb-4">
+          <ArrowLeft size={24} />
+              Enkeltvaske
+          </Link>
 
       <SingleViewCard wash={wash} isSubscription={false} onSelect={handleSelectWash} />
 

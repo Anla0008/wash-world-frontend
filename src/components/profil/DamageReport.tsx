@@ -45,7 +45,11 @@ export default function DamageReport() {
 
   return (
     <div>
-      <ArrowLeft onClick={() => router.push("/profil")} size={30} />
+         <Link href="/profil" className="flex items-center gap-2 mb-4">
+            <ArrowLeft size={24} />
+              Profil
+            </Link>
+            
       <h1 className="extra-bold pb-8">Skaderapportering</h1>
       <form onSubmit={handleSubmit}>
         <TextArea

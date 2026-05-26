@@ -4,6 +4,7 @@ import HistorikCard from "@/components/profil/HistoryCard";
 import { useWash } from "@/hooks/useWash";
 import ArrowLeft from "@/components/global/icons/navigation/ArrowLeft";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function WashHistory() {
   const { useWashHistory } = useWash();
@@ -16,7 +17,10 @@ export default function WashHistory() {
 
   return (
     <div>
-      <ArrowLeft onClick={() => router.push("/profil")} size={30} />
+        <Link href="/profil" className="flex items-center gap-2 mb-4">
+            <ArrowLeft size={24} />
+              Profil
+            </Link>
       <h1 className="extra-bold">Vaskehistorik</h1>
       <div className="flex flex-col gap-3">
         {history?.length > 0 ? (

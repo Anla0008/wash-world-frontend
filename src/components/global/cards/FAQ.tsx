@@ -3,6 +3,7 @@
 import { useState } from "react";
 import OpenAndClose from "../icons/navigation/OpenAndClose";
 import { FAQItem } from "@/types/FAQItem";
+import Link from "next/link";
 
 // Definerer typen for hvert accordion item
 
@@ -12,14 +13,14 @@ const items: FAQItem[] = [
     content: (
       <p>
         Vi tilbyder kun Vask Selv på udvalgte lokationer, men vi åbner hele
-        tiden flere. Du kan finde en oversigt over vores Vask Selv stationer{" "}
-        <a
+        tiden flere. Du kan finde en oversigt over vores Vask Selv stationer
+        <Link
           href="https://washworld.dk/vask-selv"
           target="_blank"
           className="underline text-(--blue-selected)"
         >
           her
-        </a>
+        </Link>
         .
       </p>
     ),
@@ -30,9 +31,9 @@ const items: FAQItem[] = [
       <p>
         Vi tilbyder tre forskellige abonnementer med ubegrænset vask. Læs mere
         om vores abonnementer{" "}
-        <a href="/profil" className="underline text-(--blue-selected)">
+        <Link href="/profil" className="underline text-(--blue-selected)">
           her
-        </a>
+        </Link>
         .
       </p>
     ),

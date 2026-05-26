@@ -79,7 +79,7 @@ export default function ResetPassword({
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <div className="flex items-center gap-4">
-          <Lock color={"white"} size={40} />
+          <Lock color={"foreground"} size={40} />
           <Input
             label="Kode*"
             error={!!params2.user_hashed_password && !passwordValid}
@@ -95,7 +95,7 @@ export default function ResetPassword({
         </div>
 
         <div className="flex items-center gap-4">
-          <Lock color={"white"} size={40} />
+          <Lock color={"foreground"} size={40} />
           <Input
             label="Gentag kode*"
             error={

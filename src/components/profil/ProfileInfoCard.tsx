@@ -76,7 +76,7 @@ export default function ProfileInfoCard() {
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <div className="flex items-center gap-4">
-          <User color={"white"} size={40} />
+          <User color={"foreground"} size={40} />
           <Input
             label="Fornavn"
             error={!!firstName && !firstNameValid}
@@ -90,7 +90,7 @@ export default function ProfileInfoCard() {
         </div>
 
         <div className="flex items-center gap-4">
-          <User color={"white"} size={40} />
+          <User color={"foreground"} size={40} />
           <Input
             label="Efternavn"
             error={!!lastName && !lastNameValid}
@@ -104,7 +104,7 @@ export default function ProfileInfoCard() {
         </div>
 
         <div className="flex items-center gap-4">
-          <Mail color={"white"} size={40} />
+          <Mail color={"foreground"} size={40} />
           <Input
             label="E-mail"
             error={(!!email && !emailValid) || emailTaken}
@@ -124,7 +124,7 @@ export default function ProfileInfoCard() {
 
         {/* Betalingskort og nummerplade er disabled da de ikke kan ændres her */}
         <div className="flex items-center gap-4">
-          <Card color={"white"} size={40} />
+          <Card color={"foreground"} size={40} />
           <Input
             label="Betalingskort"
             error={false}
@@ -137,7 +137,7 @@ export default function ProfileInfoCard() {
         </div>
 
         <div className="flex items-center gap-4">
-          <ProfileCard color={"white"} size={40} />
+          <ProfileCard color={"foreground"} size={40} />
           <Input
             label="Nummerplade"
             error={false}

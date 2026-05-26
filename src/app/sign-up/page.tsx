@@ -99,7 +99,7 @@ export default function Signup() {
             <h1 className="text-center">Opret bruger</h1>
 
             <div className="flex items-center gap-4">
-              <Mail color={"white"} size={40} />
+              <Mail color={"foreground"} size={40} />
               <Input
                 label="E-mail*"
                 error={(!!params.user_email && !emailValid) || emailTaken}
@@ -118,7 +118,7 @@ export default function Signup() {
             </div>
 
             <div className="flex items-center gap-4">
-              <Userr color={"white"} size={40} />
+              <Userr color={"foreground"} size={40} />
               <Input
                 label="Fornavn*"
                 error={!!params.user_first_name && !firstNameValid}
@@ -134,7 +134,7 @@ export default function Signup() {
             </div>
 
             <div className="flex items-center gap-4">
-              <Userr color={"white"} size={40} />
+              <Userr color={"foreground"} size={40} />
               <Input
                 label="Efternavn*"
                 error={!!params.user_last_name && !lastNameValid}
@@ -150,7 +150,7 @@ export default function Signup() {
             </div>
 
             <div className="flex items-center gap-4">
-              <Lock color={"white"} size={40} />
+              <Lock color={"foreground"} size={40} />
               <Input
                 label="Kode*"
                 error={!!params.user_hashed_password && !passwordValid}
@@ -166,7 +166,7 @@ export default function Signup() {
             </div>
 
             <div className="flex items-center gap-4">
-              <Lock color={"white"} size={40} />
+              <Lock color={"foreground"} size={40} />
               <Input
                 label="Gentag kode*"
                 error={
@@ -187,7 +187,7 @@ export default function Signup() {
             </div>
 
             <div className="flex items-center gap-4">
-              <ProfileCard color={"white"} size={40} />
+              <ProfileCard color={"foreground"} size={40} />
               <Input
                 label="Nummerplade*"
                 error={
@@ -232,7 +232,7 @@ export default function Signup() {
           <h1 className="text-center">Kortoplysninger</h1>
           <form onSubmit={handleSubmitSignup} className="flex flex-col gap-6">
             <div className="flex items-center gap-4">
-              <Card color={"white"} size={40} />
+              <Card color={"foreground"} size={40} />
               <Input
                 label="Kortnummer*"
                 error={false}
@@ -245,7 +245,7 @@ export default function Signup() {
             </div>
 
             <div className="flex items-center gap-4">
-              <Userr color={"white"} size={40} />
+              <Userr color={"foreground"} size={40} />
               <Input
                 label="Navn på kort*"
                 error={false}
@@ -258,7 +258,7 @@ export default function Signup() {
             </div>
 
             <div className="flex items-center gap-4">
-              <Clock color={"white"} size={40} />
+              <Clock color={"foreground"} size={40} />
               <div className="flex flex-row gap-6">
                 <Input
                   label="Udløbsdato*"

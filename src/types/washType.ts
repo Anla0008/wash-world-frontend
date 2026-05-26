@@ -90,6 +90,8 @@ export type WashStore = {
   locationName: Location["location_name"];
   availibleWashHall: number | null;
   selectedWash: WashType | null;
+  hasSub: boolean;
+  subType: string | null;
 
   startedAt: number | null;
   endedAt: number | null;
@@ -101,6 +103,8 @@ export type WashStore = {
   setAvailibleWashHall: (hallNumber: number) => void;
 
   setSelectedWash: (wash: WashType | null) => void;
+  setSubscription: (hasSub: boolean, subType: string | null) => void;
+  hydrateSubscription: () => Promise<void>;
 
   setStartedAt: (time: number) => void;
 

@@ -5,18 +5,18 @@ import { WashStore } from "@/types/washType";
 
 export const useWashStore = create<WashStore>((set) => ({
 
-
-  // start med undefined for at tvinge eksplicit valg af vaskehal
+  // initial state for wash store
   locationID: "undefined",
   locationName: "undefined",
   availibleWashHall: null,
   selectedWash: null,
+  hasSub: false,
+  subType: null,
   startedAt: null,
   endedAt: null,
   washDate: null,
 
-  // set alle state funktioner til at opdatere den relevante del af state i zustand store
-
+// set alle state funktioner til at opdatere den relevante del af state i zustand store
 setLocationID: (locationID) =>
     set({
       locationID: locationID  ,
@@ -36,6 +36,39 @@ setLocationName: (locationName) =>
     set({
       selectedWash: wash,
     }),
+
+  setSubscription: (hasSub, subType) =>
+    set({
+      hasSub,
+      subType,
+    }),
+
+  hydrateSubscription: async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:80/subscription/status", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-store",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (!response.ok) {
+        set({ hasSub: false, subType: null });
+        return;
+      }
+
+      const data = await response.json();
+
+      set({
+        hasSub: Boolean(data.has_sub),
+        subType: data.sub_type ?? null,
+      });
+    } catch {
+      set({ hasSub: false, subType: null });
+    }
+  },
 
     setWashDate: (date) =>
     set({
@@ -62,6 +95,8 @@ setLocationName: (locationName) =>
       startedAt: null,
       endedAt: null,
       washDate: null,
+      hasSub: false,
+      subType: null,
       locationID: undefined,
       locationName: undefined,
     }),

@@ -11,7 +11,7 @@ const SubscriptionCard = ({ washData }: { washData: WashType[] }) => {
   if (!data) return null;
 
   return (
-    <section className="max-w-lg w-full flex gap-4 overflow-x-auto scroll-smooth hide-scrollbar pt-6 pb-8">
+    <section className="max-w-lg w-full flex gap-6 overflow-x-auto scroll-smooth hide-scrollbar py-8">
       {data.types.map((wash) => (
         <article
           key={wash.id}

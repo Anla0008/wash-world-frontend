@@ -1,4 +1,4 @@
-import NavArrowRight from "../icons/navigation/NavArrowRight";
+import ArrowRight from "../icons/navigation/ArrowRight";
 
 const CustomerServiceCard = () => {
   return (
@@ -6,7 +6,7 @@ const CustomerServiceCard = () => {
       <h3 className="extra-bold">Kundeservice</h3>
       <a href="/damage-report" className="flex justify-between">
         <span>Skaderapportering</span>
-        <NavArrowRight size={30} />
+        <ArrowRight size={20} />
       </a>
       <div className="flex pt-4 gap-1 small text-(--gray-60)">
         <p>Kontakt os:</p>

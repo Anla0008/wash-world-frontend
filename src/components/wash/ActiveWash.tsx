@@ -7,9 +7,12 @@ import { useWashStore } from "@/stores/useWashStore";
 import { useEffect, useState } from "react";
 import { useWash } from "@/hooks/useWash";
 import { washData } from "@/mockupData/washData";
+import { useSubscriptionStatus } from "@/lib/wash/resolvers";
 
 const ActiveWash = () => {
   const router = useRouter();
+
+  const userHasSub = useSubscriptionStatus();
 
   const { selectedWash, startedAt, setStartedAt, setEndedAt } = useWashStore();
 
@@ -17,28 +20,11 @@ const ActiveWash = () => {
   //                DURATION EFTER SUB
   // ===========================================================
 
-  const { hasSub } = useWash();
-
-  const [subscriptionType, setSubscriptionType] = useState<string | null>(null);
-
-  const [userHasSub, setUserHasSub] = useState(false);
-
-
-  // tjekker om bruger har sub og hvilken type
-  useEffect(() => {
-    const checkSub = async () => {const result = await hasSub(); 
-      setUserHasSub(result.has_sub);
-      setSubscriptionType(result.sub_type);
-    };
-  
-    checkSub();
-  }, [hasSub]);
-
   // finder den valgte vask i mockup data for at få duration til timer
-  const subscriptionWash = washData.types.find((wash) => wash.name === subscriptionType);
+  const subscriptionWash = washData.types.find((wash) => wash.name === userHasSub.subType);
 
   // hvis bruger har sub, brug duration fra sub, ellers brug duration fra valgt vask
-  const timerDuration = userHasSub ? subscriptionWash?.duration : selectedWash?.duration;
+  const timerDuration = userHasSub.hasSub ? subscriptionWash?.duration : selectedWash?.duration;
 
   // ===========================================================
   //                  START TIDSPUNKT FOR VASK

@@ -141,7 +141,7 @@ const deleteSubscription = useCallback(async () => {
   const navigateBasedOnStatus = useCallback(async (): Promise<WashRoute> => {
     const userHasSub = await hasSub();
 
-    return userHasSub ? "/drive-in" : "/buy-wash";
+    return userHasSub.hasSub ? "/drive-in" : "/buy-wash";
   }, [hasSub]);
 
   // ===========================================================

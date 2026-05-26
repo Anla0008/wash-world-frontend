@@ -85,7 +85,7 @@ export default function SingleWash() {
       {checkAnimation && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md px-6">
           <div className="rounded-2xl bg-(--gray-80)/90 px-8 py-10 shadow-2xl">
-            <CheckMarkAnimation title="Kob gennemført!" subtitle="Dit kob er registreret" durationMs={1600} onComplete={handleCheckAnimationComplete} />
+            <CheckMarkAnimation title="Køb gennemført!" subtitle="Dit køb er registreret" durationMs={1600} onComplete={handleCheckAnimationComplete} />
           </div>
         </div>
       )}

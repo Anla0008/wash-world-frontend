@@ -71,7 +71,7 @@ export default function Feedback() {
         {/* Validation/API fejl */}
         <div className="h-5">{error && <p className={` text-red-500 small ${error ? "opacity-100" : "opacity-0"}`}>{error}</p>}</div>
 
-        <TextArea label="Feedback" placeholder="Her kan du uddybe din feedback..." type="text" onTextAreaChange={handleCommentChange} />
+        <TextArea label="Feedback" placeholder="Her kan du uddybe din feedback..." type="text" value="" onTextAreaChange={handleCommentChange} />
 
         <div className="mt-12 text-right">
           <PrimaryButton>Indsend</PrimaryButton>

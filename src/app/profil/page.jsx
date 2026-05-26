@@ -29,7 +29,7 @@ export default function Profil() {
       {/*TODO: Hent navn fra backend */}
       <MyProfileCard />
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col -mr-8">
         <h2 className="extra-bold">Abonnementer</h2>
         <SubscriptionCard />
       </div>
@@ -57,7 +57,7 @@ export default function Profil() {
         </button>
       </div>
 
-      <div className="flex justify-center mt-18">
+      <div className="flex justify-center mt-8">
         <DeleteUserButton
           user_pk={user_pk}
           onDeleted={() => (window.location.href = "/")}

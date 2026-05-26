@@ -59,7 +59,7 @@ export default function Home() {
 
       <form onSubmit={handleLogin} className="flex flex-col gap-10">
         <div className="flex items-center gap-4">
-          <Mail color={"white"} size={40} />
+          <Mail color={"foreground"} size={40} />
           <Input
             label="E-mail*"
             error={(!!params.user_email && !emailValid) || loginFailed}
@@ -79,7 +79,7 @@ export default function Home() {
 
         <div>
           <div className="flex items-center gap-4">
-            <Lock color={"white"} size={40} />
+            <Lock color={"foreground"} size={40} />
             <Input
               label="Kode*"
               error={

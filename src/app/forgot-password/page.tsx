@@ -69,7 +69,7 @@ export default function ForgotPassword() {
 
       <form onSubmit={handleSubmit}>
         <div className="flex items-center gap-4">
-          <Mail color={"white"} size={40} />
+          <Mail color={"foreground"} size={40} />
           <Input
             label="E-mail*"
             error={(!!params.user_email && !emailValid) || emailNotFound}

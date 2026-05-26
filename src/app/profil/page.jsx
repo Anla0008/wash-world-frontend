@@ -35,7 +35,7 @@ export default function Profil() {
       {/*TODO: Hent navn fra backend */}
       <MyProfileCard />
 
-      <div className="flex flex-col -mr-8 mt-14">
+      <div className="flex flex-col -mr-8 mt-6">
         <h2 className="extra-bold">Abonnementer</h2>
         <SubscriptionCard />
       </div>

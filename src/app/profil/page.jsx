@@ -26,7 +26,7 @@ export default function Profil() {
 
   const handleCancelSubscription = () => {
     deleteSubscription();
-  }
+  };
 
   return (
     <div className="flex flex-col gap-8">
@@ -44,19 +44,18 @@ export default function Profil() {
 
       <FAQ />
 
-      {/* Button stylet om tertriary button, men med log ud logik op – bruges KUN her */}
+      {/* Button stylet om secondary button, men med log ud logik op – bruges KUN her */}
       {/* JWT er stateless – log ud sker ved at slette tokenet lokalt */}
       <div className="flex justify-center">
         <button
-          className="bg-foreground text-background relative px-5 pr-10 py-2 w-fit extra-bold"
+          className="bg-(--gray-60) relative px-5 pr-10 py-2 w-fit extra-bold text-white"
           style={{
             clipPath: "polygon(0 0, 100% 0, calc(100% - 16px) 100%, 0 100%)",
-            boxShadow:
-              "inset -10px -10px 20px #121212, inset 20px 20px 30px rgba(255, 255, 255, 0.25)",
+            boxShadow: "inset -15px -15px 20px #00170B, inset 20px 20px 30px rgba(255, 255, 255, 0.25)",
           }}
           onClick={() => {
-            localStorage.removeItem("token"); // Sletter tokenet fra browseren
-            window.location.href = "/"; // Sender brugeren til forsiden
+            localStorage.removeItem("token");
+            window.location.href = "/";
           }}
         >
           Log ud
@@ -64,10 +63,7 @@ export default function Profil() {
       </div>
 
       <div className="flex justify-center mt-8">
-        <DeleteUserButton
-          user_pk={user_pk}
-          onDeleted={() => (window.location.href = "/")}
-        />
+        <DeleteUserButton user_pk={user_pk} onDeleted={() => (window.location.href = "/")} />
       </div>
     </div>
   );

@@ -33,7 +33,7 @@ const NavBar = () => {
     {
       name: "Kort",
       link: "/locations",
-      icon: <Map size={40} color={pathname === "/locations" ? "var(--brand-green-reverse)" : "var(--background)"} />,
+      icon: <Map size={40} color={pathname === "/locations" || pathname.startsWith("/locations/") ? "var(--brand-green-reverse)" : "var(--background)"} />,
     },
     {
       name: "Favoritter",
@@ -43,7 +43,7 @@ const NavBar = () => {
     {
       name: "Profil",
       link: "/profil",
-      icon: <Profile size={40} color={pathname === "/profil" ? "var(--brand-green-reverse)" : "var(--background)"} />,
+      icon: <Profile size={40} color={pathname === "/profil" || pathname === "/profile-information" || pathname === "/wash-history" || pathname === "/damage-report" || pathname.startsWith("/wash-history") || pathname.startsWith("/subscription-single-view") ? "var(--brand-green-reverse)" : "var(--background)"} />,
     },
   ];
 
@@ -75,7 +75,7 @@ const NavBar = () => {
 
         <li className="bg-foreground flex flex-col items-center justify-center rounded-full p-3 border-5 border-background absolute left-1/2" style={{ transform: "translate(-50%, -35%)" }}>
           <a href={washRoute} aria-label="vask">
-            <Wash size={50} color={pathname === washRoute ? "var(--brand-green-reverse)" : "var(--background)"} />
+            <Wash size={50} color={pathname === washRoute || pathname === "/buy-wash" || pathname.startsWith("/wash-single-view") || pathname === "/waiting-line" || pathname === "/drive-in" || pathname === "/active-wash" || pathname === "/reciept" || pathname === "/feedback" ? "var(--brand-green-reverse)" : "var(--background)"} />
           </a>
         </li>
       </ul>

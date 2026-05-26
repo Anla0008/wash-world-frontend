@@ -19,7 +19,6 @@ const ProgressBar = ({ activeIndex, isWashProcess }: ProgressBarProps) => {
     <div className="max-w-100 m-auto w-full">
       {isWashProcess ? (
         <ul className="mb-2 flex px-2.5 justify-between gap-10">
-          w
           {numbers.map((number) => {
             const stepNumber = Number(number);
 

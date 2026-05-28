@@ -152,7 +152,7 @@ export default function Signup() {
             <div className="flex items-center gap-4">
               <Lock color={"foreground"} size={40} />
               <Input
-                label="Kode*"
+                label="Adgangskode*"
                 error={!!params.user_hashed_password && !passwordValid}
                 validated={passwordValid}
                 type="password"
@@ -168,7 +168,7 @@ export default function Signup() {
             <div className="flex items-center gap-4">
               <Lock color={"foreground"} size={40} />
               <Input
-                label="Gentag kode*"
+                label="Gentag adgangskode*"
                 error={
                   !!params.user_repeat_hashed_password && !repeatPasswordValid
                 }

@@ -61,7 +61,7 @@ export default function ForgotPassword() {
       <WashWorldLogo />
 
       <div className="flex flex-col gap-2 my-12">
-        <h1 className="text-center">Glemt kode?</h1>
+        <h1 className="text-center">Glemt adgangskode?</h1>
         <p>
           Indtast din e mail og modtag et link til at nulstille din adgangskode
         </p>

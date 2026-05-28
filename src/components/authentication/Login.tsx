@@ -81,7 +81,7 @@ export default function Login() {
           <div className="flex items-center gap-4">
             <Lock color={"foreground"} size={40} />
             <Input
-              label="Kode*"
+              label="Adgangskode*"
               error={
                 (!!params.user_hashed_password && !passwordValid) || loginFailed
               }

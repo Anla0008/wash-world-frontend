@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Location } from "@/types/locations";
 import { useLocationFilterStore } from "@/stores/useLocationFilterStore";
 
@@ -10,7 +10,8 @@ import FilterWrapper from "../global/filtering/FilterWrapper";
 import Sorting from "../global/filtering/Sorting";
 import type { FindCarWashBottomSheetProps } from "@/types/locations";
 import type { Range, SortDirection } from "@/types/filtering";
-import { createDiversifiedWaitTimesByLocation, resolveWaitStatusLabel, type WaitStatusLabel } from "@/lib/wash/waitTime";
+import { resolveWaitStatusLabel, type WaitStatusLabel } from "@/lib/wash/waitTime";
+import { useWashHall } from "@/hooks/washHallContext";
 
 const waitStatusOrder: Record<WaitStatusLabel, number> = {
   "Kort ventetid": 1,
@@ -72,6 +73,7 @@ export default function FindCarWashBottomSheet({ locations, selectedLocationPk, 
     lat: number;
     lng: number;
   } | null>(null);
+  const { waitTimeByLocationPk, ensureWaitTimesForLocations } = useWashHall();
 
   useEffect(() => {
     if (!navigator.geolocation) return;
@@ -113,9 +115,11 @@ export default function FindCarWashBottomSheet({ locations, selectedLocationPk, 
   // Tjekker om der er nogen aktive filtre, så vi ved om nulstil knappen skal vises.
   const hasFilters = selectedFacilities.length > 0 || washHallRange.min !== 1 || washHallRange.max !== maxWashHallNumber || selfWashRange.min !== minSelfWashNumber || selfWashRange.max !== maxSelfWashNumber || searchTerm.trim() !== "";
 
-  const waitTimeByLocationPk = useMemo(() => {
-    return createDiversifiedWaitTimesByLocation(locations.map((location) => location.location_pk));
-  }, [locations]);
+  useEffect(() => {
+    ensureWaitTimesForLocations(locations.map((location) => location.location_pk));
+  }, [locations, ensureWaitTimesForLocations]);
+
+  const isWaitTimeReady = locations.every((location) => waitTimeByLocationPk[location.location_pk] != null);
 
   function getWaitTimeForLocation(location: Location) {
     const waitTime = waitTimeByLocationPk[location.location_pk];
@@ -263,7 +267,9 @@ export default function FindCarWashBottomSheet({ locations, selectedLocationPk, 
       </div>
 
       <div className="hide-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto gap-4 pb-24">
-        {sortedLocations.length > 0 ? (
+        {!isWaitTimeReady ? (
+          <p className="pt-4 text-sm text-(--gray-10)">Indlæser ventetider...</p>
+        ) : sortedLocations.length > 0 ? (
           sortedLocations.map((location) => {
             const isSelected = selectedLocationPk === location.location_pk;
 

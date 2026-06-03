@@ -6,10 +6,24 @@ import { useWash } from "@/hooks/useWash";
 import AvailibleWashingHall from "@/components/wash/AvailibleWashingHall";
 import { useRouter } from "next/navigation";
 import { useWashHall } from "@/hooks/washHallContext";
+import { useWashStore } from "@/stores/useWashStore";
+import { useEffect } from "react";
 
 const WaitingLine = () => {
   const router = useRouter();
-  const { waitTime } = useWashHall();
+  const locationPk = useWashStore((state) => state.locationID);
+  const { waitTimeByLocationPk, ensureWaitTimesForLocations } = useWashHall();
+
+  useEffect(() => {
+    if (!locationPk || locationPk === "undefined") return;
+    ensureWaitTimesForLocations([locationPk]);
+  }, [locationPk, ensureWaitTimesForLocations]);
+
+  const waitTime = locationPk && locationPk !== "undefined" ? waitTimeByLocationPk[locationPk] : null;
+
+  if (waitTime == null) {
+    return <p>Henter ventetid...</p>;
+  }
 
   return (
     <div className="flex flex-col gap-5">

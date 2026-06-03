@@ -1,4 +1,9 @@
 import { Location } from "./locations";
+
+// ===========================================================
+//               GET RUTE TIL STEP
+// ==========================================================
+
 export type WashRoute = "/buy-wash" | "/drive-in" | "/error-in-distance";
 
 // ===========================================================
@@ -46,6 +51,18 @@ export type WashHallWaitTimeResponse = {
 export type WaitForWashProps = {
   activeIndex: number;
 };
+
+export type WaitStatusLabel = "Kort ventetid" | "Moderat ventetid" | "Lang ventetid";
+
+export type WashHallContextType = {
+  waitTimeByLocationPk: Record<string, number>;
+  waitTime: number;
+  waitStatus: WaitStatusLabel;
+  ensureWaitTimesForLocations: (locationPks: string[]) => void;
+  getWaitTimeForLocation: (locationPk: string) => number;
+  getWaitStatusForLocation: (locationPk: string) => WaitStatusLabel;
+  refreshWaitTimes: () => void;
+}
 
 // ===========================================================
 //                    POST VASK TIL BACKEND

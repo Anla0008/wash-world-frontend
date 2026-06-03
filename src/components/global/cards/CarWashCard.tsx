@@ -9,7 +9,8 @@ import { IoMdHeart } from "react-icons/io";
 import { CardWashCardProps } from "@/types/CardWashCardProps";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavoritesStore } from "@/stores/favoritesStore";
-import { resolveWaitStatusLabel, type WaitStatusLabel } from "@/lib/wash/waitTime";
+import { resolveWaitStatusLabel} from "@/lib/wash/waitTime";
+import { WaitStatusLabel } from "@/types/washType";
 
 const statusStyles: Record<WaitStatusLabel, { dotColor: string; textColor: string }> = {
   "Kort ventetid": {

@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { Location } from "@/types/locations";
 import { useWashHall } from "@/hooks/washHallContext";
+import { resolveWaitStatusLabel } from "@/lib/wash/waitTime";
 
 // Components fra mappen
 import ArrowLeft from "@/components/global/icons/navigation/ArrowLeft";
@@ -25,7 +26,7 @@ import PracticInfoWashSelf from "@/components/singleview/PracticInfoWashSelf";
 import BusinessGraph from "@/components/singleview/BusinessGraph";
 
 export default function LocationSingle() {
-  const { waitStatus } = useWashHall();
+  const { waitTimeByLocationPk, ensureWaitTimesForLocations } = useWashHall();
   // Henter det dynamiske id-segment fra URL
   const { id } = useParams();
 
@@ -37,6 +38,14 @@ export default function LocationSingle() {
 
   // Styrer loading-tilstand
   const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (!id || typeof id !== "string") return;
+    ensureWaitTimesForLocations([id]);
+  }, [id, ensureWaitTimesForLocations]);
+
+  const waitTimeForLocation = typeof id === "string" ? waitTimeByLocationPk[id] : null;
+  const waitStatus = waitTimeForLocation != null ? resolveWaitStatusLabel(waitTimeForLocation) : null;
 
   const status =
     waitStatus === "Lang ventetid"
@@ -75,6 +84,14 @@ export default function LocationSingle() {
     return (
       <div className="min-h-screen bg-background py-10 text-foreground">
         <p>Indlæser vaskehal...</p>
+      </div>
+    );
+  }
+
+  if (!waitStatus) {
+    return (
+      <div className="min-h-screen bg-background py-10 text-foreground">
+        <p>Indlæser ventetid...</p>
       </div>
     );
   }

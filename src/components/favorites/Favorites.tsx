@@ -1,24 +1,18 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Location } from "@/types/locations";
 import CarWashCard from "@/components/global/cards/CarWashCard";
 import { useFavoritesStore } from "@/stores/favoritesStore";
-import { createDiversifiedWaitTimesByLocation } from "@/lib/wash/waitTime";
+import { useWashHall } from "@/hooks/washHallContext";
 
 export default function Favorites() {
   const { getFavorites } = useAuth();
   const [favorites, setFavorites] = useState<Location[]>([]);
   const [fadingOut, setFadingOut] = useState<Set<string>>(new Set());
   const favoriteIds = useFavoritesStore((state) => state.favoriteIds);
-
-  // Memoiser ventetider for favoritter baseret på deres location_pk
-  const waitTimeByLocationPk = useMemo(() => {
-
-    // Generer en map af location_pk til ventetid ved at bruge den eksisterende funktion, der skaber diversificerede ventetider
-    return createDiversifiedWaitTimesByLocation(favorites.map((favorite) => favorite.location_pk));
-  }, [favorites]);
+  const { waitTimeByLocationPk, ensureWaitTimesForLocations } = useWashHall();
 
   // Hent favoritter ved komponentens første indlæsning
   useEffect(() => {
@@ -31,6 +25,12 @@ export default function Favorites() {
       prev.filter((loc) => favoriteIds.has(loc.location_pk)),
     );
   }, [favoriteIds]);
+
+  useEffect(() => {
+    ensureWaitTimesForLocations(favorites.map((favorite) => favorite.location_pk));
+  }, [favorites, ensureWaitTimesForLocations]);
+
+  const isWaitTimeReady = favorites.every((favorite) => waitTimeByLocationPk[favorite.location_pk] != null);
 
   const handleRemove = (location_pk: string) => {
     setFadingOut((prev) => new Set(prev).add(location_pk));
@@ -52,6 +52,8 @@ export default function Favorites() {
           <p className="text-sm text-(--gray-40)">
             Du har ingen favoritter endnu.
           </p>
+        ) : !isWaitTimeReady ? (
+          <p className="text-sm text-(--gray-40)">Indlæser ventetider...</p>
         ) : (
           favorites.map((location) => (
             <div

@@ -54,8 +54,11 @@ export type WaitForWashProps = {
 
 export type WaitStatusLabel = "Kort ventetid" | "Moderat ventetid" | "Lang ventetid";
 
+export type WaitTimeHistoryByLocationPk = Record<string, Record<string, number>>;
+
 export type WashHallContextType = {
   waitTimeByLocationPk: Record<string, number>;
+  waitTimeHistoryByLocationPk: WaitTimeHistoryByLocationPk;
   waitTime: number;
   waitStatus: WaitStatusLabel;
   ensureWaitTimesForLocations: (locationPks: string[]) => void;

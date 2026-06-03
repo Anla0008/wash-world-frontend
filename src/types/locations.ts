@@ -3,6 +3,11 @@ export type Location = {
   location_name: string;
   location_address: string;
   location_city: string;
+  opening_hours?: string;
+  openingHours?: string;
+  location_opening_hours?: string;
+  open_from?: string;
+  open_to?: string;
   car_wash_hall_number?: number;
   car_wash_text?: string;
   car_wash_high_pressure?: number;

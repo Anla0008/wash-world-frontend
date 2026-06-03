@@ -25,6 +25,20 @@ import PracticInfoVacuumCleaner from "@/components/singleview/PracticInfoVacuumC
 import PracticInfoWashSelf from "@/components/singleview/PracticInfoWashSelf";
 import BusinessGraph from "@/components/singleview/BusinessGraph";
 
+const DEFAULT_OPENING_HOURS = "07 - 22";
+
+const resolveOpeningHours = (location: Location) => {
+  if (location.opening_hours) return location.opening_hours;
+  if (location.openingHours) return location.openingHours;
+  if (location.location_opening_hours) return location.location_opening_hours;
+
+  if (location.open_from && location.open_to) {
+    return `${location.open_from} - ${location.open_to}`;
+  }
+
+  return DEFAULT_OPENING_HOURS;
+};
+
 export default function LocationSingle() {
   const { waitTimeByLocationPk, ensureWaitTimesForLocations } = useWashHall();
   // Henter det dynamiske id-segment fra URL
@@ -46,13 +60,6 @@ export default function LocationSingle() {
 
   const waitTimeForLocation = typeof id === "string" ? waitTimeByLocationPk[id] : null;
   const waitStatus = waitTimeForLocation != null ? resolveWaitStatusLabel(waitTimeForLocation) : null;
-
-  const status =
-    waitStatus === "Lang ventetid"
-      ? "travl"
-      : waitStatus === "Moderat ventetid"
-        ? "moderat"
-        : "rolig";
 
   useEffect(() => {
     async function loadLocation() {
@@ -108,6 +115,8 @@ export default function LocationSingle() {
     );
   }
 
+  const openingHours = resolveOpeningHours(location);
+
   return (
     <div className="flex flex-col gap-20">
       {/* ================== HERO SECTION =================== */}
@@ -130,7 +139,7 @@ export default function LocationSingle() {
 
         <div className="mb-3 flex items-center gap-3">
           <Clock size={22} />
-          <p>07 - 22</p>
+          <p>{openingHours}</p>
         </div>
 
         <div className="mb-6 flex items-center gap-3">
@@ -155,8 +164,7 @@ export default function LocationSingle() {
         <h2 className="mb-8 text-3xl font-extrabold">
           Travlhed i {location.location_city}
         </h2>
-        <BusinessGraph status={status} />{" "}
-        {/* Hardcoded status for at vise grafen, skal senere være dynamisk baseret på location */}
+        <BusinessGraph locationPk={location.location_pk} openingHours={openingHours} />{" "}
       </section>
 
       {/* ====================== PRAKTISK INFO ====================== */}

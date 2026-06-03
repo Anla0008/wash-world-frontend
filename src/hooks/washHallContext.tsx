@@ -2,11 +2,12 @@
 import { createContext, useContext, useMemo, useState, ReactNode, useEffect, useCallback } from "react";
 import { resolveWaitStatusLabel, createDiversifiedWaitTimesByLocation, createDiversifiedWaitTimesByLocationWithOffset } from "@/lib/wash/waitTime";
 import { useWashStore } from "@/stores/useWashStore";
-import { WashHallContextType,  } from "@/types/washType";
+import { WaitTimeHistoryByLocationPk, WashHallContextType } from "@/types/washType";
 
 const WashHallContext = createContext<WashHallContextType | undefined>(undefined);
 
 const WAIT_TIMES_STORAGE_KEY = "washhall.waitTimesByLocation";
+const WAIT_TIMES_HISTORY_STORAGE_KEY = "washhall.waitTimeHistoryByLocation";
 
 const WAIT_TIMES_UPDATED_AT_STORAGE_KEY = "washhall.waitTimesUpdatedAt";
 // udskiftet til 1 time for at give mere realistiske ventetider og undgå for hyppige opdateringer under testning
@@ -17,40 +18,81 @@ const isValidLocationPk = (value: string | null | undefined): value is string =>
   return Boolean(value && value !== "undefined");
 };
 
+const getHourBucketTimestamp = (timestamp: number) => {
+  const date = new Date(timestamp);
+  date.setMinutes(0, 0, 0);
+  return date.getTime();
+};
+
+const recordWaitTimeHistory = (
+  previousHistory: WaitTimeHistoryByLocationPk,
+  waitTimes: Record<string, number>,
+  timestamp: number,
+): WaitTimeHistoryByLocationPk => {
+  const nextHistory: WaitTimeHistoryByLocationPk = { ...previousHistory };
+  const bucketTimestamp = String(getHourBucketTimestamp(timestamp));
+  const oldestAllowedTimestamp = getHourBucketTimestamp(timestamp - (23 * 60 * 60 * 1000));
+
+  Object.entries(waitTimes).forEach(([locationPk, waitTime]) => {
+    const existingHistory = previousHistory[locationPk] ?? {};
+    const trimmedHistory = Object.fromEntries(
+      Object.entries(existingHistory).filter(([hourTimestamp]) => Number(hourTimestamp) >= oldestAllowedTimestamp),
+    );
+
+    nextHistory[locationPk] = {
+      ...trimmedHistory,
+      [bucketTimestamp]: waitTime,
+    };
+  });
+
+  return nextHistory;
+};
+
 // Funktioner til at læse og skrive ventetider i localStorage
-const readStoredWaitTimes = (): { waitTimes: Record<string, number>; updatedAt: number | null } => {
+const readStoredWaitTimes = (): {
+  waitTimes: Record<string, number>;
+  waitTimeHistoryByLocationPk: WaitTimeHistoryByLocationPk;
+  updatedAt: number | null;
+} => {
 
   try {
     // læs ventetider fra localStorage
     const rawWaitTimes = localStorage.getItem(WAIT_TIMES_STORAGE_KEY);
+    const rawWaitTimeHistory = localStorage.getItem(WAIT_TIMES_HISTORY_STORAGE_KEY);
     // læs opdateringstidspunkt fra localStorage
     const rawUpdatedAt = localStorage.getItem(WAIT_TIMES_UPDATED_AT_STORAGE_KEY);
 
     // parse ventetider og opdateringstidspunkt, håndter fejl ved parsing
     const waitTimes = rawWaitTimes ? (JSON.parse(rawWaitTimes) as Record<string, number>) : {};
+    const waitTimeHistoryByLocationPk = rawWaitTimeHistory ? (JSON.parse(rawWaitTimeHistory) as WaitTimeHistoryByLocationPk) : {};
     // læs tidspunktet ventehallen er opdateret på
     const updatedAt = rawUpdatedAt ? Number(rawUpdatedAt) : null;
 
     // hvis updatedAt ikke er et gyldigt tal, returner tomme ventetider og null for updatedAt
     if (!Number.isFinite(updatedAt)) {
-      return { waitTimes, updatedAt: null };
+      return { waitTimes, waitTimeHistoryByLocationPk, updatedAt: null };
     }
 
     // returner de læste ventetider og opdateringstidspunkt
-    return { waitTimes, updatedAt };
+    return { waitTimes, waitTimeHistoryByLocationPk, updatedAt };
   } catch {
     // hvis der opstår en fejl (f.eks. ved parsing), returner tomme ventetider og null for updatedAt
-    return { waitTimes: {}, updatedAt: null };
+    return { waitTimes: {}, waitTimeHistoryByLocationPk: {}, updatedAt: null };
   }
 };
 
 // Funktion til at skrive ventetider og opdateringstidspunkt til localStorage
-const writeStoredWaitTimes = (waitTimes: Record<string, number>, updatedAt: number) => {
+const writeStoredWaitTimes = (
+  waitTimes: Record<string, number>,
+  waitTimeHistoryByLocationPk: WaitTimeHistoryByLocationPk,
+  updatedAt: number,
+) => {
   // hvis vi er i et miljø uden window (f.eks. server-side rendering), skal vi ikke forsøge at skrive til localStorage
   if (typeof window === "undefined") return;
 
   // set state for ventetider og opdateringstidspunkt i localStorage
   localStorage.setItem(WAIT_TIMES_STORAGE_KEY, JSON.stringify(waitTimes));
+  localStorage.setItem(WAIT_TIMES_HISTORY_STORAGE_KEY, JSON.stringify(waitTimeHistoryByLocationPk));
   localStorage.setItem(WAIT_TIMES_UPDATED_AT_STORAGE_KEY, String(updatedAt));
 };
 
@@ -63,14 +105,17 @@ export const WashHallProvider = ({ children }: { children: ReactNode }) => {
   // initialiser state for ventetider og opdateringstidspunkt ved at læse fra localStorage og tjekke om data er ok
   const initialState = useMemo(() => {
     // læs ventetider og opdateringstidspunkt fra localStorage
-    const { waitTimes, updatedAt } = readStoredWaitTimes();
+    const { waitTimes, waitTimeHistoryByLocationPk, updatedAt } = readStoredWaitTimes();
     // er data ok - tjek at updatedAt ikke er null og at det ikke er for gammelt (ældre end WAIT_TIME_REFRESH_INTERVAL_MS)
     const isFresh = updatedAt != null && Date.now() - updatedAt < WAIT_TIME_REFRESH_INTERVAL_MS;
 
 
     if (isFresh) {
+      const hydratedHistory = recordWaitTimeHistory(waitTimeHistoryByLocationPk, waitTimes, updatedAt);
+
       return {
         waitTimeByLocationPk: waitTimes,
+        waitTimeHistoryByLocationPk: hydratedHistory,
         updatedAt,
       };
     }
@@ -79,19 +124,22 @@ export const WashHallProvider = ({ children }: { children: ReactNode }) => {
     const locationPks = Object.keys(waitTimes);
     // generer nye ventetider for de locationPks vi har i localStorage, for at sikre at vi starter med realistiske ventetider, selvom data i localStorage er forældet
     const regeneratedWaitTimes = createDiversifiedWaitTimesByLocation(locationPks);
+    const regeneratedHistory = recordWaitTimeHistory({}, regeneratedWaitTimes, Date.now());
     // opdater localStorage med de regenererede ventetider og det nye opdateringstidspunkt
     const regeneratedUpdatedAt = Date.now();
     // skriv de regenererede ventetider og det nye opdateringstidspunkt til localStorage
-    writeStoredWaitTimes(regeneratedWaitTimes, regeneratedUpdatedAt);
+    writeStoredWaitTimes(regeneratedWaitTimes, regeneratedHistory, regeneratedUpdatedAt);
 
     return {
       waitTimeByLocationPk: regeneratedWaitTimes,
+      waitTimeHistoryByLocationPk: regeneratedHistory,
       updatedAt: regeneratedUpdatedAt,
     };
   }, []);
 
   // state for ventetider og opdateringstidspunkt
   const [waitTimeByLocationPk, setWaitTimeByLocationPk] = useState<Record<string, number>>(initialState.waitTimeByLocationPk);
+  const [waitTimeHistoryByLocationPk, setWaitTimeHistoryByLocationPk] = useState<WaitTimeHistoryByLocationPk>(initialState.waitTimeHistoryByLocationPk);
 
   // state for hvornår ventetiderne sidst blev opdateret, initialiseret til det opdateringstidspunkt vi har i localStorage (eller nu hvis data i localStorage var forældet)
   const [lastUpdatedAt, setLastUpdatedAt] = useState<number>(initialState.updatedAt ?? Date.now());
@@ -106,9 +154,12 @@ export const WashHallProvider = ({ children }: { children: ReactNode }) => {
       const refreshed = createDiversifiedWaitTimesByLocation(locationPks);
 
       const now = Date.now();
+      const nextHistory = recordWaitTimeHistory(waitTimeHistoryByLocationPk, refreshed, now);
+
+      setWaitTimeHistoryByLocationPk(nextHistory);
 
       // skriv de opdaterede ventetider og det nye opdateringstidspunkt til localStorage
-      writeStoredWaitTimes(refreshed, now);
+      writeStoredWaitTimes(refreshed, nextHistory, now);
 
       // set last updated at til nu
       setLastUpdatedAt(now);
@@ -116,7 +167,7 @@ export const WashHallProvider = ({ children }: { children: ReactNode }) => {
         // returner de opdaterede ventetider, som vil blive sat i state
       return refreshed;
     });
-  }, []);
+  }, [waitTimeHistoryByLocationPk]);
 
   // funktion til at sikre at vi har ventetider for en given liste af locationPks, tjekker hvilke locationPks vi mangler ventetider for, genererer ventetider for dem, og opdaterer state og localStorage
   const ensureWaitTimesForLocations = useCallback((locationPks: string[]) => {
@@ -141,14 +192,18 @@ export const WashHallProvider = ({ children }: { children: ReactNode }) => {
         ...additions,
       };
 
-      // skriv de opdaterede ventetider og det nye opdateringstidspunkt til localStorage
       const now = Date.now();
-      writeStoredWaitTimes(next, now);
+      const nextHistory = recordWaitTimeHistory(waitTimeHistoryByLocationPk, additions, now);
+
+      setWaitTimeHistoryByLocationPk(nextHistory);
+
+      // skriv de opdaterede ventetider og det nye opdateringstidspunkt til localStorage
+      writeStoredWaitTimes(next, nextHistory, now);
       setLastUpdatedAt(now);
 
       return next;
     });
-  }, []);
+  }, [waitTimeHistoryByLocationPk]);
 
   // få nu ventetiden ved at brige useCallback for at memoize funktionen, så den kun ændres hvis waitTimeByLocationPk ændres, og kast en fejl hvis vi ikke har en ventetid for den locationPk vi spørger efter
   const getWaitTimeForLocation = useCallback((locationPk: string) => {
@@ -218,6 +273,7 @@ export const WashHallProvider = ({ children }: { children: ReactNode }) => {
     <WashHallContext.Provider
       value={{
         waitTimeByLocationPk,
+        waitTimeHistoryByLocationPk,
         waitTime: activeWaitTime,
         waitStatus,
         ensureWaitTimesForLocations,

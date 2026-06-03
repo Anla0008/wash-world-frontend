@@ -40,8 +40,11 @@ export const useNearestWash = () => {
   // få lokationer fra backend
   const { getLocations } = useAuth();
 
-  // få brugerens geolokation, loading state og koordinater - håndteres i hooks/useGeoLocation.ts
-  const { coords, isLoading: geoLoading } = useGeoLocation();
+  // få brugerens geolokation, loading state, koordinater og permission-state - håndteres i hooks/useGeoLocation.ts
+  const { coords, isLoading: geoLoading, locationPermissionState } = useGeoLocation();
+
+  // true når bruger aktivt afviser geolocation prompten
+  const geolocationPermissionDenied = locationPermissionState === "tillad lokation";
 
   // state til at gemme nærmeste vaskehal, afstand og loading state for hele processen
   const [nearestLocation, setNearestLocation] = useState<Location | null>(null);
@@ -124,6 +127,7 @@ export const useNearestWash = () => {
   return {
     nearestLocation,
     nearestDistanceKm,
+    geolocationPermissionDenied,
     isLoading: isLoading || geoLoading,
   };
 };

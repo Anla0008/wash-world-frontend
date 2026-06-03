@@ -5,7 +5,7 @@ import { useWashHall } from "@/hooks/washHallContext";
 import { useEffect } from "react";
 
 const NearestWashCard = () => {
-  const { nearestLocation, isLoading } = useNearestWash();
+  const { nearestLocation, isLoading, geolocationPermissionDenied } = useNearestWash();
   const { waitTimeByLocationPk, ensureWaitTimesForLocations } = useWashHall();
 
   // Når nearestLocation er opdateret, sørg for at hente ventetiden for denne lokation
@@ -17,6 +17,7 @@ const NearestWashCard = () => {
   }, [nearestLocation, ensureWaitTimesForLocations]);
 
   if (isLoading) return <p>Indlæser nærmeste vaskehal...</p>;
+  if (geolocationPermissionDenied) return <p>Tillad sporring af lokation for at finde nærmeste vaskehal.</p>;
   if (!nearestLocation) return <p>Ingen lokation fundet i nærheden.</p>;
 
   const waitTime = waitTimeByLocationPk[nearestLocation.location_pk];

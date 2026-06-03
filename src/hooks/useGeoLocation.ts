@@ -2,6 +2,9 @@ import { useEffect, useState, useCallback } from "react";
 import { GeoCoords } from "@/types/washType";
 import { fallbackCords } from "@/mockupData/washData";
 
+const GEO_PERMISSION_DENIED = 1;
+const GEO_POSITION_UNAVAILABLE = 2;
+
 export const useGeoLocation = () => {
 
   // state til at gemme geokoordinater, loading state og fejl
@@ -12,6 +15,12 @@ export const useGeoLocation = () => {
 
   // state til fejl
   const [error, setError] = useState<GeolocationPositionError | null>(null);
+
+  // state til at vise om bruger skal tillade lokation
+  const [locationPermissionState, setLocationPermissionState] = useState<"ok" | "tillad lokation">("ok");
+
+  // toggle bruges til at trigge ny geolocation-kørsel (remount-lignende flow)
+  const [remountToggle, setRemountToggle] = useState(false);
 
   // funktion til at hente geokoordinater, med retry logik ved midlertidige fejl
   const getPosition = useCallback((retry = 0) => {
@@ -45,6 +54,7 @@ export const useGeoLocation = () => {
         setIsLoading(false);
 
         setError(null);
+        setLocationPermissionState("ok");
       },
 
       (err) => {
@@ -52,7 +62,7 @@ export const useGeoLocation = () => {
 
         // retry kun ved midlertidige fejl
         if (
-          err.code === err.POSITION_UNAVAILABLE &&
+          err.code === GEO_POSITION_UNAVAILABLE &&
 
           // tillad op til 2 retries med en kort delay imellem, for at håndtere midlertidige GPS fejl
           retry < 2
@@ -66,6 +76,13 @@ export const useGeoLocation = () => {
         // fallback
         setCoords(fallbackCords);
         setError(err);
+
+        if (err.code === GEO_PERMISSION_DENIED) {
+          setLocationPermissionState("tillad lokation");
+        } else {
+          setLocationPermissionState("ok");
+        }
+
         setIsLoading(false);
       },
 
@@ -80,9 +97,47 @@ export const useGeoLocation = () => {
     );
   }, []);
 
-  useEffect(() => {
+  const retryGeolocation = useCallback(() => {
+    setIsLoading(true);
     getPosition();
   }, [getPosition]);
 
-  return {coords, isLoading, error,};
+  const toggleGeolocationRemount = useCallback(() => {
+    setRemountToggle((prev) => !prev);
+  }, []);
+
+  useEffect(() => {
+    retryGeolocation();
+  }, [retryGeolocation, remountToggle]);
+
+  useEffect(() => {
+    // forsøg kun igen automatisk, hvis bruger tidligere har afvist lokation
+    if (error?.code !== GEO_PERMISSION_DENIED) return;
+
+    const retryIfVisible = () => {
+      if (document.visibilityState === "visible") {
+        toggleGeolocationRemount();
+      }
+    };
+
+    const retryOnFocus = () => {
+      toggleGeolocationRemount();
+    };
+
+    window.addEventListener("focus", retryOnFocus);
+    document.addEventListener("visibilitychange", retryIfVisible);
+
+    return () => {
+      window.removeEventListener("focus", retryOnFocus);
+      document.removeEventListener("visibilitychange", retryIfVisible);
+    };
+  }, [error, toggleGeolocationRemount]);
+
+  return {
+    coords,
+    isLoading,
+    error,
+    locationPermissionState,
+    toggleGeolocationRemount,
+  };
 };

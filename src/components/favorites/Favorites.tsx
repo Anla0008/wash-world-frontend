@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Location } from "@/types/locations";
 import CarWashCard from "@/components/global/cards/CarWashCard";
 import { useFavoritesStore } from "@/stores/favoritesStore";
+import { createDiversifiedWaitTimesByLocation } from "@/lib/wash/waitTime";
 
 export default function Favorites() {
   const { getFavorites } = useAuth();
@@ -12,6 +13,14 @@ export default function Favorites() {
   const [fadingOut, setFadingOut] = useState<Set<string>>(new Set());
   const favoriteIds = useFavoritesStore((state) => state.favoriteIds);
 
+  // Memoiser ventetider for favoritter baseret på deres location_pk
+  const waitTimeByLocationPk = useMemo(() => {
+
+    // Generer en map af location_pk til ventetid ved at bruge den eksisterende funktion, der skaber diversificerede ventetider
+    return createDiversifiedWaitTimesByLocation(favorites.map((favorite) => favorite.location_pk));
+  }, [favorites]);
+
+  // Hent favoritter ved komponentens første indlæsning
   useEffect(() => {
     getFavorites().then(setFavorites).catch(console.error);
   }, []);
@@ -63,6 +72,7 @@ export default function Favorites() {
                 image={location.location_img}
                 href={`/locations/${location.location_pk}`}
                 onRemove={() => handleRemove(location.location_pk)}
+                waitTimeSeconds={waitTimeByLocationPk[location.location_pk]}
               />
             </div>
           ))

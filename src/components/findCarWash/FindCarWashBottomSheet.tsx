@@ -8,12 +8,11 @@ import CarWashCard from "@/components/global/cards/CarWashCard";
 import SearchBar from "../global/filtering/SearchBar";
 import FilterWrapper from "../global/filtering/FilterWrapper";
 import Sorting from "../global/filtering/Sorting";
-import type { FindCarWashBottomSheetProps, WaitStatus } from "@/types/locations";
+import type { FindCarWashBottomSheetProps } from "@/types/locations";
 import type { Range, SortDirection } from "@/types/filtering";
-import { resolveWaitTime, resolveWaitStatus } from "@/lib/wash/resolvers";
-import { washHallWaitTime } from "@/mockupData/washData";
+import { createDiversifiedWaitTimesByLocation, resolveWaitStatusLabel, type WaitStatusLabel } from "@/lib/wash/waitTime";
 
-const waitStatusOrder: Record<WaitStatus, number> = {
+const waitStatusOrder: Record<WaitStatusLabel, number> = {
   "Kort ventetid": 1,
   "Moderat ventetid": 2,
   "Lang ventetid": 3,
@@ -114,24 +113,23 @@ export default function FindCarWashBottomSheet({ locations, selectedLocationPk, 
   // Tjekker om der er nogen aktive filtre, så vi ved om nulstil knappen skal vises.
   const hasFilters = selectedFacilities.length > 0 || washHallRange.min !== 1 || washHallRange.max !== maxWashHallNumber || selfWashRange.min !== minSelfWashNumber || selfWashRange.max !== maxSelfWashNumber || searchTerm.trim() !== "";
 
-  // Erstat den eksisterende waitStatusByLocationPk useMemo med:
-  const waitStatusByLocationPk = useMemo(() => {
-    return locations.reduce<Record<string, WaitStatus>>((acc, location) => {
-      const waitTimeSeconds = resolveWaitTime(washHallWaitTime);
-      const isBroken = location.is_broken ?? false;
-      const graphStatus = resolveWaitStatus(waitTimeSeconds, isBroken);
-
-      // Konverter fra graf-status til WaitStatus
-      const waitStatus: WaitStatus = graphStatus === "travl" ? "Lang ventetid" : graphStatus === "moderat" ? "Moderat ventetid" : "Kort ventetid";
-
-      acc[location.location_pk] = waitStatus;
-      return acc;
-    }, {});
+  const waitTimeByLocationPk = useMemo(() => {
+    return createDiversifiedWaitTimesByLocation(locations.map((location) => location.location_pk));
   }, [locations]);
+
+  function getWaitTimeForLocation(location: Location) {
+    const waitTime = waitTimeByLocationPk[location.location_pk];
+
+    if (waitTime == null) {
+      throw new Error(`Mangler ventetid for location_pk: ${location.location_pk}`);
+    }
+
+    return waitTime;
+  }
 
   // Finder ventestatus for en bestemt vaskehal.
   function getWaitStatusForLocation(location: Location) {
-    return waitStatusByLocationPk[location.location_pk] ?? "Kort ventetid";
+    return resolveWaitStatusLabel(getWaitTimeForLocation(location));
   }
 
   const filteredLocations = locations.filter((location) => {
@@ -277,7 +275,7 @@ export default function FindCarWashBottomSheet({ locations, selectedLocationPk, 
                 }}
                 className={`px-3 rounded-md transition-all duration-300 ${isSelected ? "ring-4 ring-(--brand-green)" : ""}`}
               >
-                <CarWashCard city={location.location_city} address={location.location_address} openingHours="07 - 22" image={location.location_img} href={`/locations/${location.location_pk}`} location_pk={location.location_pk} isFavorite={favoriteIds.includes(location.location_pk)} waitStatus={getWaitStatusForLocation(location)} />
+                <CarWashCard city={location.location_city} address={location.location_address} openingHours="07 - 22" image={location.location_img} href={`/locations/${location.location_pk}`} location_pk={location.location_pk} isFavorite={favoriteIds.includes(location.location_pk)} waitTimeSeconds={getWaitTimeForLocation(location)} />
               </div>
             );
           })

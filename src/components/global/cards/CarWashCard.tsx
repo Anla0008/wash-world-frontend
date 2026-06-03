@@ -9,11 +9,26 @@ import { IoMdHeart } from "react-icons/io";
 import { CardWashCardProps } from "@/types/CardWashCardProps";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavoritesStore } from "@/stores/favoritesStore";
+import { resolveWaitStatusLabel, type WaitStatusLabel } from "@/lib/wash/waitTime";
 
-const CarWashCard = ({ city, address, openingHours, image, href, location_pk, waitStatus = "Kort ventetid" }: CardWashCardProps) => {
+const statusStyles: Record<WaitStatusLabel, { dotColor: string; textColor: string }> = {
+  "Kort ventetid": {
+    dotColor: "bg-(--brand-green)",
+    textColor: "text-(--brand-green)",
+  },
+  "Moderat ventetid": {
+    dotColor: "bg-(--splash)",
+    textColor: "text-(--splash)",
+  },
+  "Lang ventetid": {
+    dotColor: "bg-(--error-red)",
+    textColor: "text-(--error-red)",
+  },
+};
+
+const CarWashCard = ({ city, address, openingHours, image, href, location_pk, waitTimeSeconds }: CardWashCardProps) => {
   const { addFavorite, removeFavorite } = useAuth();
-  //const status = useRandomWaitStatus();
-  const status = waitStatus;
+  const status = resolveWaitStatusLabel(waitTimeSeconds);
 
   const favoriteIds = useFavoritesStore((state) => state.favoriteIds);
   const storeAdd = useFavoritesStore((state) => state.addFavorite);
@@ -34,9 +49,7 @@ const CarWashCard = ({ city, address, openingHours, image, href, location_pk, wa
     }
   };
 
-  const statusColor = status === "Kort ventetid" ? "bg-(--brand-green)" : status === "Moderat ventetid" ? "bg-(--splash)" : "bg-(--error-red)";
-
-  const statusTextColor = status === "Kort ventetid" ? "text-(--brand-green)" : status === "Moderat ventetid" ? "text-(--splash)" : "text-(--error-red)";
+  const resolvedStatusStyle = statusStyles[status];
 
   const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${address}, ${city}`)}`;
 
@@ -49,8 +62,8 @@ const CarWashCard = ({ city, address, openingHours, image, href, location_pk, wa
           <p className="extra-bold">{city}</p>
 
           <div className="ml-auto flex gap-3">
-            <p className={`${statusTextColor} text-[10px]`}>{status}</p>
-            <span className={`h-2 w-2 rounded-full ${statusColor}`}></span>
+            <p className={`${resolvedStatusStyle.textColor} text-[10px]`}>{status}</p>
+            <span className={`h-2 w-2 rounded-full ${resolvedStatusStyle.dotColor}`}></span>
           </div>
         </div>
 

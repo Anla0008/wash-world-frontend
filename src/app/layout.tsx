@@ -4,6 +4,7 @@ import NavBar from "@/components/global/navigation/NavBar";
 import MswInitializer from "@/components/global/MswInitializer";
 import { FavoritesInitializer } from "@/components/global/favorit/FavoritesInitializer";
 import AuthGuard from "@/components/global/AuthGuard";
+import { WashHallProvider } from "@/hooks/washHallContext";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -28,10 +29,12 @@ export default function RootLayout({
         <MswInitializer>
           <AuthGuard>
             <FavoritesInitializer />
-            <div id="app-shell">
-              <main className="flex flex-col mb-20 px-8 pt-8">{children}</main>
-              <NavBar />
-            </div>
+            <WashHallProvider>
+              <div id="app-shell">
+                <main className="flex flex-col mb-20 px-8 pt-8">{children}</main>
+                <NavBar />
+              </div>
+            </WashHallProvider>
           </AuthGuard>
         </MswInitializer>
       </body>

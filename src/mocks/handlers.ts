@@ -1,7 +1,7 @@
 "use client";
 import { http, HttpResponse } from "msw";
 import { WashStepResponse } from "@/types/washType";
-import { washHallWaitTime, washHallState, carInWashHall, washData } from "@/mockupData/washData";
+import { washHallState, carInWashHall, washData } from "@/mockupData/washData";
 import { initializeHallState, updateHallState, resolveRoute } from "@/lib/wash/resolvers";
 
 const baseUrl = "http://127.0.0.1";
@@ -24,15 +24,6 @@ http.get("/api/wash/single", () => {
 http.post("/api/wash/single", () => {
 return HttpResponse.json();
 }),
-
-  // ===========================================================
-  //              GET WASH HALL WAIT TIME
-  // ===========================================================
-
-  http.get("/api/washhall/waittime", () => {
-  return HttpResponse.json(washHallWaitTime);
-  }),
-
 
   // ===========================================================
   //              GET LEDIG VASKEHAL
@@ -90,10 +81,10 @@ http.get("/api/washhall/available", async ({ request }) => {
       });
 
     // Filtrer vaskehaller, der er markeret som optaget fra den opdaterede liste af vaskehaller eller som er null
-    const availableHalls = resolvedHalls.filter((hall: any) => hall && !hall.occupied || null);
+    const availableHalls = resolvedHalls.filter((hall: any) => hall && !hall.occupied);
 
-    // vælg hal, der har kortest ventetid blandt de ledige vaskehaller. Hvis alle er optaget: vælg den med kortest ventetid
-    const selectedHall = availableHalls[0] ?? resolvedHalls.sort((a: any, b: any) => a.waitTime - b.waitTime)[0];
+    // vælg første ledige hal. Hvis alle er optaget, vælg første hal i listen.
+    const selectedHall = availableHalls[0] ?? resolvedHalls.find((hall: any) => hall != null);
 
     // hvis der er en valgt vaskehal, så start registrering af bil i vaskehal
     if (selectedHall) { currentAvailableHallNumber = selectedHall.car_wash_hall_number;
@@ -177,14 +168,6 @@ http.get("/api/washhall/available", async ({ request }) => {
 
     // math.ceil for at runde op til nærmeste hele sekund, og Math.max for at sikre at det ikke bliver negativt
     return HttpResponse.json({ registered, seconds_remaining: Math.max(0, Math.ceil(registeredAfterSeconds - secondsPassed))});
-  }),
-
-
-  // ===========================================================
-  //              GET VENTETID FOR VASKEHAL
-  // ===========================================================
-  http.get("/api/washhall/waittime", () => {
-    return HttpResponse.json(washHallWaitTime);
   }),
 ];
 

@@ -9,8 +9,7 @@ import Link from "next/link";
 // Henter funktioner osv.
 import { useAuth } from "@/hooks/useAuth";
 import { Location } from "@/types/locations";
-import { resolveWaitStatus, resolveWaitTime } from "@/lib/wash/resolvers";
-import { washHallWaitTime } from "@/mockupData/washData";
+import { useWashHall } from "@/hooks/washHallContext";
 
 // Components fra mappen
 import ArrowLeft from "@/components/global/icons/navigation/ArrowLeft";
@@ -26,6 +25,7 @@ import PracticInfoWashSelf from "@/components/singleview/PracticInfoWashSelf";
 import BusinessGraph from "@/components/singleview/BusinessGraph";
 
 export default function LocationSingle() {
+  const { waitStatus } = useWashHall();
   // Henter det dynamiske id-segment fra URL
   const { id } = useParams();
 
@@ -38,14 +38,12 @@ export default function LocationSingle() {
   // Styrer loading-tilstand
   const [isLoading, setIsLoading] = useState(true);
 
-  // Udregner ventetid i sekunder baseret på mockup-data
-  const waitTimeSeconds = resolveWaitTime(washHallWaitTime);
-
-  // Tjekker om vaskehallen is_broken – false hvis location ikke er loaded
-  const isBroken = location?.is_broken ?? false;
-
-  // Oversætter ventetid + fejlstatus til visuel status
-  const status = resolveWaitStatus(waitTimeSeconds, isBroken);
+  const status =
+    waitStatus === "Lang ventetid"
+      ? "travl"
+      : waitStatus === "Moderat ventetid"
+        ? "moderat"
+        : "rolig";
 
   useEffect(() => {
     async function loadLocation() {

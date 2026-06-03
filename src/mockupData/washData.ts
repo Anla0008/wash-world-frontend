@@ -11,16 +11,14 @@ export const carInWashHall = {
 //              MOCKUP FOR VENTETID I HAL
 // ==========================================================
 
- const washHallRandomizer = {
-  1: Math.floor(Math.random() * 60), // op til 1 min
-  2: Math.floor(Math.random() * 300), // op til 5 min
-  3: Math.floor(Math.random() * 600), // op til 10 min
+export const waitTimeMockup = {
+  min_seconds: 30,
+  max_seconds: 480,
 };
 
-export const washHallWaitTime: { [key: number]: number } = {
-    1: washHallRandomizer[1],
-    2: washHallRandomizer[2],
-    3: washHallRandomizer[3],
+export const createRandomWaitTimeSeconds = (): number => {
+  const { min_seconds, max_seconds } = waitTimeMockup;
+  return Math.floor(Math.random() * (max_seconds - min_seconds + 1)) + min_seconds;
 };
 
 // ===========================================================
@@ -105,7 +103,6 @@ export const washHallState = new Map<
   string,
   {
     occupied: boolean;
-    waitTime: number;
     updatedAt: number;
     entryCreatedAt: number | null;
     registeredAfterSeconds: number;

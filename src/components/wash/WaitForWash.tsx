@@ -6,52 +6,25 @@ import { useWashStore } from "@/stores/useWashStore";
 import { useNearestWash } from "@/lib/wash/resolvers";
 import { useEffect } from "react";
 import ProgressBar from "../global/grafik/ProgressBar";
-
 import { WaitForWashProps } from "@/types/washType";
-
 import Image from "next/image";
 
-const WaitForWash = ({activeIndex,}: WaitForWashProps) => {
-
+const WaitForWash = ({ activeIndex }: WaitForWashProps) => {
   const router = useRouter();
-  const { nearestLocation } = useNearestWash();
-
-  const availibleWashHall = useWashStore((s) => s.availibleWashHall);
-  const setAvailibleWashHall = useWashStore((s) => s.setAvailibleWashHall);
+  const { useEntryToWashHall } = useWash(); // ← kun denne
   
-  const { useEntryToWashHall, useAvailableWashHall } = useWash();
+  // Hallen er allerede sat i store af AvailibleWashingHall
+  const hallNumber = useWashStore((s) => s.availibleWashHall);
 
-  const { hall, isLoading, error } = useAvailableWashHall(
-    nearestLocation?.location_pk
-  );
+  const { registered } = useEntryToWashHall(hallNumber);
 
   useEffect(() => {
-    if (hall && availibleWashHall === null) {
-      setAvailibleWashHall(hall.car_wash_hall_number);
+    if (registered) {
+      router.push("/active-wash");
     }
-  }, [hall, availibleWashHall, setAvailibleWashHall]);
+  }, [registered, router]);
 
-  const hallNumber = availibleWashHall ?? hall?.car_wash_hall_number ?? null;
-  
-    const { registered } = useEntryToWashHall(hallNumber);
-
-    useEffect(() => {
-      if (registered) {
-        router.push("/active-wash");
-      }
-    }, [registered, router]);
-
-  if (isLoading && !hallNumber) {
-    return <p>Finder ledig vaskehal...</p>;
-  }
-
-  if (error) {
-    return <p>{error}</p>;
-  }
-
-  if (!hallNumber) {
-    return <p>Ingen ledig vaskehal valgt</p>;
-  }
+  if (!hallNumber) return <p>Ingen ledig vaskehal valgt</p>;
 
   return (
     <div>

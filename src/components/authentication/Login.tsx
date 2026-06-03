@@ -16,6 +16,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Lock from "@/components/global/icons/grafik/Lock";
 import Mail from "@/components/global/icons/grafik/Mail";
+import Eye from "../global/icons/validation/Eye";
 
 export default function Login() {
   const [params, setParams] = useState<User>({} as User);
@@ -74,6 +75,7 @@ export default function Login() {
               setParams({ ...params, user_email: e.target.value });
               setLoginFailed(false);
             }}
+            isPassword={false}
           />
         </div>
 
@@ -96,7 +98,9 @@ export default function Login() {
                 setParams({ ...params, user_hashed_password: e.target.value });
                 setLoginFailed(false);
               }}
+              isPassword={true}
             />
+       
           </div>
           <Link href={"/forgot-password"} className="flex justify-end mt-2">
             <p className="underline light">Glemt kodeord?</p>

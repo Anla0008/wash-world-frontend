@@ -249,3 +249,13 @@ h3 + h3 {
     opacity: 0;
   }
 }
+
+/* ============================================================
+   OVERWEITE - fjern styling af autofill fra browseren
+   ============================================================ */
+
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px var(--background) inset;
+  -webkit-text-fill-color: var(--foreground);
+  border-color: var(--foreground);
+}

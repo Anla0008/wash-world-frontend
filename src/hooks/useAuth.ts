@@ -179,7 +179,15 @@ export function useAuth() {
   //                          LOCATIONS
   // ===========================================================
   const getLocations = useCallback(async () => {
-    const response = await fetch(baseUrl + "/locations");
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(baseUrl + "/locations", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     if (!response.ok) {
       throw new Error("Failed to get locations");
@@ -193,7 +201,15 @@ export function useAuth() {
   //                      SINGLE LOCATION
   // ===========================================================
   const getSingleLocation = useCallback(async (id: string) => {
-    const response = await fetch(baseUrl + `/locations/${id}`);
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(baseUrl + `/locations/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     if (!response.ok) {
       throw new Error("Failed to get single location");

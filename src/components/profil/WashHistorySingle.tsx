@@ -2,33 +2,27 @@
 
 import PointBadge from "@/components/global/grafik/PointBadge";
 import ArrowLeft from "@/components/global/icons/navigation/ArrowLeft";
-import { useWash } from "@/hooks/useWash";
-import { useRouter } from "next/navigation";
+import { useWashDetail } from "@/hooks/useWash";
 import { use } from "react";
 import Link from "next/link";
 
-export default function WashHistorySingle({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default function WashHistorySingle({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const router = useRouter();
 
-  const { useWashDetail } = useWash();
-  const wash = useWashDetail(id);
+  const { data: wash, isLoading } = useWashDetail(id);
 
-  if (!wash) return <p>Indlæser...</p>;
+  if (isLoading) return <p>Indlæser...</p>;
+  if (!wash) return <p>Vask ikke fundet</p>;
 
   const startDate = new Date(wash.car_wash_started_at);
   const endDate = new Date(wash.car_wash_ended_at);
 
   return (
     <div className="flex flex-col gap-10">
-       <Link href="/profil" className="flex items-center gap-2 mb-4">
-            <ArrowLeft size={24} />
-              Vaskehistorik
-            </Link>
+      <Link href="/wash-history" className="flex items-center gap-2 mb-4">
+        <ArrowLeft size={24} />
+        Vaskehistorik
+      </Link>
 
       <div className="flex flex-col">
         <h1 className="extra-bold">{startDate.toLocaleDateString("da-DK")}</h1>

@@ -3,19 +3,20 @@ import { WashRoute, SingleWashType, WashingHalls, SubscriptionResponse } from "@
 import { User } from "@/types/user";
 import { useCallback, useEffect, useState } from "react";
 import { postWash } from "@/types/washType";
+import { useQuery } from "@tanstack/react-query";
+
+const baseUrl = "http://127.0.0.1:80";
 
 export function useWash() {
-  const baseUrl = "http://127.0.0.1:80";
-
   // ===========================================================
   //                    KØB ABONNOMENT
   // ===========================================================
-const postSubscriptionStatus = useCallback(async (user: User, wash: { name: string }): Promise<WashRoute> => {
+  const postSubscriptionStatus = useCallback(async (user: User, wash: { name: string }): Promise<WashRoute> => {
     const response = await fetch(baseUrl + "/subscription", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Cache-Control": "no-store",  
+        "Cache-Control": "no-store",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify({
@@ -30,39 +31,38 @@ const postSubscriptionStatus = useCallback(async (user: User, wash: { name: stri
 
     const data = await response.json();
 
-    return data
+    return data;
   }, []);
 
   // ===========================================================
   //              GET BRUGERS ABONNOMENT STATUS
   // ===========================================================
-const hasSub = useCallback(async (): Promise<{ hasSub: boolean; subType: string | null }> => {
-  const response = await fetch(baseUrl + "/subscription", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      "Cache-Control": "no-store",
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  });
+  const hasSub = useCallback(async (): Promise<{ hasSub: boolean; subType: string | null }> => {
+    const response = await fetch(baseUrl + "/subscription", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
 
-  if (!response.ok) {
-    return { hasSub: false, subType: null };
-  }
+    if (!response.ok) {
+      return { hasSub: false, subType: null };
+    }
 
-  const data: SubscriptionResponse = await response.json();
+    const data: SubscriptionResponse = await response.json();
 
-  return {
-  hasSub: data.has_sub,
-  subType: data.sub_type,
-};
-}, []);
+    return {
+      hasSub: data.has_sub,
+      subType: data.sub_type,
+    };
+  }, []);
 
   // ===========================================================
   //                   UPDATE ABONNOMENT
   // ===========================================================
-const updateSubscription = useCallback(
-  async (hasSub: boolean, subType: string | null) => {
+  const updateSubscription = useCallback(async (hasSub: boolean, subType: string | null) => {
     const response = await fetch(baseUrl + "/subscription", {
       method: "PATCH",
       headers: {
@@ -79,36 +79,33 @@ const updateSubscription = useCallback(
     if (!response.ok) {
       throw new Error("Failed to update subscription status");
     }
-    
+
     const data = await response.json();
 
-    return data ;
-
-  },
-  []
-);
+    return data;
+  }, []);
 
   // ===========================================================
   //                   DELETE ABONNOMENT
   // ===========================================================
-const deleteSubscription = useCallback(async () => {
-  const response = await fetch(baseUrl + "/subscription", {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-      "Cache-Control": "no-store",
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  });
+  const deleteSubscription = useCallback(async () => {
+    const response = await fetch(baseUrl + "/subscription", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
 
-  if (!response.ok) {
-    throw new Error("Failed to delete subscription");
-  }
+    if (!response.ok) {
+      throw new Error("Failed to delete subscription");
+    }
 
-  const data = await response.json();
+    const data = await response.json();
 
-  return data;
-}, []);
+    return data;
+  }, []);
 
   // ===========================================================
   //                GET ENKELTVASK  (MOCKUPDATA)
@@ -242,119 +239,104 @@ const deleteSubscription = useCallback(async () => {
   // ===========================================================
   //               POST BRUGERS VASKEPROCES
   // ===========================================================
-  const postAvailableWashHall = useCallback(async ({ wash, startedAt, endedAt, availibleWashHall, locationID }: postWash)  => {
-    console.log("POST DATA:", {
-      wash,
-      startedAt,
-      endedAt,
-      availibleWashHall,
-      locationID,
-    });
+  const postAvailableWashHall = useCallback(
+    async ({ wash, startedAt, endedAt, availibleWashHall, locationID }: postWash) => {
+      console.log("POST DATA:", {
+        wash,
+        startedAt,
+        endedAt,
+        availibleWashHall,
+        locationID,
+      });
 
-    const userHasSub = await hasSub();
+      const userHasSub = await hasSub();
 
-    const response = await fetch(baseUrl + "/reciept", {
-      method: "POST",
+      const response = await fetch(baseUrl + "/reciept", {
+        method: "POST",
 
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-store",
-
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-
-      body: JSON.stringify({
-        car_wash_location_fk: locationID,
-
-        car_wash_hall_fk: availibleWashHall,
-
-        car_wash_price: userHasSub ? wash.price_subscription : wash.price_single,
-
-        car_wash_type: wash.name,
-
-        car_wash_started_at: startedAt,
-
-        car_wash_ended_at: endedAt,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-
-      throw new Error(errorData.error || "Failed to save wash");
-    }
-
-    const data = await response.json();
-
-    return data;
-  }, [hasSub ]);
-
-  // ===========================================================
-  //                Vaskehistorik hooks
-  // ===========================================================
-  const useWashHistory = () => {
-    const [history, setHistory] = useState<any[]>([]);
-
-    useEffect(() => {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-
-      const userPk = JSON.parse(atob(token.split(".")[1])).sub;
-
-      fetch(`${baseUrl}/car-wash-history/user/${userPk}`, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          "Cache-Control": "no-store",
+
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      })
-        .then((res) => {
-          if (!res.ok) return null; // returner null i stedet for at kaste fejl
-          return res.json();
-        })
-        .then((data) => {
-          if (!data) return; // ignorer hvis null (ingen vask endnu)
-          setHistory(data.car_wash_history ?? []);
-        })
-        .catch((err) => console.error("Fetch fejl:", err));
-    }, []);
 
-    return history;
+        body: JSON.stringify({
+          car_wash_location_fk: locationID,
+
+          car_wash_hall_fk: availibleWashHall,
+
+          car_wash_price: userHasSub ? wash.price_subscription : wash.price_single,
+
+          car_wash_type: wash.name,
+
+          car_wash_started_at: startedAt,
+
+          car_wash_ended_at: endedAt,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+
+        throw new Error(errorData.error || "Failed to save wash");
+      }
+
+      const data = await response.json();
+
+      return data;
+    },
+    [hasSub],
+  );
+
+  return {
+    postSubscriptionStatus,
+    navigateBasedOnStatus,
+    deleteSubscription,
+    hasSub,
+    postAvailableWashHall,
+    updateSubscription,
+    useSingleWash,
+    useAvailableWashHall,
+    useEntryToWashHall,
   };
+}
 
-  const useWashDetail = (id: string) => {
-    const [wash, setWash] = useState<any | null>(null);
+// ===========================================================
+//                Vaskehistorik hooks
+// ===========================================================
+export function useWashHistory() {
+  return useQuery({
+    queryKey: ["washHistory"],
+    queryFn: async () => {
+      const token = localStorage.getItem("token");
+      const userPk = token ? JSON.parse(atob(token.split(".")[1])).sub : null;
 
-    useEffect(() => {
-      if (!id) return;
+      if (!userPk) return [];
 
+      const res = await fetch(`${baseUrl}/car-wash-history/user/${userPk}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) return [];
+      const data = await res.json();
+      return data.car_wash_history ?? [];
+    },
+  });
+}
+
+export function useWashDetail(id: string) {
+  return useQuery({
+    queryKey: ["washDetail", id],
+    gcTime: 0, // Garbage collection time – how long it will be stored in the cache
+    queryFn: async () => {
       const token = localStorage.getItem("token");
 
-      fetch(`${baseUrl}/car-wash-history/detail/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((res) => {
-          if (!res.ok) throw new Error("Ikke fundet");
-          return res.json();
-        })
-        .then((data) => setWash(data))
-        .catch((err) => console.error(err));
-    }, [id]);
-
-    return wash;
-  };
-
-return {
-  useWashDetail,
-  postSubscriptionStatus,
-  navigateBasedOnStatus,
-  deleteSubscription,
-  hasSub,
-  postAvailableWashHall,
-  updateSubscription,
-  useSingleWash,
-  useAvailableWashHall,
-  useEntryToWashHall,
-  useWashHistory,
-};
+      const res = await fetch(`${baseUrl}/car-wash-history/detail/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Ikke fundet");
+      return res.json();
+    },
+    enabled: !!id,
+  });
 }

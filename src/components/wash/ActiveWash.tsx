@@ -4,8 +4,7 @@ import ProgressBar from "@/components/global/grafik/ProgressBar";
 import { useRouter } from "next/navigation";
 import Timer from "@/components/wash/Timer";
 import { useWashStore } from "@/stores/useWashStore";
-import { useEffect, useState } from "react";
-import { useWash } from "@/hooks/useWash";
+import { useEffect } from "react";
 import { washData } from "@/mockupData/washData";
 import { useSubscriptionStatus } from "@/lib/wash/resolvers";
 
@@ -14,17 +13,25 @@ const ActiveWash = () => {
 
   const userHasSub = useSubscriptionStatus();
 
-  const { selectedWash, startedAt, setStartedAt, setEndedAt } = useWashStore();
+  const { selectedWash, startedAt, setSelectedWash, setStartedAt, setEndedAt } = useWashStore();
 
   // ===========================================================
   //                DURATION EFTER SUB
   // ===========================================================
 
-  // finder den valgte vask i mockup data for at få duration til timer
-  const subscriptionWash = washData.types.find((wash) => wash.name === userHasSub.subType);
+  // finder abonnementsvasken via sub_type, så receipt får en selectedWash i sub-flow
+  const normalizedSubType = userHasSub.subType?.trim().toLowerCase();
+  const subscriptionWash = washData.types.find((wash) => wash.name.trim().toLowerCase() === normalizedSubType);
 
   // hvis bruger har sub, brug duration fra sub, ellers brug duration fra valgt vask
   const timerDuration = userHasSub.hasSub ? subscriptionWash?.duration : selectedWash?.duration;
+
+  useEffect(() => {
+    if (!userHasSub.hasSub || !subscriptionWash) return;
+    if (selectedWash?.name === subscriptionWash.name) return;
+
+    setSelectedWash(subscriptionWash);
+  }, [userHasSub.hasSub, selectedWash?.name, setSelectedWash, subscriptionWash]);
 
   // ===========================================================
   //                  START TIDSPUNKT FOR VASK

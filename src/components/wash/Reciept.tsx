@@ -167,7 +167,7 @@ const {
 
         <div className="rounded-2xl bg-(--gray-80)/90 px-8 py-10 shadow-2xl">
           <CheckMarkAnimation
-            title="Vask valgt!"
+            title="Afsluttet!"
             subtitle="Din vask er betalt!"
             durationMs={1600}
             onComplete={handleCheckAnimationComplete}

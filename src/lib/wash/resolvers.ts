@@ -198,7 +198,7 @@ export const distanceFromWashhall = (distanceKm: number, userHasSub: boolean): W
     return "/error-in-distance";
   } else {
     // ellers returner rute baseret på abonnementstatus
-    return userHasSub ? "/drive-in" : "/buy-wash"; 
+    return userHasSub ? "/drive-in" : "/buy-wash";
   }
 };
 

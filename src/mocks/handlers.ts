@@ -5,7 +5,6 @@ import { washHallState, carInWashHall, washData } from "@/mockupData/washData";
 import { initializeHallState, updateHallState, resolveRoute } from "@/lib/wash/resolvers";
 
 const baseUrl = "http://127.0.0.1";
-let currentAvailableHallNumber: number | null = null;
 
 export const handlers = [
 
@@ -87,7 +86,7 @@ http.get("/api/washhall/available", async ({ request }) => {
     const selectedHall = availableHalls[0] ?? resolvedHalls.find((hall: any) => hall != null);
 
     // hvis der er en valgt vaskehal, så start registrering af bil i vaskehal
-    if (selectedHall) { currentAvailableHallNumber = selectedHall.car_wash_hall_number;
+    if (selectedHall) {
 
       // get den valgte hal og dens tilsvarende nummer/name
       const hallKey = String( selectedHall.car_wash_hall_number);
@@ -95,13 +94,9 @@ http.get("/api/washhall/available", async ({ request }) => {
       // Hent den aktuelle state for den valgte vaskehal - (state angivet i mocks/resolvers.ts)
       const hallState = washHallState.get(hallKey);
 
-      // hvis der ikke allerede er oprettet en entryCreatedAt for denne vaskehal...
-      if (hallState && !hallState.entryCreatedAt) {
-
-        // så opret den nu for at starte registrering af bil i vaskehal
-       hallState.entryCreatedAt = Date.now();
-
-       // og sæt registeredAfterSeconds baseret på det simulerede tidspunkt for registrering i vaskehal
+      if (hallState) {
+        // Start altid en ny registreringsperiode, så drive-in varer fast 25 sekunder hver gang.
+        hallState.entryCreatedAt = Date.now();
         hallState.registeredAfterSeconds = carInWashHall.registered_after_seconds;
 
         // gem den opdaterede state tilbage i washHallState
@@ -131,16 +126,9 @@ http.get("/api/washhall/available", async ({ request }) => {
       );
     }
 
-    // Valider at hall_number matcher den aktuelle ledige vaskehal
-    if (Number(hallNumber) !== currentAvailableHallNumber) {
-      return HttpResponse.json(
-        { error: "hall_number is not the selected available hall" },
-        { status: 409 }
-      );
-    }
-
-    // Hent den aktuelle state for vaskehallen (state angivet i mocks/wash/resolvers.ts)
-    const hallState = washHallState.get(String(currentAvailableHallNumber));
+    // Hent state for den konkrete hal, som klienten spørger på.
+    const hallKey = String(hallNumber);
+    const hallState = washHallState.get(hallKey);
 
     // Hvis der ikke findes en state for denne vaskehal, eller entryCreatedAt ikke er sat...
     if (!hallState || !hallState.entryCreatedAt) {

@@ -297,7 +297,6 @@ export function useWash() {
     postAvailableWashHall,
     updateSubscription,
     useSingleWash,
-    useWashHallWaitTime,
     useAvailableWashHall,
     useEntryToWashHall,
   };

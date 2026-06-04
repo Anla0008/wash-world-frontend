@@ -10,7 +10,8 @@ import FilterWrapper from "../global/filtering/FilterWrapper";
 import Sorting from "../global/filtering/Sorting";
 import type { FindCarWashBottomSheetProps } from "@/types/locations";
 import type { Range, SortDirection } from "@/types/filtering";
-import { resolveWaitStatusLabel, type WaitStatusLabel } from "@/lib/wash/waitTime";
+import { resolveWaitStatusLabel } from "@/lib/wash/waitTime";
+import { WaitStatusLabel } from "@/types/washType";
 import { useWashHall } from "@/hooks/washHallContext";
 
 const waitStatusOrder: Record<WaitStatusLabel, number> = {
@@ -40,7 +41,7 @@ function matchesRange(value: number | undefined, range: Range) {
   return value !== undefined && value >= range.min && value <= range.max;
 }
 
-// Finder den højde bottom sheet'et skal ende på, når brugeren slipper.
+// Finder den højde bottom sheet'et skal ende på, når brugeren slipper derfor "SNAP".
 function getSnapHeight(currentHeight: number) {
   if (currentHeight < SNAP_TO_MIN_LIMIT) {
     return MIN_HEIGHT;

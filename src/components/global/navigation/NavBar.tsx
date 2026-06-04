@@ -67,7 +67,7 @@ const NavBar = () => {
       ),
     },
     {
-      name: "Favorites",
+      name: "Favoritter",
       link: "/favorites",
       icon: (
         <Favourites

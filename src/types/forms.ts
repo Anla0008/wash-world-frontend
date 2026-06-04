@@ -13,4 +13,5 @@ export type FormProps = {
   onTextAreaChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   disabled?: boolean;
   labelBg?: string;
+  isPassword: boolean;
 };

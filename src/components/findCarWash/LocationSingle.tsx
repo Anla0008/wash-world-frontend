@@ -9,8 +9,8 @@ import Link from "next/link";
 // Henter funktioner osv.
 import { useAuth } from "@/hooks/useAuth";
 import { Location } from "@/types/locations";
-import { resolveWaitStatus, resolveWaitTime } from "@/lib/wash/resolvers";
-import { washHallWaitTime } from "@/mockupData/washData";
+import { useWashHall } from "@/hooks/washHallContext";
+import { resolveWaitStatusLabel } from "@/lib/wash/waitTime";
 
 // Components fra mappen
 import ArrowLeft from "@/components/global/icons/navigation/ArrowLeft";
@@ -25,7 +25,22 @@ import PracticInfoVacuumCleaner from "@/components/singleview/PracticInfoVacuumC
 import PracticInfoWashSelf from "@/components/singleview/PracticInfoWashSelf";
 import BusinessGraph from "@/components/singleview/BusinessGraph";
 
+const DEFAULT_OPENING_HOURS = "07 - 22";
+
+const resolveOpeningHours = (location: Location) => {
+  if (location.opening_hours) return location.opening_hours;
+  if (location.openingHours) return location.openingHours;
+  if (location.location_opening_hours) return location.location_opening_hours;
+
+  if (location.open_from && location.open_to) {
+    return `${location.open_from} - ${location.open_to}`;
+  }
+
+  return DEFAULT_OPENING_HOURS;
+};
+
 export default function LocationSingle() {
+  const { waitTimeByLocationPk, ensureWaitTimesForLocations } = useWashHall();
   // Henter det dynamiske id-segment fra URL
   const { id } = useParams();
 
@@ -38,14 +53,13 @@ export default function LocationSingle() {
   // Styrer loading-tilstand
   const [isLoading, setIsLoading] = useState(true);
 
-  // Udregner ventetid i sekunder baseret på mockup-data
-  const waitTimeSeconds = resolveWaitTime(washHallWaitTime);
+  useEffect(() => {
+    if (!id || typeof id !== "string") return;
+    ensureWaitTimesForLocations([id]);
+  }, [id, ensureWaitTimesForLocations]);
 
-  // Tjekker om vaskehallen is_broken – false hvis location ikke er loaded
-  const isBroken = location?.is_broken ?? false;
-
-  // Oversætter ventetid + fejlstatus til visuel status
-  const status = resolveWaitStatus(waitTimeSeconds, isBroken);
+  const waitTimeForLocation = typeof id === "string" ? waitTimeByLocationPk[id] : null;
+  const waitStatus = waitTimeForLocation != null ? resolveWaitStatusLabel(waitTimeForLocation) : null;
 
   useEffect(() => {
     async function loadLocation() {
@@ -81,6 +95,14 @@ export default function LocationSingle() {
     );
   }
 
+  if (!waitStatus) {
+    return (
+      <div className="min-h-screen bg-background py-10 text-foreground">
+        <p>Indlæser ventetid...</p>
+      </div>
+    );
+  }
+
   // Viser fejl-UI hvis lokationen ikke blev fundet eller fetch fejlede
   if (!location) {
     return (
@@ -92,6 +114,8 @@ export default function LocationSingle() {
       </div>
     );
   }
+
+  const openingHours = resolveOpeningHours(location);
 
   return (
     <div className="flex flex-col gap-20">
@@ -115,7 +139,7 @@ export default function LocationSingle() {
 
         <div className="mb-3 flex items-center gap-3">
           <Clock size={22} />
-          <p>07 - 22</p>
+          <p>{openingHours}</p>
         </div>
 
         <div className="mb-6 flex items-center gap-3">
@@ -140,8 +164,7 @@ export default function LocationSingle() {
         <h2 className="mb-8 text-3xl font-extrabold">
           Travlhed i {location.location_city}
         </h2>
-        <BusinessGraph status={status} />{" "}
-        {/* Hardcoded status for at vise grafen, skal senere være dynamisk baseret på location */}
+        <BusinessGraph locationPk={location.location_pk} openingHours={openingHours} />{" "}
       </section>
 
       {/* ====================== PRAKTISK INFO ====================== */}

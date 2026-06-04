@@ -114,6 +114,7 @@ export default function Signup() {
                   setParams({ ...params, user_email: e.target.value });
                   setEmailTaken(false);
                 }}
+                isPassword={false}
               />
             </div>
 
@@ -130,6 +131,7 @@ export default function Signup() {
                 onChange={(e) =>
                   setParams({ ...params, user_first_name: e.target.value })
                 }
+                isPassword={false}
               />
             </div>
 
@@ -146,13 +148,14 @@ export default function Signup() {
                 onChange={(e) =>
                   setParams({ ...params, user_last_name: e.target.value })
                 }
+                isPassword={false}
               />
             </div>
 
             <div className="flex items-center gap-4">
               <Lock color={"foreground"} size={40} />
               <Input
-                label="Kode*"
+                label="Adgangskode*"
                 error={!!params.user_hashed_password && !passwordValid}
                 validated={passwordValid}
                 type="password"
@@ -162,13 +165,14 @@ export default function Signup() {
                 onChange={(e) =>
                   setParams({ ...params, user_hashed_password: e.target.value })
                 }
+                isPassword={false}
               />
             </div>
 
             <div className="flex items-center gap-4">
               <Lock color={"foreground"} size={40} />
               <Input
-                label="Gentag kode*"
+                label="Gentag adgangskode*"
                 error={
                   !!params.user_repeat_hashed_password && !repeatPasswordValid
                 }
@@ -183,6 +187,7 @@ export default function Signup() {
                     user_repeat_hashed_password: e.target.value,
                   })
                 }
+                isPassword={true}
               />
             </div>
 
@@ -205,6 +210,7 @@ export default function Signup() {
                   setParams({ ...params, plate_number: e.target.value });
                   setPlateTaken(false);
                 }}
+                isPassword={false}
               />
             </div>
 
@@ -246,6 +252,7 @@ export default function Signup() {
                 value=""
                 placeholder="1234 5678 9012 3456"
                 disabled={true}
+                isPassword={false}
               />
             </div>
 
@@ -259,6 +266,7 @@ export default function Signup() {
                 value=""
                 placeholder="Anders Andersen"
                 disabled={true}
+                isPassword={false}
               />
             </div>
 
@@ -273,6 +281,7 @@ export default function Signup() {
                   value=""
                   placeholder="01/01/2000"
                   disabled={true}
+                  isPassword={false}
                 />
                 <Input
                   label="CVC*"
@@ -282,6 +291,7 @@ export default function Signup() {
                   value=""
                   placeholder="1234"
                   disabled={true}
+                  isPassword={false}
                 />
               </div>
             </div>

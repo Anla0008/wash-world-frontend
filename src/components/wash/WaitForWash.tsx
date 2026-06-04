@@ -6,50 +6,44 @@ import { useWashStore } from "@/stores/useWashStore";
 import { useNearestWash } from "@/lib/wash/resolvers";
 import { useEffect } from "react";
 import ProgressBar from "../global/grafik/ProgressBar";
-
 import { WaitForWashProps } from "@/types/washType";
-
 import Image from "next/image";
 
-const WaitForWash = ({activeIndex,}: WaitForWashProps) => {
-
+const WaitForWash = ({ activeIndex }: WaitForWashProps) => {
   const router = useRouter();
+  const { useEntryToWashHall, useAvailableWashHall } = useWash();
   const { nearestLocation } = useNearestWash();
 
   const availibleWashHall = useWashStore((s) => s.availibleWashHall);
   const setAvailibleWashHall = useWashStore((s) => s.setAvailibleWashHall);
-  
-  const { useEntryToWashHall, useAvailableWashHall } = useWash();
 
-  const { hall, isLoading, error } = useAvailableWashHall(
-    nearestLocation?.location_pk
-  );
+  const { hall, isLoading, error } = useAvailableWashHall(nearestLocation?.location_pk);
 
+  // Hvis brugeren kommer direkte til drive-in (abonnement), sæt automatisk næste ledige hall.
   useEffect(() => {
-    if (hall && availibleWashHall === null) {
-      setAvailibleWashHall(hall.car_wash_hall_number);
-    }
+    if (!hall || availibleWashHall !== null) return;
+    setAvailibleWashHall(hall.car_wash_hall_number);
   }, [hall, availibleWashHall, setAvailibleWashHall]);
 
-  const hallNumber = availibleWashHall ?? hall?.car_wash_hall_number ?? null;
-  
-    const { registered } = useEntryToWashHall(hallNumber);
+  const hallNumber = availibleWashHall;
 
-    useEffect(() => {
-      if (registered) {
-        router.push("/active-wash");
-      }
-    }, [registered, router]);
+  const { registered } = useEntryToWashHall(hallNumber);
 
-  if (isLoading && !hallNumber) {
-    return <p>Finder ledig vaskehal...</p>;
-  }
-
-  if (error) {
-    return <p>{error}</p>;
-  }
+  useEffect(() => {
+    if (registered) {
+      router.push("/active-wash");
+    }
+  }, [registered, router]);
 
   if (!hallNumber) {
+    if (isLoading) {
+      return <p>Finder ledig vaskehal...</p>;
+    }
+
+    if (error) {
+      return <p>{error}</p>;
+    }
+
     return <p>Ingen ledig vaskehal valgt</p>;
   }
 

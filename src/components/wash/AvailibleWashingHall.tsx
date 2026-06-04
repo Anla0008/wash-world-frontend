@@ -14,12 +14,12 @@ const AvailibleWashingHall = () => {
     nearestLocation?.location_pk
   );
 
-  // Gem hallen i store første gang den hentes, så den er den samme igennem hele flowet
-  useEffect(() => {
-    if (hall && availibleWashHall === null) {
-      setAvailibleWashHall(hall.car_wash_hall_number);
-    }
-  }, [hall, availibleWashHall, setAvailibleWashHall]);
+// Når vi får data om den ledige vaskehal, sætter vi den i store, så den kan bruges i hele vaskeflowet.
+useEffect(() => {
+  if (hall && availibleWashHall === null) {
+    setAvailibleWashHall(hall.car_wash_hall_number);
+  }
+}, [hall, availibleWashHall, setAvailibleWashHall]);
 
   if (isLoading) {
     return <p>Finder ledig vaskehal...</p>;

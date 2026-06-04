@@ -4,7 +4,7 @@ import NavBar from "@/components/global/navigation/NavBar";
 import MswInitializer from "@/components/global/MswInitializer";
 import { FavoritesInitializer } from "@/components/global/favorit/FavoritesInitializer";
 import AuthGuard from "@/components/global/AuthGuard";
-import QueryProvider from "@/components/global/QueryProvider";
+import { WashHallProvider } from "@/hooks/washHallContext";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -26,18 +26,17 @@ export default function RootLayout({
         <link rel="shortcut icon" href="/favicon/favicon.ico" />
       </head>
       <body>
-        {/* QueryClientProvider wrapping the entire application to provide react-query context */}
-        <QueryProvider>
-          <MswInitializer>
-            <AuthGuard>
-              <FavoritesInitializer />
+        <MswInitializer>
+          <AuthGuard>
+            <FavoritesInitializer />
+            <WashHallProvider>
               <div id="app-shell">
                 <main className="flex flex-col mb-20 px-8 pt-8">{children}</main>
                 <NavBar />
               </div>
-            </AuthGuard>
-          </MswInitializer>
-        </QueryProvider>
+            </WashHallProvider>
+          </AuthGuard>
+        </MswInitializer>
       </body>
     </html>
   );

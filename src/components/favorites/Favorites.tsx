@@ -5,13 +5,16 @@ import { useAuth } from "@/hooks/useAuth";
 import { Location } from "@/types/locations";
 import CarWashCard from "@/components/global/cards/CarWashCard";
 import { useFavoritesStore } from "@/stores/favoritesStore";
+import { useWashHall } from "@/hooks/washHallContext";
 
 export default function Favorites() {
   const { getFavorites } = useAuth();
   const [favorites, setFavorites] = useState<Location[]>([]);
   const [fadingOut, setFadingOut] = useState<Set<string>>(new Set());
   const favoriteIds = useFavoritesStore((state) => state.favoriteIds);
+  const { waitTimeByLocationPk, ensureWaitTimesForLocations } = useWashHall();
 
+  // Hent favoritter ved komponentens første indlæsning
   useEffect(() => {
     getFavorites().then(setFavorites).catch(console.error);
   }, []);
@@ -22,6 +25,12 @@ export default function Favorites() {
       prev.filter((loc) => favoriteIds.has(loc.location_pk)),
     );
   }, [favoriteIds]);
+
+  useEffect(() => {
+    ensureWaitTimesForLocations(favorites.map((favorite) => favorite.location_pk));
+  }, [favorites, ensureWaitTimesForLocations]);
+
+  const isWaitTimeReady = favorites.every((favorite) => waitTimeByLocationPk[favorite.location_pk] != null);
 
   const handleRemove = (location_pk: string) => {
     setFadingOut((prev) => new Set(prev).add(location_pk));
@@ -43,6 +52,8 @@ export default function Favorites() {
           <p className="text-sm text-(--gray-40)">
             Du har ingen favoritter endnu.
           </p>
+        ) : !isWaitTimeReady ? (
+          <p className="text-sm text-(--gray-40)">Indlæser ventetider...</p>
         ) : (
           favorites.map((location) => (
             <div
@@ -63,6 +74,7 @@ export default function Favorites() {
                 image={location.location_img}
                 href={`/locations/${location.location_pk}`}
                 onRemove={() => handleRemove(location.location_pk)}
+                waitTimeSeconds={waitTimeByLocationPk[location.location_pk]}
               />
             </div>
           ))

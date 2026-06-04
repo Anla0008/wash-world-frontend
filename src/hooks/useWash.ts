@@ -1,8 +1,7 @@
 "use client";
-import { WashRoute, SingleWashType, WashingHalls, WashHallWaitTimeResponse, SubscriptionResponse } from "@/types/washType";
+import { WashRoute, SingleWashType, WashingHalls, SubscriptionResponse } from "@/types/washType";
 import { User } from "@/types/user";
 import { useCallback, useEffect, useState } from "react";
-import { resolveWaitTime } from "@/lib/wash/resolvers";
 import { postWash } from "@/types/washType";
 import { useQuery } from "@tanstack/react-query";
 
@@ -140,43 +139,6 @@ export function useWash() {
 
     return userHasSub.hasSub ? "/drive-in" : "/buy-wash";
   }, [hasSub]);
-
-  // ===========================================================
-  //                  GET VENTETID FOR VASKEHAL (SIMULERING)
-  // ===========================================================
-  const useWashHallWaitTime = () => {
-    const [waitTime, setWaitTime] = useState<number | null>(null);
-
-    useEffect(() => {
-      const fetchWaitTime = async () => {
-        try {
-          const response = await fetch("/api/washhall/waittime", {
-            method: "GET",
-            headers: {
-              "Cache-Control": "no-store",
-            },
-          });
-
-          if (!response.ok) {
-            throw new Error("Failed to fetch wash hall wait time");
-          }
-
-          const data = (await response.json()) as WashHallWaitTimeResponse;
-
-          // Beregn samlet ventetid ved at summere ventetider for alle vaskehaller
-          const totalWaitTime = resolveWaitTime(data);
-
-          setWaitTime(totalWaitTime);
-        } catch (err) {
-          console.error(err instanceof Error ? err.message : "Unknown error");
-        }
-      };
-
-      void fetchWaitTime();
-    }, []);
-
-    return waitTime;
-  };
 
   // ===========================================================
   //             GET NÆSTE LEDIGE VASKEHAL (SIMULERING)

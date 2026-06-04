@@ -19,7 +19,7 @@ export default function WashHistorySingle({ params }: { params: Promise<{ id: st
 
   return (
     <div className="flex flex-col gap-10">
-      <Link href="/profil" className="flex items-center gap-2 mb-4">
+      <Link href="/wash-history" className="flex items-center gap-2 mb-4">
         <ArrowLeft size={24} />
         Vaskehistorik
       </Link>

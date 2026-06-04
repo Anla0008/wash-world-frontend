@@ -9,7 +9,7 @@ import { IoMdHeart } from "react-icons/io";
 import { CardWashCardProps } from "@/types/CardWashCardProps";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavoritesStore } from "@/stores/favoritesStore";
-import { resolveWaitStatusLabel} from "@/lib/wash/waitTime";
+import { resolveWaitStatusLabel } from "@/lib/wash/waitTime";
 import { WaitStatusLabel } from "@/types/washType";
 
 const statusStyles: Record<WaitStatusLabel, { dotColor: string; textColor: string }> = {
@@ -56,7 +56,7 @@ const CarWashCard = ({ city, address, openingHours, image, href, location_pk, wa
 
   return (
     <article className="col-span-2 relative flex gap-3 p-3 bg-(--gray-80) text-foreground rounded-md">
-      <Image src={image} alt={`WashWorld ${city}`} width={110} height={170} className="rounded-md object-cover" />
+      <Image src={image} alt={`WashWorld ${city}`} width={110} height={110} className="rounded-md object-cover w-27.5 h-27.5" />
 
       <div className="flex flex-1 flex-col justify-between">
         <div className="flex gap-6 pr-8 items-center">

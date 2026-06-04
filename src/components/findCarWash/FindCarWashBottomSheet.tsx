@@ -224,6 +224,8 @@ export default function FindCarWashBottomSheet({ locations, selectedLocationPk, 
     const city = location.location_city.toLowerCase();
     const address = location.location_address.toLowerCase();
 
+    // Søger både i by og adresse.
+    // Derfor kan ét bogstav stadig matche mange resultater, fx hvis adressen indeholder "vej".
     const matchesSearch = city.includes(searchValue) || address.includes(searchValue);
 
     const matchesWashHallRange = matchesRange(location.car_wash_hall_number, washHallRange);

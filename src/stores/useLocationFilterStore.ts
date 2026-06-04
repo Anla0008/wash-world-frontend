@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { SetStateAction } from "react";
 
 type Range = {
   min: number;
@@ -8,17 +7,13 @@ type Range = {
 
 type LocationFilterStore = {
   searchTerm: string;
-
   washHallRange: Range;
   selfWashRange: Range;
-
   selectedFacilities: string[];
 
   setSearchTerm: (value: string) => void;
-
-  setWashHallRange: (value: SetStateAction<Range>) => void;
-  setSelfWashRange: (value: SetStateAction<Range>) => void;
-
+  setWashHallRange: (range: Range) => void;
+  setSelfWashRange: (range: Range) => void;
   toggleFacility: (facility: string) => void;
   resetFilters: (maxWashHallNumber?: number, minSelfWashNumber?: number, maxSelfWashNumber?: number) => void;
 };
@@ -32,34 +27,53 @@ export const useLocationFilterStore = create<LocationFilterStore>((set) => ({
   },
 
   selfWashRange: {
-    min: 1,
-    max: 1,
+    min: 0,
+    max: 0,
   },
 
   selectedFacilities: [],
 
+  // Opdaterer teksten fra søgefeltet.
   setSearchTerm: (value) => {
-    set({ searchTerm: value });
+    set({
+      searchTerm: value,
+    });
   },
 
-  setWashHallRange: (value) => {
-    set((state) => ({
-      washHallRange: typeof value === "function" ? value(state.washHallRange) : value,
-    }));
+  // Opdaterer intervallet for antal vaskehaller.
+  setWashHallRange: (range) => {
+    set({
+      washHallRange: range,
+    });
   },
 
-  setSelfWashRange: (value) => {
-    set((state) => ({
-      selfWashRange: typeof value === "function" ? value(state.selfWashRange) : value,
-    }));
+  // Opdaterer intervallet for antal selvvask pladser.
+  setSelfWashRange: (range) => {
+    set({
+      selfWashRange: range,
+    });
   },
 
+  // Tilføjer eller fjerner en facilitet fra filteret.
   toggleFacility: (facility) => {
-    set((state) => ({
-      selectedFacilities: state.selectedFacilities.includes(facility) ? state.selectedFacilities.filter((item) => item !== facility) : [...state.selectedFacilities, facility],
-    }));
+    set((state) => {
+      const isSelected = state.selectedFacilities.includes(facility);
+
+      if (isSelected) {
+        return {
+          selectedFacilities: state.selectedFacilities.filter((item) => {
+            return item !== facility;
+          }),
+        };
+      }
+
+      return {
+        selectedFacilities: [...state.selectedFacilities, facility],
+      };
+    });
   },
 
+  // Nulstiller alle filtre.
   resetFilters: (maxWashHallNumber = 1, minSelfWashNumber = 0, maxSelfWashNumber = 0) => {
     set({
       searchTerm: "",

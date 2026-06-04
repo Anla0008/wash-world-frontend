@@ -236,6 +236,7 @@ export default function FindCarWashBottomSheet({ locations, selectedLocationPk, 
 
     return matchesSearch && matchesWashHallRange && matchesSelfWashRange && matchesFacilities;
   });
+
   // ===========================================================
   //                    SORTING LOGIC
   // ===========================================================

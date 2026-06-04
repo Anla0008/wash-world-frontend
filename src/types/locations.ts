@@ -25,4 +25,5 @@ export type FindCarWashBottomSheetProps = {
   locations: Location[];
   selectedLocationPk: string | null;
   favoriteIds: string[];
+  clearSelectedLocation: () => void;
 };

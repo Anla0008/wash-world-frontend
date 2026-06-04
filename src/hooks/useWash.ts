@@ -305,6 +305,7 @@ export function useWash() {
 // ===========================================================
 //                Vaskehistorik hooks
 // ===========================================================
+// Disse hooks bruger React Query (TanStack Query) til at håndtere asynkrone dataforespørgsler og caching for vaskehistorik
 export function useWashHistory() {
   return useQuery({
     queryKey: ["washHistory"],
@@ -327,7 +328,6 @@ export function useWashHistory() {
 export function useWashDetail(id: string) {
   return useQuery({
     queryKey: ["washDetail", id],
-    gcTime: 0, // Garbage collection time – how long it will be stored in the cache
     queryFn: async () => {
       const token = localStorage.getItem("token");
 

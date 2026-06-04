@@ -1,18 +1,18 @@
 "use client";
 
-// Imports fra next/react
+// Next / React
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 
-// Henter funktioner osv.
+// Hooks, types og helpers
 import { useAuth } from "@/hooks/useAuth";
 import { Location } from "@/types/locations";
 import { useWashHall } from "@/hooks/washHallContext";
 import { resolveWaitStatusLabel } from "@/lib/wash/waitTime";
 
-// Components fra mappen
+// Components
 import ArrowLeft from "@/components/global/icons/navigation/ArrowLeft";
 import Clock from "@/components/global/icons/grafik/Clock";
 import LocationPin from "@/components/global/icons/grafik/Location";
@@ -25,72 +25,129 @@ import PracticInfoVacuumCleaner from "@/components/singleview/PracticInfoVacuumC
 import PracticInfoWashSelf from "@/components/singleview/PracticInfoWashSelf";
 import BusinessGraph from "@/components/singleview/BusinessGraph";
 
+// ===========================================================
+//                         CONSTANTS
+// ===========================================================
+
 const DEFAULT_OPENING_HOURS = "07 - 22";
 
-const resolveOpeningHours = (location: Location) => {
-  if (location.opening_hours) return location.opening_hours;
-  if (location.openingHours) return location.openingHours;
-  if (location.location_opening_hours) return location.location_opening_hours;
+// ===========================================================
+//                    OPENING HOURS LOGIC
+// ===========================================================
+
+// Finder åbningstider for lokationen.
+// Der tjekkes flere felter, fordi data kan komme fra forskellige steder/formater.
+function resolveOpeningHours(location: Location) {
+  if (location.opening_hours) {
+    return location.opening_hours;
+  }
+
+  if (location.openingHours) {
+    return location.openingHours;
+  }
+
+  if (location.location_opening_hours) {
+    return location.location_opening_hours;
+  }
 
   if (location.open_from && location.open_to) {
     return `${location.open_from} - ${location.open_to}`;
   }
 
   return DEFAULT_OPENING_HOURS;
-};
+}
+
+// ===========================================================
+//                       COMPONENT START
+// ===========================================================
 
 export default function LocationSingle() {
-  const { waitTimeByLocationPk, ensureWaitTimesForLocations } = useWashHall();
-  // Henter det dynamiske id-segment fra URL
+  // ===========================================================
+  //                         URL ID LOGIC
+  // ===========================================================
+
+  // Henter id'et fra URL'en, fx /locations/3.
   const { id } = useParams();
 
-  // Henter funktion til at fetche én lokation fra auth
+  // Gør id'et sikkert at bruge.
+  // Hvis id ikke er en string, bruger vi null.
+  const locationId = typeof id === "string" ? id : null;
+
+  // ===========================================================
+  //                    LOCATION DATA LOGIC
+  // ===========================================================
+
   const { getSingleLocation } = useAuth();
 
-  // State til at gemme lokationens data – null indtil data er hentet
+  // Gemmer den lokation, der bliver hentet fra backend.
   const [location, setLocation] = useState<Location | null>(null);
 
-  // Styrer loading-tilstand
+  // Bruges til at vise loading, mens lokationen bliver hentet.
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!id || typeof id !== "string") return;
-    ensureWaitTimesForLocations([id]);
-  }, [id, ensureWaitTimesForLocations]);
+    if (!locationId) return;
 
-  const waitTimeForLocation = typeof id === "string" ? waitTimeByLocationPk[id] : null;
-  const waitStatus = waitTimeForLocation != null ? resolveWaitStatusLabel(waitTimeForLocation) : null;
+    const idToFetch = locationId;
 
-  useEffect(() => {
     async function loadLocation() {
       try {
-        // Fetcher lokationsdata fra API med id'et fra URL'en
-        const data = await getSingleLocation(id as string);
-        console.log("Single location data:", data);
+        const data = await getSingleLocation(idToFetch);
 
-        // Gemmer data i state og sætter null hvis intet returneres
         setLocation(data || null);
       } catch (error) {
-        // Ved fejl sættes til null så fejl-UI vises
         console.error("Der skete en fejl ved hentning af location:", error);
+
         setLocation(null);
       } finally {
-        // Slår altid loading fra, uanset om fetch lykkedes eller fejlede
         setIsLoading(false);
       }
     }
 
-    // Fetch kun hvis id er tilgængeligt
-    if (id) {
-      loadLocation();
-    }
-  }, [getSingleLocation, id]); // Kører igen hvis id eller getSingleLocation ændrer sig
+    loadLocation();
+  }, [getSingleLocation, locationId]);
 
-  // Viser loading-tekst mens data hentes
+  // ===========================================================
+  //                       WAIT TIME LOGIC
+  // ===========================================================
+
+  const { waitTimeByLocationPk, ensureWaitTimesForLocations } = useWashHall();
+
+  // Henter ventetid for den lokation, der vises på siden.
+  useEffect(() => {
+    if (!locationId) return;
+
+    ensureWaitTimesForLocations([locationId]);
+  }, [locationId, ensureWaitTimesForLocations]);
+
+  const waitTimeForLocation = locationId ? waitTimeByLocationPk[locationId] : null;
+
+  let waitStatus = null;
+
+  if (waitTimeForLocation != null) {
+    waitStatus = resolveWaitStatusLabel(waitTimeForLocation);
+  }
+
+  // ===========================================================
+  //                    LOADING / ERROR UI
+  // ===========================================================
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background py-10 text-foreground">
         <p>Indlæser vaskehal...</p>
+      </div>
+    );
+  }
+
+  if (!location) {
+    return (
+      <div className="min-h-screen bg-background py-10 text-foreground">
+        <p>Vaskehallen blev ikke fundet.</p>
+
+        <Link href="/locations" className="mt-4 inline-block underline">
+          Tilbage til kortet
+        </Link>
       </div>
     );
   }
@@ -103,39 +160,39 @@ export default function LocationSingle() {
     );
   }
 
-  // Viser fejl-UI hvis lokationen ikke blev fundet eller fetch fejlede
-  if (!location) {
-    return (
-      <div className="min-h-screen bg-background py-10 text-foreground">
-        <p>Vaskehallen blev ikke fundet.</p>
-        <Link href="/locations" className="mt-4 inline-block underline">
-          Tilbage til kortet
-        </Link>
-      </div>
-    );
-  }
+  // ===========================================================
+  //                       DISPLAY VALUES
+  // ===========================================================
 
   const openingHours = resolveOpeningHours(location);
+
+  // Teksten der skal søges efter på Google Maps.
+  const googleMapsSearch = `${location.location_address}, ${location.location_city}`;
+
+  // Link til Google Maps baseret på lokationens adresse og by.
+  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(googleMapsSearch)}`;
+
+  // Gør JSX'en mere læsbar ved at gemme disse tjek i variabler.
+  const hasSelfWash = Number(location.car_wash_self) > 0;
+  const hasPrewash = Number(location.car_wash_high_pressure) > 0;
+  const hasVacuumCleaner = Number(location.car_wash_vacuum) > 0;
+
+  // ===========================================================
+  //                         RENDER
+  // ===========================================================
 
   return (
     <div className="flex flex-col gap-20">
       {/* ================== HERO SECTION =================== */}
       <section>
-        
-         <Link href="/locations" className="flex items-center gap-2 mb-4">
-            <ArrowLeft size={24} />
-              Kort
-            </Link>
+        <Link href="/locations" className="flex items-center gap-2 mb-4">
+          <ArrowLeft size={24} />
+          Kort
+        </Link>
 
         <h1 className="my-8 extra-bold">{location.location_city}</h1>
 
-        <Image
-          src={location.location_img}
-          alt={`Wash World ${location.location_city}`}
-          width={600}
-          height={350}
-          className="mb-7 h-56 w-full object-cover"
-        />
+        <Image src={location.location_img} alt={`Wash World ${location.location_city}`} width={600} height={350} className="mb-7 h-56 w-full object-cover" />
 
         <div className="mb-3 flex items-center gap-3">
           <Clock size={22} />
@@ -150,10 +207,7 @@ export default function LocationSingle() {
         </div>
 
         <div className="flex justify-center">
-          <PrimaryButtonAnchorTag
-            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${location.location_address}, ${location.location_city}`)}`}
-            target="_blank"
-          >
+          <PrimaryButtonAnchorTag href={googleMapsUrl} target="_blank">
             Find vej
           </PrimaryButtonAnchorTag>
         </div>
@@ -161,10 +215,9 @@ export default function LocationSingle() {
 
       {/* ================== TRAVLHED I VASKEHAL =================== */}
       <section>
-        <h2 className="mb-8 text-3xl font-extrabold">
-          Travlhed i {location.location_city}
-        </h2>
-        <BusinessGraph locationPk={location.location_pk} openingHours={openingHours} />{" "}
+        <h2 className="mb-8 text-3xl font-extrabold">Travlhed i {location.location_city}</h2>
+
+        <BusinessGraph locationPk={location.location_pk} openingHours={openingHours} />
       </section>
 
       {/* ====================== PRAKTISK INFO ====================== */}
@@ -176,25 +229,13 @@ export default function LocationSingle() {
 
           <PracticInfoTime />
 
-          {Number(location.car_wash_self) > 0 && (
-            <PracticInfoWashSelf car_wash_self={location.car_wash_self ?? 0} />
-          )}
+          {hasSelfWash && <PracticInfoWashSelf car_wash_self={location.car_wash_self ?? 0} />}
 
-          {Number(location.car_wash_high_pressure) > 0 && (
-            <PracticInfoPrewash
-              car_wash_high_pressure={location.car_wash_high_pressure ?? 0}
-            />
-          )}
+          {hasPrewash && <PracticInfoPrewash car_wash_high_pressure={location.car_wash_high_pressure ?? 0} />}
 
-          {Number(location.car_wash_vacuum) > 0 && (
-            <PracticInfoVacuumCleaner
-              car_wash_vacuum={location.car_wash_vacuum ?? 0}
-            />
-          )}
+          {hasVacuumCleaner && <PracticInfoVacuumCleaner car_wash_vacuum={location.car_wash_vacuum ?? 0} />}
 
-          <PracticInfoCarwash
-            car_wash_hall_number={location.car_wash_hall_number ?? 0}
-          />
+          <PracticInfoCarwash car_wash_hall_number={location.car_wash_hall_number ?? 0} />
         </div>
       </section>
 
@@ -207,14 +248,10 @@ export default function LocationSingle() {
         ) : (
           <div className="space-y-6 leading-relaxed">
             <p>
-              På {location.location_address} i {location.location_city} finder
-              du Wash World. Her kan du nemt vaske din bil, når det passer dig.
+              På {location.location_address} i {location.location_city} finder du Wash World. Her kan du nemt vaske din bil, når det passer dig.
             </p>
 
-            <p>
-              Det er hurtigt og enkelt at vaske din bil hos Wash World. Som
-              medlem kan du køre bilen i vaskehallen, når det passer dig.
-            </p>
+            <p>Det er hurtigt og enkelt at vaske din bil hos Wash World. Som medlem kan du køre bilen i vaskehallen, når det passer dig.</p>
           </div>
         )}
       </section>

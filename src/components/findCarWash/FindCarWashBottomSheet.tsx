@@ -68,24 +68,25 @@ export default function FindCarWashBottomSheet({ locations, selectedLocationPk, 
 
     return MAX_HEIGHT;
   }
-
+  // Funktion der tager et react event som parameter, hvilket gør det muligt at tilgå cursorens position og pointerId, som bruges til at trække i sheet'et.
   function handlePointerDown(event: React.PointerEvent<HTMLDivElement>) {
     setIsDragging(true);
 
-    startY.current = event.clientY;
-    startHeight.current = height;
+    startY.current = event.clientY; // Cursorens position i Y-aksen, når brugeren starter med at trække.
+    startHeight.current = height; // Sheet'ets højde i det øjeblik, brugeren starter med at trække.
 
-    event.currentTarget.setPointerCapture(event.pointerId);
+    event.currentTarget.setPointerCapture(event.pointerId); // Sikrer at vi fortsat får pointer events, selvom cursoren bevæger sig udenfor det hvide område, der udløste onPointerDown.
   }
 
   function handlePointerMove(event: React.PointerEvent<HTMLDivElement>) {
-    if (!isDragging) return;
+    if (isDragging === false) return;
 
     const draggedPixels = startY.current - event.clientY;
     const draggedPercent = (draggedPixels / window.innerHeight) * 100;
 
-    let newHeight = startHeight.current + draggedPercent;
+    let newHeight = startHeight.current + draggedPercent; //newHeight er en let fordi den opdateres løbende, mens brugeren trækker.
 
+    // Følgende if-statements tjekker om den er indenfor de tilladte grænser (MIN_HEIGHT og MAX_HEIGHT) og begrænser bottom sheet til kun at kunne trækkes til disse.
     if (newHeight < MIN_HEIGHT) {
       newHeight = MIN_HEIGHT;
     }

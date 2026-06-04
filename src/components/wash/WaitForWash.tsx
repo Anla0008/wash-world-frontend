@@ -11,10 +11,21 @@ import Image from "next/image";
 
 const WaitForWash = ({ activeIndex }: WaitForWashProps) => {
   const router = useRouter();
-  const { useEntryToWashHall } = useWash(); // ← kun denne
-  
-  // Hallen er allerede sat i store af AvailibleWashingHall
-  const hallNumber = useWashStore((s) => s.availibleWashHall);
+  const { useEntryToWashHall, useAvailableWashHall } = useWash();
+  const { nearestLocation } = useNearestWash();
+
+  const availibleWashHall = useWashStore((s) => s.availibleWashHall);
+  const setAvailibleWashHall = useWashStore((s) => s.setAvailibleWashHall);
+
+  const { hall, isLoading, error } = useAvailableWashHall(nearestLocation?.location_pk);
+
+  // Hvis brugeren kommer direkte til drive-in (abonnement), sæt automatisk næste ledige hall.
+  useEffect(() => {
+    if (!hall || availibleWashHall !== null) return;
+    setAvailibleWashHall(hall.car_wash_hall_number);
+  }, [hall, availibleWashHall, setAvailibleWashHall]);
+
+  const hallNumber = availibleWashHall;
 
   const { registered } = useEntryToWashHall(hallNumber);
 
@@ -24,7 +35,17 @@ const WaitForWash = ({ activeIndex }: WaitForWashProps) => {
     }
   }, [registered, router]);
 
-  if (!hallNumber) return <p>Ingen ledig vaskehal valgt</p>;
+  if (!hallNumber) {
+    if (isLoading) {
+      return <p>Finder ledig vaskehal...</p>;
+    }
+
+    if (error) {
+      return <p>{error}</p>;
+    }
+
+    return <p>Ingen ledig vaskehal valgt</p>;
+  }
 
   return (
     <div>

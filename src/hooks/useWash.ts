@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 const baseUrl = "http://127.0.0.1:80";
 
 export function useWash() {
+
   // ===========================================================
   //                    KØB ABONNOMENT
   // ===========================================================
@@ -110,25 +111,30 @@ export function useWash() {
   // ===========================================================
   //                GET ENKELTVASK  (MOCKUPDATA)
   // ===========================================================
-
-const useSingleWash = () => {
-
-  return useQuery({
-
-    queryKey: ["singleWash"],
-
-    queryFn: async () => {
-
-      const res = await fetch("/api/wash/single");
-
-      if (!res.ok) {
-        throw new Error("Failed to fetch wash");
-      }
-
-      return res.json() as Promise<SingleWashType>;
-    },
-
-    staleTime: Infinity,
+  
+  // bruger tanstack for at håndtere asynkrone dataforespørgsler
+  // useQuery giver os data, isLoading og error states, som vi kan bruge i vores komponenter
+  const useSingleWash = () => {
+    
+    return useQuery({
+      
+      // queryKey er en unik nøgle for denne forespørgsel, som bruges til caching og opdatering
+      queryKey: ["singleWash"],
+      
+      // queryFn er den funktion, der udfører selve datahentningen - i dette tilfælde en fetch til vores API
+      queryFn: async () => {
+        
+        const res = await fetch("/api/wash/single");
+        
+        if (!res.ok) {
+          throw new Error("Failed to fetch wash");
+        }
+        
+        return res.json() as Promise<SingleWashType>;
+      },
+      
+    // 20 min for at tage højde for den længst mulige vask og ventetid 
+    staleTime: 2000000, // dataen betragtes som frisk i (20 minutter) før den skal hentes igen
   });
 }
 

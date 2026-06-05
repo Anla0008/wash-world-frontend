@@ -43,8 +43,6 @@ const WaitForWash = ({ activeIndex }: WaitForWashProps) => {
     if (error) {
       return <p>{error}</p>;
     }
-
-    return <p>Ingen ledig vaskehal valgt</p>;
   }
 
   return (

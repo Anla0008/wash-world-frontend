@@ -13,7 +13,7 @@ export const carInWashHall = {
 
 export const waitTimeMockup = {
   min_seconds: 30,
-  max_seconds: 480,
+  max_seconds: 480, // 8 minutter
 };
 
 export const createRandomWaitTimeSeconds = (): number => {

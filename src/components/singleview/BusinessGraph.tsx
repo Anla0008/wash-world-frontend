@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import { useWashHall } from "@/hooks/washHallContext";
+import { useWashHall } from "@/components/global/washHallContext";
 import { resolveWaitStatusLabel } from "@/lib/wash/waitTime";
 import { waitTimeMockup } from "@/mockupData/washData";
 import ArrowLeft from "../global/icons/navigation/ArrowLeft";

@@ -1,7 +1,7 @@
 "use client";
 import { useNearestWash } from "@/lib/wash/resolvers";
 import CarWashCard from "@/components/global/cards/CarWashCard";
-import { useWashHall } from "@/hooks/washHallContext";
+import { useWashHall } from "@/components/global/washHallContext";
 import { useEffect } from "react";
 
 const NearestWashCard = () => {

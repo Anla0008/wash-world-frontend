@@ -1,0 +1,1 @@
+export const openingHours = "07:00 - 22:00";

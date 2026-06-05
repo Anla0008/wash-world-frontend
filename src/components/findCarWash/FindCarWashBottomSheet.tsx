@@ -282,7 +282,7 @@ export default function FindCarWashBottomSheet({ locations, selectedLocationPk, 
                 }}
                 className={`px-3 rounded-md transition-all duration-300 ${isSelected ? "ring-4 ring-(--brand-green)" : ""}`}
               >
-                <CarWashCard city={location.location_city} address={location.location_address} openingHours="07 - 22" image={location.location_img} href={`/locations/${location.location_pk}`} location_pk={location.location_pk} isFavorite={favoriteIds.includes(location.location_pk)} waitTimeSeconds={getWaitTimeForLocation(location)} />
+                <CarWashCard city={location.location_city} address={location.location_address} openingHours={location.openingHours} image={location.location_img} href={`/locations/${location.location_pk}`} location_pk={location.location_pk} isFavorite={favoriteIds.includes(location.location_pk)} waitTimeSeconds={getWaitTimeForLocation(location)} />
               </div>
             );
           })

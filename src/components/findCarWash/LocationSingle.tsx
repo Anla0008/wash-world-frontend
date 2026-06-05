@@ -25,20 +25,6 @@ import PracticInfoVacuumCleaner from "@/components/singleview/PracticInfoVacuumC
 import PracticInfoWashSelf from "@/components/singleview/PracticInfoWashSelf";
 import BusinessGraph from "@/components/singleview/BusinessGraph";
 
-const DEFAULT_OPENING_HOURS = "07 - 22";
-
-const resolveOpeningHours = (location: Location) => {
-  if (location.opening_hours) return location.opening_hours;
-  if (location.openingHours) return location.openingHours;
-  if (location.location_opening_hours) return location.location_opening_hours;
-
-  if (location.open_from && location.open_to) {
-    return `${location.open_from} - ${location.open_to}`;
-  }
-
-  return DEFAULT_OPENING_HOURS;
-};
-
 export default function LocationSingle() {
   const { waitTimeByLocationPk, ensureWaitTimesForLocations } = useWashHall();
   // Henter det dynamiske id-segment fra URL
@@ -115,7 +101,7 @@ export default function LocationSingle() {
     );
   }
 
-  const openingHours = resolveOpeningHours(location);
+  const openingHours = location.openingHours;
 
   return (
     <div className="flex flex-col gap-20">

@@ -70,7 +70,7 @@ export default function Favorites() {
                 location_pk={location.location_pk}
                 city={location.location_city}
                 address={location.location_address}
-                openingHours="07 - 22"
+                openingHours={location.openingHours}
                 image={location.location_img}
                 href={`/locations/${location.location_pk}`}
                 onRemove={() => handleRemove(location.location_pk)}

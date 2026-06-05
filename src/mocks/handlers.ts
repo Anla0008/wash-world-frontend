@@ -111,8 +111,8 @@ http.get("/api/washhall/available", async ({ request }) => {
   //              GET INDKØRSEL I VASKEHAL
   // ===========================================================
 
-  http.get("/api/washhall/entry", ({ request }) => {
-
+http.get("/api/washhall/entry", ({ request }) => {
+  console.log("Handler hit:", request.url);
     const url = new URL(request.url);
 
     // Valider at hall_number er til stede

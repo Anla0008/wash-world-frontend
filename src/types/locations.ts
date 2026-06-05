@@ -3,11 +3,7 @@ export type Location = {
   location_name: string;
   location_address: string;
   location_city: string;
-  opening_hours?: string;
-  openingHours?: string;
-  location_opening_hours?: string;
-  open_from?: string;
-  open_to?: string;
+  openingHours: string;
   car_wash_hall_number?: number;
   car_wash_text?: string;
   car_wash_high_pressure?: number;
@@ -18,8 +14,6 @@ export type Location = {
   location_lng?: number;
   is_broken?: boolean;
 };
-
-export type WaitStatus = "Kort ventetid" | "Moderat ventetid" | "Lang ventetid";
 
 export type FindCarWashBottomSheetProps = {
   locations: Location[];

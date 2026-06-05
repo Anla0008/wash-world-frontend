@@ -2,9 +2,17 @@
 
 import { useCallback } from "react";
 import { User } from "@/types/user";
+import { openingHours } from "@/mockupData/locationData";
+import { Location } from "@/types/locations";
 
 export function useAuth() {
   const baseUrl = "http://127.0.0.1";
+
+  // hardcoder at trække openingHours fra mockupData/locationData.ts
+  const withOpeningHours = (location: Omit<Location, "openingHours">): Location => ({
+    ...location,
+    openingHours,
+  });
 
   // ===========================================================
   //                          SIGNUP
@@ -194,7 +202,9 @@ export function useAuth() {
     }
 
     const data = await response.json();
-    return data.locations;
+    return data.locations.map((location: Omit<Location, "openingHours">) =>
+      withOpeningHours(location),
+    );
   }, []);
 
   // ===========================================================
@@ -216,7 +226,7 @@ export function useAuth() {
     }
 
     const data = await response.json();
-    return data.location;
+    return withOpeningHours(data.location as Omit<Location, "openingHours">);
   }, []);
 
   // ===========================================================
@@ -237,7 +247,9 @@ export function useAuth() {
     }
 
     const data = await response.json();
-    return data.favorites;
+    return data.favorites.map((location: Omit<Location, "openingHours">) =>
+      withOpeningHours(location),
+    );
   }, []);
 
   // ===========================================================

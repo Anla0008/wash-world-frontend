@@ -11,7 +11,6 @@ import Validated from "../global/icons/validation/Validated";
 import Error from "../global/icons/validation/Error";
 
 const GRAPH_MAX_BAR_HEIGHT = 100;
-const DEFAULT_OPENING_HOURS = "07 - 22";
 type GraphStatus = "travl" | "moderat" | "rolig";
 
 //////////////////////////////////////////////
@@ -133,7 +132,7 @@ const createHourBars = (historyByHour: Record<string, number>, openingHours: str
 // ===========================================================
 //                      KOMPONENT
 // ===========================================================
-const BusinessGraph = ({ locationPk, openingHours = DEFAULT_OPENING_HOURS }: { locationPk: string; openingHours?: string }) => {
+const BusinessGraph = ({ locationPk, openingHours }: { locationPk: string; openingHours: string }) => {
   const { waitTimeByLocationPk, waitTimeHistoryByLocationPk } = useWashHall();
 
   // loop og start ved nuværende time

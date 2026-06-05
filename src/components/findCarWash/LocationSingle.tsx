@@ -9,7 +9,7 @@ import Link from "next/link";
 // Hooks, types og helpers
 import { useAuth } from "@/hooks/useAuth";
 import { Location } from "@/types/locations";
-import { useWashHall } from "@/hooks/washHallContext";
+import { useWashHall } from "@/components/global/washHallContext";
 import { resolveWaitStatusLabel } from "@/lib/wash/waitTime";
 
 // Components

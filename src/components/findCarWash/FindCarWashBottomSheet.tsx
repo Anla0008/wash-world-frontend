@@ -12,7 +12,7 @@ import Sorting from "../global/filtering/Sorting";
 import type { FindCarWashBottomSheetProps } from "@/types/locations";
 import type { Range, SortDirection } from "@/types/filtering";
 import { resolveWaitStatusLabel } from "@/lib/wash/waitTime";
-import { useWashHall } from "@/hooks/washHallContext";
+import { useWashHall } from "@/components/global/washHallContext";
 
 // ===========================================================
 //                    HELPER: DISTANCE

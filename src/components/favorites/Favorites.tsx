@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Location } from "@/types/locations";
 import { useFavoritesStore } from "@/stores/favoritesStore";
-import { useWashHall } from "@/hooks/washHallContext";
+import { useWashHall } from "@/components/global/washHallContext";
 
 import CarWashCard from "@/components/global/cards/CarWashCard";
 

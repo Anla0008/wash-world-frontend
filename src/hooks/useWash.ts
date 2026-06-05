@@ -111,25 +111,26 @@ export function useWash() {
   //                GET ENKELTVASK  (MOCKUPDATA)
   // ===========================================================
 
-  const useSingleWash = () => {
-    const [data, setData] = useState<SingleWashType | null>(null);
+const useSingleWash = () => {
 
-    useEffect(() => {
-      const getRequest = async () => {
-        const response = await fetch("/api/wash/single", {
-          cache: "no-store",
-          method: "GET",
-        });
+  return useQuery({
 
-        const json = (await response.json()) as SingleWashType;
-        setData(json);
-      };
+    queryKey: ["singleWash"],
 
-      void getRequest();
-    }, []);
+    queryFn: async () => {
 
-    return { data };
-  };
+      const res = await fetch("/api/wash/single");
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch wash");
+      }
+
+      return res.json() as Promise<SingleWashType>;
+    },
+
+    staleTime: Infinity,
+  });
+}
 
   // ===========================================================
   //      NAVIGER TIL RUTE BASERET PÅ STATUS (SIMULERING)

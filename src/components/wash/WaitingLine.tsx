@@ -5,7 +5,7 @@ import Timer from "@/components/wash/Timer";
 import { useWash } from "@/hooks/useWash";
 import AvailibleWashingHall from "@/components/wash/AvailibleWashingHall";
 import { useRouter } from "next/navigation";
-import { useWashHall } from "@/hooks/washHallContext";
+import { useWashHall } from "@/components/global/washHallContext";
 import { useWashStore } from "@/stores/useWashStore";
 import { useEffect } from "react";
 

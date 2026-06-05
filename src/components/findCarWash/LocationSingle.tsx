@@ -26,36 +26,10 @@ import PracticInfoWashSelf from "@/components/singleview/PracticInfoWashSelf";
 import BusinessGraph from "@/components/singleview/BusinessGraph";
 
 // ===========================================================
-//                         CONSTANTS
+//                       CONSTANTS
 // ===========================================================
 
-const DEFAULT_OPENING_HOURS = "07 - 22";
-
-// ===========================================================
-//                    OPENING HOURS LOGIC
-// ===========================================================
-
-// Finder åbningstider for lokationen.
-// Der tjekkes flere felter, fordi data kan komme fra forskellige steder/formater.
-function resolveOpeningHours(location: Location) {
-  if (location.opening_hours) {
-    return location.opening_hours;
-  }
-
-  if (location.openingHours) {
-    return location.openingHours;
-  }
-
-  if (location.location_opening_hours) {
-    return location.location_opening_hours;
-  }
-
-  if (location.open_from && location.open_to) {
-    return `${location.open_from} - ${location.open_to}`;
-  }
-
-  return DEFAULT_OPENING_HOURS;
-}
+const openingHours = "07:00 - 22:00";
 
 // ===========================================================
 //                       COMPONENT START
@@ -163,8 +137,6 @@ export default function LocationSingle() {
   // ===========================================================
   //                       DISPLAY VALUES
   // ===========================================================
-
-  const openingHours = resolveOpeningHours(location);
 
   // Teksten der skal søges efter på Google Maps.
   const googleMapsSearch = `${location.location_address}, ${location.location_city}`;

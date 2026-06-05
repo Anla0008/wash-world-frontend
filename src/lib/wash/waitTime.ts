@@ -2,7 +2,7 @@ import { waitTimeMockup } from "@/mockupData/washData";
 import { WaitStatusLabel } from "@/types/washType";
 
 /////////////////////////////////////////////////////////
-          // GENERATE LABEL FOR WAITTIME //
+// GENERATE LABEL FOR WAITTIME //
 /////////////////////////////////////////////////////////
 export const resolveWaitStatusLabel = (waitTimeSeconds: number): WaitStatusLabel => {
   if (waitTimeSeconds > 300) return "Lang ventetid";
@@ -11,7 +11,7 @@ export const resolveWaitStatusLabel = (waitTimeSeconds: number): WaitStatusLabel
 };
 
 /////////////////////////////////////////////////////////
-          // GENERATE RANDOM WAITTIME //
+// GENERATE RANDOM WAITTIME //
 /////////////////////////////////////////////////////////
 const createRandomInRange = (minSeconds: number, maxSeconds: number): number => {
   // hent max og min sec fra waitTimeMockup, og generer et random tal i det interval
@@ -19,10 +19,9 @@ const createRandomInRange = (minSeconds: number, maxSeconds: number): number => 
 };
 
 /////////////////////////////////////////////////////////
-    // GENERATE DIVERSIFIED WAITTIME SECONDS//
+// GENERATE DIVERSIFIED WAITTIME SECONDS//
 /////////////////////////////////////////////////////////
 const waitStatusSecondRanges = [
-
   // interval for "Kort ventetid" - fra min_seconds til 120 sekunder
   { min: waitTimeMockup.min_seconds, max: 120 },
   // interval for "Moderat ventetid" - fra 121 sekunder til 300 sekunder
@@ -31,15 +30,12 @@ const waitStatusSecondRanges = [
   { min: 301, max: waitTimeMockup.max_seconds },
 ] as const; // returner som tuple, så vi bevarer de specifikke typer for min og max i hvert objekt
 
-
 // bruges til at reset ventetiderne for hver locationPk
 /////////////////////////////////////////////////////////
-    // GENERATE WAITTIMES BAED ON LOCATION_PK //  
+// GENERATE WAITTIMES BAED ON LOCATION_PK //
 /////////////////////////////////////////////////////////
 export const createDiversifiedWaitTimesByLocation = (locationPks: string[]): Record<string, number> => {
-
   return locationPks.reduce<Record<string, number>>((acc, locationPk, index) => {
-
     // KILDE: https://stackoverflow.com/questions/31106189/how-to-cycle-through-an-array-in-javascript-using-modulo
     // vælg det relevante interval baseret på index, og brug modulo for at sikre, at vi cykler gennem intervallerne, hvis der er flere locationPks end intervaller
     const selectedRange = waitStatusSecondRanges[index % waitStatusSecondRanges.length];
@@ -53,12 +49,11 @@ export const createDiversifiedWaitTimesByLocation = (locationPks: string[]): Rec
 
 // bruges til at føje nye lokationer ind uden at ødelægge eksisterende fordeling
 /////////////////////////////////////////////////////////
-    // GENERATE WAITTIMES BASED ON LOCATION_PK WITH OFFSET //
+// GENERATE WAITTIMES BASED ON LOCATION_PK WITH OFFSET //
 /////////////////////////////////////////////////////////
 export const createDiversifiedWaitTimesByLocationWithOffset = (locationPks: string[], offset: number): Record<string, number> => {
-// offset bruges til at starte fordelingen af ventetider ved et andet punkt i waitStatusSecondRanges, så vi får en mere varieret fordeling af ventetiderne, selvom locationPks altid kommer i samme rækkefølge
+  // offset bruges til at starte fordelingen af ventetider ved et andet punkt i waitStatusSecondRanges, så vi får en mere varieret fordeling af ventetiderne, selvom locationPks altid kommer i samme rækkefølge
   return locationPks.reduce<Record<string, number>>((acc, locationPk, index) => {
-
     const selectedRange = waitStatusSecondRanges[(offset + index) % waitStatusSecondRanges.length];
 
     acc[locationPk] = createRandomInRange(selectedRange.min, selectedRange.max);

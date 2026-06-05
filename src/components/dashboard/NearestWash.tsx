@@ -13,7 +13,6 @@ const NearestWashCard = () => {
     if (!nearestLocation?.location_pk) return;
     // Sørg for at hente ventetiden for den nærmeste lokation
     ensureWaitTimesForLocations([nearestLocation.location_pk]);
-
   }, [nearestLocation, ensureWaitTimesForLocations]);
 
   if (isLoading) return <p>Indlæser nærmeste vaskehal...</p>;
@@ -26,7 +25,7 @@ const NearestWashCard = () => {
   return (
     <>
       <h2 className="extra-bold">Nærmeste vaskehal</h2>
-      <CarWashCard city={nearestLocation.location_city} address={nearestLocation.location_address} image={nearestLocation.location_img} href={`/locations/${nearestLocation.location_pk}`} location_pk={nearestLocation.location_pk} openingHours="07:00 - 22:00" waitTimeSeconds={waitTime} />
+      <CarWashCard city={nearestLocation.location_city} address={nearestLocation.location_address} image={nearestLocation.location_img} href={`/locations/${nearestLocation.location_pk}`} location_pk={nearestLocation.location_pk} openingHours="07 - 22" waitTimeSeconds={waitTime} />
     </>
   );
 };

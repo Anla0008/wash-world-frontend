@@ -75,7 +75,9 @@ export default function FindCarWashBottomSheet({ locations, selectedLocationPk, 
     startY.current = event.clientY; // Cursorens position i Y-aksen, når brugeren starter med at trække.
     startHeight.current = height; // Sheet'ets højde i det øjeblik, brugeren starter med at trække.
 
-    event.currentTarget.setPointerCapture(event.pointerId); // Sikrer at vi fortsat får pointer events, selvom cursoren bevæger sig udenfor det hvide område, der udløste onPointerDown.
+    // Sikrer at vi fortsat får pointer events,
+    // selvom cursoren bevæger sig udenfor det hvide område, der udløste onPointerDown.
+    event.currentTarget.setPointerCapture(event.pointerId);
   }
 
   function handlePointerMove(event: React.PointerEvent<HTMLDivElement>) {
@@ -86,7 +88,8 @@ export default function FindCarWashBottomSheet({ locations, selectedLocationPk, 
 
     let newHeight = startHeight.current + draggedPercent; //newHeight er en let fordi den opdateres løbende, mens brugeren trækker.
 
-    // Følgende if-statements tjekker om den er indenfor de tilladte grænser (MIN_HEIGHT og MAX_HEIGHT) og begrænser bottom sheet til kun at kunne trækkes til disse.
+    // Følgende if-statements tjekker om den er indenfor de tilladte grænser (MIN_HEIGHT og MAX_HEIGHT)
+    // og begrænser bottom sheet til kun at kunne trækkes til disse.
     if (newHeight < MIN_HEIGHT) {
       newHeight = MIN_HEIGHT;
     }
@@ -129,28 +132,36 @@ export default function FindCarWashBottomSheet({ locations, selectedLocationPk, 
   //                    WAIT TIME LOGIC
   // ===========================================================
 
+  //waitTimeByLocationPk er et object der mapper location_pk til ventetid i sekunder.
+  //ensureWaitTimeForLocations er en funktion der henter ventertider hvis de ikke allerede er hentet.
   const { waitTimeByLocationPk, ensureWaitTimesForLocations } = useWashHall();
 
+  // Tjekker om vi har hentet ventetiden for alle de locations, der vises i sheet'et.
   const isWaitTimeReady = locations.every((location) => {
     return waitTimeByLocationPk[location.location_pk] != null;
   });
 
   useEffect(() => {
+    // Henter ventetider for alle locations i sheet'et, hvis de ikke allerede er hentet.
     const locationPks = locations.map((location) => location.location_pk);
 
-    ensureWaitTimesForLocations(locationPks);
-  }, [locations, ensureWaitTimesForLocations]);
+    ensureWaitTimesForLocations(locationPks); //Har vi allerede ventetid - gør ingenting.
+  }, [locations, ensureWaitTimesForLocations]); // Har vi ikke ventetid - hent ventetid for alle locations i sheet'et.
 
+  //Funktion får ventetid fra en specefik lokation.
   function getWaitTimeForLocation(location: Location) {
     const waitTime = waitTimeByLocationPk[location.location_pk];
 
+    // Hvis vi ikke har ventetid for lokationen, er det en fejl.
     if (waitTime == null) {
       throw new Error(`Mangler ventetid for location_pk: ${location.location_pk}`);
     }
 
+    // Ellers returnerer vi ventetiden.
     return waitTime;
   }
 
+  //Oversætter ventetiden til en label.
   function getWaitStatusForLocation(location: Location) {
     const waitTime = getWaitTimeForLocation(location);
 
@@ -175,10 +186,11 @@ export default function FindCarWashBottomSheet({ locations, selectedLocationPk, 
       return number !== undefined;
     });
 
-    return Array.from(new Set(validNumbers)).sort((a, b) => a - b); // Sorterer tallene i stigende rækkefølge
+    return Array.from(new Set(validNumbers)).sort((a, b) => a - b); // Sorterer tallene i stigende rækkefølge i et array.
   }
 
   // Tjekker om tallet ligger indenfor det valgte interval.
+  // (value: number | undefined, range: Range) = Hvilke slags værdier funktionen forventer at modtage.
   function matchesRange(value: number | undefined, range: Range) {
     return value !== undefined && value >= range.min && value <= range.max;
   }
@@ -211,11 +223,19 @@ export default function FindCarWashBottomSheet({ locations, selectedLocationPk, 
 
   const selfWashNumbers = getAvailableFilterNumbers(locations.map((location) => location.car_wash_self));
 
+  // Henter det højeste antal vaskehaller der findes blandt lokationerne.
+  // Hvis ingen lokationer har vaskehaller, bruges 1 som fallback.
   const maxWashHallNumber = washHallNumbers.at(-1) ?? 1;
 
+  // Henter det laveste antal selvvask pladser der findes blandt lokationerne.
+  // Hvis ingen lokationer har selvvask, bruges 0 som fallback.
   const minSelfWashNumber = selfWashNumbers.at(0) ?? 0;
+
+  // Henter det højeste antal selvvask pladser der findes blandt lokationerne.
+  // Hvis ingen lokationer har selvvask, bruges 0 som fallback.
   const maxSelfWashNumber = selfWashNumbers.at(-1) ?? 0;
 
+  // Boolean der tjekker om der er nogen filtre aktive.
   const hasFilters = selectedFacilities.length > 0 || washHallRange.min !== 1 || washHallRange.max !== maxWashHallNumber || selfWashRange.min !== minSelfWashNumber || selfWashRange.max !== maxSelfWashNumber || searchTerm.trim() !== "";
 
   const searchValue = searchTerm.toLowerCase().trim();

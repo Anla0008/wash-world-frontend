@@ -84,6 +84,7 @@ export default function ForgotPassword() {
               setParams({ ...params, user_email: e.target.value });
               setEmailNotFound(false);
             }}
+            isPassword={false}
           />
         </div>
 

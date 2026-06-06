@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import { useWashHall } from "@/hooks/washHallContext";
+import { useWashHall } from "@/components/global/washHallContext";
 import { resolveWaitStatusLabel } from "@/lib/wash/waitTime";
 import { waitTimeMockup } from "@/mockupData/washData";
 import ArrowLeft from "../global/icons/navigation/ArrowLeft";
@@ -15,7 +15,7 @@ const DEFAULT_OPENING_HOURS = "07 - 22";
 type GraphStatus = "travl" | "moderat" | "rolig";
 
 //////////////////////////////////////////////
-          // ÅBNINGSTIDER//
+// ÅBNINGSTIDER//
 //////////////////////////////////////////////
 
 // formater tiden til "HH:00" og sørg for at det er et gyldigt tidspunkt mellem 00:00 og 23:00
@@ -56,7 +56,7 @@ const parseOpeningHourRange = (openingHours: string) => {
 };
 
 //////////////////////////////////////////////
-          // GRAPH STATUS//
+// GRAPH STATUS//
 //////////////////////////////////////////////
 
 const resolveGraphStatus = (waitTimeSeconds: number): GraphStatus => {
@@ -75,7 +75,7 @@ const getColor = (status?: GraphStatus) => {
     case "travl":
       return "var(--error-red)";
     case "moderat":
-      return "yellow";
+      return "var(--splash)";
     case "rolig":
       return "var(--brand-green)";
     default:
@@ -86,13 +86,14 @@ const getColor = (status?: GraphStatus) => {
 // ===========================================================
 //                 GENERER TIMER OG HØJDER TIL GRAF
 // ===========================================================
-const createHourBars = (historyByHour: Record<string, number>, openingHours: string, currentWaitTimeSeconds?: number,) => {
+const createHourBars = (historyByHour: Record<string, number>, openingHours: string, currentWaitTimeSeconds?: number) => {
   // få aktuel dato
   const today = new Date();
   // parse åbningstider for at få openHour og closeHour
   const { openHour, closeHour } = parseOpeningHourRange(openingHours);
   // sæt minutter, sekunder og millisekunder til 0 for at få et rent tidspunkt for hver time
-  const currentHour = new Date(); currentHour.setMinutes(0, 0, 0);
+  const currentHour = new Date();
+  currentHour.setMinutes(0, 0, 0);
 
   // hvis lukketiden er tidligere end åbningstiden, returner en tom array (håndterer ugyldige åbningstider)
   if (closeHour < openHour) {
@@ -101,7 +102,6 @@ const createHourBars = (historyByHour: Record<string, number>, openingHours: str
 
   // returner en array af objekter for hver time i åbningstidsintervallet
   return Array.from({ length: closeHour - openHour + 1 }, (_, index) => {
-
     const hourDate = new Date(today);
 
     hourDate.setHours(openHour + index, 0, 0, 0);
@@ -113,7 +113,7 @@ const createHourBars = (historyByHour: Record<string, number>, openingHours: str
     const isCurrentHour = hourDate.getTime() === currentHour.getTime();
 
     // få ventetid for timen, brug currentWaitTimeSeconds hvis det er den aktuelle time, ellers slå op i history, og default til 0 hvis ingen data
-    const waitTimeSeconds = isCurrentHour ? currentWaitTimeSeconds ?? historyByHour[hourKey] ?? 0 : historyByHour[hourKey] ?? 0;
+    const waitTimeSeconds = isCurrentHour ? (currentWaitTimeSeconds ?? historyByHour[hourKey] ?? 0) : (historyByHour[hourKey] ?? 0);
 
     // højden på søjlen beregnes som en procentdel af den maksimale ventetid, baseret på mockup data, og afrundes til nærmeste heltal for at få en pæn pixelværdi
     const height = Math.round((waitTimeSeconds / waitTimeMockup.max_seconds) * GRAPH_MAX_BAR_HEIGHT);

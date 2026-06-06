@@ -4,7 +4,7 @@ import NavBar from "@/components/global/navigation/NavBar";
 import MswInitializer from "@/components/global/MswInitializer";
 import { FavoritesInitializer } from "@/components/global/favorit/FavoritesInitializer";
 import AuthGuard from "@/components/global/AuthGuard";
-import { WashHallProvider } from "@/hooks/washHallContext";
+import { WashHallProvider } from "@/components/global/washHallContext";
 import QueryProvider from "@/components/global/QueryProvider";
 
 export const metadata: Metadata = {

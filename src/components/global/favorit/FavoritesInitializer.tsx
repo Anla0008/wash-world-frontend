@@ -4,6 +4,8 @@ import { useEffect } from "react";
 import { useFavoritesStore } from "@/stores/favoritesStore";
 import { useAuth } from "@/hooks/useAuth";
 
+//FavoritesInitializer → hent ALLE favorit-ids én gang → gem globalt
+
 export function FavoritesInitializer() {
   const { getFavorites } = useAuth();
   const setFavorites = useFavoritesStore((state) => state.setFavorites);

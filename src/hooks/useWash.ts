@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 const baseUrl = "http://127.0.0.1:80";
 
 export function useWash() {
+
   // ===========================================================
   //                    KØB ABONNOMENT
   // ===========================================================
@@ -110,26 +111,32 @@ export function useWash() {
   // ===========================================================
   //                GET ENKELTVASK  (MOCKUPDATA)
   // ===========================================================
-
+  
+  // bruger tanstack for at håndtere asynkrone dataforespørgsler
+  // useQuery giver os data, isLoading og error states, som vi kan bruge i vores komponenter
   const useSingleWash = () => {
-    const [data, setData] = useState<SingleWashType | null>(null);
-
-    useEffect(() => {
-      const getRequest = async () => {
-        const response = await fetch("/api/wash/single", {
-          cache: "no-store",
-          method: "GET",
-        });
-
-        const json = (await response.json()) as SingleWashType;
-        setData(json);
-      };
-
-      void getRequest();
-    }, []);
-
-    return { data };
-  };
+    
+    return useQuery({
+      
+      // queryKey er en unik nøgle for denne forespørgsel, som bruges til caching og opdatering
+      queryKey: ["singleWash"],
+      
+      // queryFn er den funktion, der udfører selve datahentningen - i dette tilfælde en fetch til vores API
+      queryFn: async () => {
+        
+        const res = await fetch("/api/wash/single");
+        
+        if (!res.ok) {
+          throw new Error("Failed to fetch wash");
+        }
+        
+        return res.json() as Promise<SingleWashType>;
+      },
+      
+    // 20 min for at tage højde for den længst mulige vask og ventetid 
+    staleTime: 2000000, // dataen betragtes som frisk i (20 minutter) før den skal hentes igen
+  });
+}
 
   // ===========================================================
   //      NAVIGER TIL RUTE BASERET PÅ STATUS (SIMULERING)
@@ -305,6 +312,7 @@ export function useWash() {
 // ===========================================================
 //                Vaskehistorik hooks
 // ===========================================================
+// Disse hooks bruger React Query (TanStack Query) til at håndtere asynkrone dataforespørgsler og caching for vaskehistorik
 export function useWashHistory() {
   return useQuery({
     queryKey: ["washHistory"],
@@ -327,7 +335,6 @@ export function useWashHistory() {
 export function useWashDetail(id: string) {
   return useQuery({
     queryKey: ["washDetail", id],
-    gcTime: 0, // Garbage collection time – how long it will be stored in the cache
     queryFn: async () => {
       const token = localStorage.getItem("token");
 

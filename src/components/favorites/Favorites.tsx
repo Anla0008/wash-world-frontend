@@ -1,47 +1,111 @@
 "use client";
 
+// ===========================================================
+//                         IMPORTS
+// ===========================================================
+
 import { useEffect, useState } from "react";
+
 import { useAuth } from "@/hooks/useAuth";
 import { Location } from "@/types/locations";
-import CarWashCard from "@/components/global/cards/CarWashCard";
 import { useFavoritesStore } from "@/stores/favoritesStore";
-import { useWashHall } from "@/hooks/washHallContext";
+import { useWashHall } from "@/components/global/washHallContext";
+
+import CarWashCard from "@/components/global/cards/CarWashCard";
+
+// ===========================================================
+//                       COMPONENT START
+// ===========================================================
 
 export default function Favorites() {
+  // ===========================================================
+  //                    FAVORITES DATA LOGIC
+  // ===========================================================
+
   const { getFavorites } = useAuth();
+
+  // Gemmer brugerens favorit lokationer.
   const [favorites, setFavorites] = useState<Location[]>([]);
-  const [fadingOut, setFadingOut] = useState<Set<string>>(new Set());
+
+  // Henter listen af favorit id'er fra global state.
   const favoriteIds = useFavoritesStore((state) => state.favoriteIds);
-  const { waitTimeByLocationPk, ensureWaitTimesForLocations } = useWashHall();
 
-  // Hent favoritter ved komponentens første indlæsning
+  // Henter favoritter første gang siden vises.
   useEffect(() => {
-    getFavorites().then(setFavorites).catch(console.error);
-  }, []);
+    async function loadFavorites() {
+      try {
+        const data = await getFavorites();
 
-  // Synkroniser listen når favoriteIds ændres (fx når bruger fjerner en favorit)
+        setFavorites(data);
+      } catch (error) {
+        console.error("Der skete en fejl ved hentning af favoritter:", error);
+      }
+    }
+
+    loadFavorites();
+  }, [getFavorites]);
+
+  // Opdaterer listen, hvis en favorit bliver fjernet.
   useEffect(() => {
-    setFavorites((prev) =>
-      prev.filter((loc) => favoriteIds.has(loc.location_pk)),
-    );
+    const updatedFavorites = favorites.filter((location) => {
+      return favoriteIds.has(location.location_pk);
+    });
+
+    setFavorites(updatedFavorites);
   }, [favoriteIds]);
 
+  // ===========================================================
+  //                       WAIT TIME LOGIC
+  // ===========================================================
+
+  const { waitTimeByLocationPk, ensureWaitTimesForLocations } = useWashHall();
+
+  // Henter ventetider for alle favorit lokationer.
   useEffect(() => {
-    ensureWaitTimesForLocations(favorites.map((favorite) => favorite.location_pk));
+    const favoriteLocationPks = favorites.map((favorite) => {
+      return favorite.location_pk;
+    });
+
+    ensureWaitTimesForLocations(favoriteLocationPks);
   }, [favorites, ensureWaitTimesForLocations]);
 
-  const isWaitTimeReady = favorites.every((favorite) => waitTimeByLocationPk[favorite.location_pk] != null);
+  // Tjekker om alle ventetider er klar.
+  const isWaitTimeReady = favorites.every((favorite) => {
+    return waitTimeByLocationPk[favorite.location_pk] != null;
+  });
 
-  const handleRemove = (location_pk: string) => {
-    setFadingOut((prev) => new Set(prev).add(location_pk));
+  // ===========================================================
+  //                    REMOVE ANIMATION LOGIC
+  // ===========================================================
+
+  // Gemmer de cards, der er ved at fade ud.
+  const [fadingOut, setFadingOut] = useState<Set<string>>(new Set());
+
+  function handleRemove(location_pk: string) {
+    // Tilføjer lokationen til fadingOut, så animationen starter.
+    setFadingOut((previousFadingOut) => {
+      const updatedFadingOut = new Set(previousFadingOut);
+
+      updatedFadingOut.add(location_pk);
+
+      return updatedFadingOut;
+    });
+
+    // Fjerner lokationen fra fadingOut igen, når animationen er færdig.
     setTimeout(() => {
-      setFadingOut((prev) => {
-        const next = new Set(prev);
-        next.delete(location_pk);
-        return next;
+      setFadingOut((previousFadingOut) => {
+        const updatedFadingOut = new Set(previousFadingOut);
+
+        updatedFadingOut.delete(location_pk);
+
+        return updatedFadingOut;
       });
     }, 300);
-  };
+  }
+
+  // ===========================================================
+  //                         RENDER
+  // ===========================================================
 
   return (
     <div className="max-w-lg w-full flex flex-col gap-15">
@@ -49,35 +113,26 @@ export default function Favorites() {
         <h1 className="extra-bold">Favoritter</h1>
 
         {favorites.length === 0 ? (
-          <p className="text-sm text-(--gray-40)">
-            Du har ingen favoritter endnu.
-          </p>
+          <p className="text-sm text-(--gray-40)">Du har ingen favoritter endnu.</p>
         ) : !isWaitTimeReady ? (
           <p className="text-sm text-(--gray-40)">Indlæser ventetider...</p>
         ) : (
-          favorites.map((location) => (
-            <div
-              key={location.location_pk}
-              className="transition-all duration-300"
-              style={{
-                opacity: fadingOut.has(location.location_pk) ? 0 : 1,
-                transform: fadingOut.has(location.location_pk)
-                  ? "scale(0.95)"
-                  : "scale(1)",
-              }}
-            >
-              <CarWashCard
-                location_pk={location.location_pk}
-                city={location.location_city}
-                address={location.location_address}
-                openingHours="07 - 22"
-                image={location.location_img}
-                href={`/locations/${location.location_pk}`}
-                onRemove={() => handleRemove(location.location_pk)}
-                waitTimeSeconds={waitTimeByLocationPk[location.location_pk]}
-              />
-            </div>
-          ))
+          favorites.map((location) => {
+            const isFadingOut = fadingOut.has(location.location_pk);
+
+            return (
+              <div
+                key={location.location_pk}
+                className="transition-all duration-300"
+                style={{
+                  opacity: isFadingOut ? 0 : 1,
+                  transform: isFadingOut ? "scale(0.95)" : "scale(1)",
+                }}
+              >
+                <CarWashCard location_pk={location.location_pk} city={location.location_city} address={location.location_address} openingHours="07 - 22" image={location.location_img} href={`/locations/${location.location_pk}`} onRemove={() => handleRemove(location.location_pk)} waitTimeSeconds={waitTimeByLocationPk[location.location_pk]} />
+              </div>
+            );
+          })
         )}
       </section>
     </div>

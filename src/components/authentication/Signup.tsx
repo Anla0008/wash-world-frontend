@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { User } from "@/types/user";
+import Link from "next/link";
+
+// Import at egne komponenter
 import PrimaryButton from "@/components/global/buttons/onClick/PrimaryButton";
 import Input from "@/components/global/forms/Input";
 import ProgressBar from "@/components/global/grafik/ProgressBar";
@@ -14,7 +17,8 @@ import Lock from "@/components/global/icons/grafik/Lock";
 import ProfileCard from "@/components/global/icons/grafik/ProfileCard";
 import Card from "@/components/global/icons/grafik/Card";
 import WashWorldLogo from "@/components/global/icons/grafik/WashWorldLogo";
-import Link from "next/link";
+
+// Import af valideringsfunktioner og fejlbeskeder
 import {
   validateEmail,
   validateName,
@@ -25,9 +29,10 @@ import {
 } from "@/lib/form/validering";
 
 export default function Signup() {
+  // State til at holde alle brugerinput samlet i et objekt (params) og styre hvilket step i processen vi er
   const [params, setParams] = useState<User>({} as User);
   const [step, setStep] = useState(1);
-  const { signup, checkEmail } = useAuth();
+  const { signup, checkEmail, checkPlate } = useAuth();
 
   // Backend-fejl - sættes hvis email eller nummerplade allerede er i brug
   const [emailTaken, setEmailTaken] = useState(false);
@@ -43,6 +48,7 @@ export default function Signup() {
     params.user_hashed_password === params.user_repeat_hashed_password;
   const plateNumberValid = validatePlateNumber(params.plate_number ?? "");
 
+  // Alle felter skal være udfyldt+gyldige for at gå til step 2
   const step1Valid =
     emailValid &&
     firstNameValid &&
@@ -51,21 +57,28 @@ export default function Signup() {
     repeatPasswordValid &&
     plateNumberValid;
 
-  // Step 1 → Step 2: tjek om email er ledig i db
+  // Step 1 → Step 2: tjek om email og plate er ledig i db
   const handleStep1Submit = async (e: any) => {
     e.preventDefault();
     if (!step1Valid) return;
 
-    const response = await checkEmail(params.user_email);
-    if (!response.ok) {
+    const emailResponse = await checkEmail(params.user_email);
+    if (!emailResponse.ok) {
       setEmailTaken(true);
       return;
     }
 
+    const plateResponse = await checkPlate(params.plate_number);
+    if (!plateResponse.ok) {
+      setPlateTaken(true);
+      return;
+    }
+
+    // Hvis både email og plate er ledige, gå videre til step 2 (kortoplysninger)
     setStep(2);
   };
 
-  // Step 2 → Step 3: NU kaldes backend
+  // Step 2 → Step 3: NU kaldes backend (opret user)
   const handleSubmitSignup = async (e: any) => {
     e.preventDefault();
 
@@ -77,13 +90,13 @@ export default function Signup() {
       setStep(1);
       return;
     }
-
     if (fieldError === "plate_number") {
       setPlateTaken(true);
       setStep(1);
       return;
     }
 
+    // Hvis ingen fejl, gå videre til step 3 (verificer email)
     setStep(3);
   };
 
@@ -232,10 +245,10 @@ export default function Signup() {
       {step === 2 && (
         <section className="grid gap-10">
           <WashWorldLogo />
-          
-        <div className="flex items-center gap-2 mb-4">
-          <ArrowLeft onClick={() => setStep(1)} size={30} />
-              Tilbage
+
+          <div className="flex items-center gap-2 mb-4">
+            <ArrowLeft onClick={() => setStep(1)} size={30} />
+            Tilbage
           </div>
 
           <ProgressBar activeIndex={2} />

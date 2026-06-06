@@ -3,12 +3,13 @@
 import { useState, useEffect, use } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { User } from "@/types/user";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+// Egne komponenter og funktioner
 import Input from "@/components/global/forms/Input";
 import Lock from "@/components/global/icons/grafik/Lock";
 import PrimaryButton from "@/components/global/buttons/onClick/PrimaryButton";
 import WashWorldLogo from "@/components/global/icons/grafik/WashWorldLogo";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { validatePassword, errorMessages } from "@/lib/form/validering";
 
 export default function ResetPassword({
@@ -20,10 +21,12 @@ export default function ResetPassword({
   const router = useRouter();
   const { validateResetKey, resetPassword } = useAuth();
 
+  // State til at holde alle brugerinput samlet i et objekt (params2), samt state til at håndtere fejl og succes
   const [params2, setParams] = useState<User>({} as User);
   const [passwordsNoMatch, setPasswordsNoMatch] = useState(false);
   const [success, setSuccess] = useState(false);
 
+  // Validering af inputfelterne, som opdateres i realtid mens brugeren skriver.
   const passwordValid = validatePassword(params2.user_hashed_password ?? "");
   const repeatPasswordValid =
     !!params2.user_hashed_password &&
@@ -31,6 +34,8 @@ export default function ResetPassword({
 
   const formValid = passwordValid && repeatPasswordValid;
 
+  // ResetPassword har en useEffect der validerer nøglen i URL'en
+  // Den tjekker at linket (fra forgotpassword) faktisk er gyldigt inden man kan indtaste en ny adgangskode
   useEffect(() => {
     async function handleValidateKey() {
       const response = await validateResetKey(key);
@@ -41,6 +46,7 @@ export default function ResetPassword({
     handleValidateKey();
   }, []);
 
+  // Når brugeren trykker på "Nulstil adgangskode" knappen, skal den først tjekke om formen er valid.
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     if (!formValid) return;
@@ -57,13 +63,17 @@ export default function ResetPassword({
     setSuccess(true);
   };
 
+  // Hvis passwordet er succesfuldt nulstillet, vises en bekræftelsesbesked og en knap til at gå tilbage til login.
   if (success) {
     return (
       <section className="flex flex-col items-center gap-10">
         <WashWorldLogo />
         <div className="flex flex-col gap-2 text-center">
-          <h3>Adgangskode nulstillet!</h3>
-          <p className="extra-bold">Din adgangskode er blevet ændret</p>
+          <h2>Adgangskode nulstillet</h2>
+          <p>
+            Din adgangskode er blevet ændret! Gå til login siden for at logge
+            ind med din nye adgangskode.
+          </p>
         </div>
         <Link href={"/"} className="text-center">
           <p className="underline">Gå til login</p>
@@ -91,6 +101,7 @@ export default function ResetPassword({
             onChange={(e) =>
               setParams({ ...params2, user_hashed_password: e.target.value })
             }
+            isPassword={true}
           />
         </div>
 
@@ -114,6 +125,7 @@ export default function ResetPassword({
               });
               setPasswordsNoMatch(false);
             }}
+            isPassword={true}
           />
         </div>
 

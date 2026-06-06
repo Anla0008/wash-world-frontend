@@ -18,6 +18,7 @@ export default function ForgotPassword() {
 
   const emailValid = validateEmail(params.user_email ?? "");
 
+  // Når brugeren submit skal der først tjekkes om emailen er valid
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     if (!emailValid) return;
@@ -43,11 +44,14 @@ export default function ForgotPassword() {
         <Mail size={150} color="var(--gray-5)" />
 
         <div className="flex flex-col gap-2 text-center">
-          <h3>Tjek din e-mail</h3>
-          <p className="extra-bold">
-            Vi har sendt et link til {params.user_email}
+          <h2>Tjek din e-mail</h2>
+          <p>
+            Vi har sendt et link til {params.user_email}. Klik på linket for at
+            nulstille din adgangskode.
           </p>
         </div>
+
+        <PrimaryButton onClick={() => setSent(false)}>Send igen</PrimaryButton>
 
         <Link href={"/"} className="text-center">
           <p className="underline">Tilbage til login</p>
@@ -56,12 +60,13 @@ export default function ForgotPassword() {
     );
   }
 
+  // Formular inden bekræfeltelse af sendt mail
   return (
     <section>
       <WashWorldLogo />
 
       <div className="flex flex-col gap-2 my-12">
-        <h1 className="text-center">Glemt adgangskode?</h1>
+        <h2 className="text-center">Glemt adgangskode?</h2>
         <p>
           Indtast din e mail og modtag et link til at nulstille din adgangskode
         </p>

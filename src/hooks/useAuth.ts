@@ -31,13 +31,23 @@ export function useAuth() {
   }, []);
 
   // ===========================================================
-  //           SIGNUP - tjek email inden oprettelse
+  //        SIGNUP - tjek email + plate inden oprettelse
   // ===========================================================
   const checkEmail = useCallback(async (email: string) => {
     const response = await fetch(baseUrl + "/check-email", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_email: email }),
+    });
+    const data = await response.json();
+    return { ok: response.ok, data };
+  }, []);
+
+  const checkPlate = useCallback(async (plate: string) => {
+    const response = await fetch(baseUrl + "/check-plate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ plate_number: plate }),
     });
     const data = await response.json();
     return { ok: response.ok, data };
@@ -157,23 +167,30 @@ export function useAuth() {
   // ===========================================================
   //                 PATCH PROFILE INFORMATION
   // ===========================================================
-  const updateProfileInfo = useCallback(async (params: { user_first_name: string; user_last_name: string; user_email: string }) => {
-    const token = localStorage.getItem("token");
+  const updateProfileInfo = useCallback(
+    async (params: {
+      user_first_name: string;
+      user_last_name: string;
+      user_email: string;
+    }) => {
+      const token = localStorage.getItem("token");
 
-    const response = await fetch(baseUrl + "/profile-information", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(params),
-    });
+      const response = await fetch(baseUrl + "/profile-information", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(params),
+      });
 
-    const data = await response.json();
-    console.log("Status:", response.status);
-    console.log("Body:", data);
-    return data;
-  }, []);
+      const data = await response.json();
+      console.log("Status:", response.status);
+      console.log("Body:", data);
+      return data;
+    },
+    [],
+  );
 
   // ===========================================================
   //                          LOCATIONS
@@ -305,6 +322,7 @@ export function useAuth() {
   return {
     signup,
     checkEmail,
+    checkPlate,
     resendVerification,
     verify,
     login,

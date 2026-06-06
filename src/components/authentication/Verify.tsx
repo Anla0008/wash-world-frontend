@@ -16,7 +16,9 @@ export default function Verify({
 
   useEffect(() => {
     async function handleVerify() {
+      // Kalder verify-funktionen med key og venter på, at den er færdig, før den fortsætter.
       await verify(key);
+      // Når verifikationen er gennemført, omdirigeres brugeren til forsiden ("/").
       router.push("/");
     }
     handleVerify();

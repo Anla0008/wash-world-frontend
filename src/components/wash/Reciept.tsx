@@ -127,7 +127,7 @@ const Reciept = () => {
           <div className="flex gap-2">
             <p className="extra-bold">Pris:</p>
 
-            {userHasSub ? <p>{selectedWash?.price_subscription} kr. / måned</p> : <p>{selectedWash?.price_single} kr.</p>}
+            {userHasSub.hasSub ? <p>{selectedWash?.price_subscription} kr. / måned</p> : <p>{selectedWash?.price_single} kr.</p>}
           </div>
 
           <div className="flex gap-2">

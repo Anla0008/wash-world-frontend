@@ -51,7 +51,7 @@ export default function SingleWash() {
         <ul className="flex flex-col gap-5">
           {data.types.map((wash) => (
             <li className="flex flex-col gap-5 bg-(--gray-80) rounded-lg p-4" key={wash.id}>
-              {/** Brug én valgt id til at styre toggle på tværs af alle kort */}
+              {/* Brug én valgt id til at styre toggle på tværs af alle kort */}
               <div className="flex justify-between items-center">
                 <div>
                   <h2 className="extra-bold">{wash.name}</h2>
@@ -64,7 +64,7 @@ export default function SingleWash() {
                 </div>
               </div>
 
-              <div className="flex w-full items-center justify-end gap-5">
+              <div className="flex self-end items-center gap-15">
                 <a className="underline" href={`/wash-single-view/${wash.id}`}>
                   Læs mere
                 </a>

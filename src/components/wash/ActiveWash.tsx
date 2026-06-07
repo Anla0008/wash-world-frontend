@@ -47,6 +47,10 @@ const ActiveWash = () => {
     setEndedAt(now);
   }, [selectedWash, startedAt, setStartedAt, setEndedAt]);
 
+  const handleTimerComplete = () => {
+    router.push("/reciept");
+  };
+
 
   return (
     <div className="flex flex-col gap-12">
@@ -54,7 +58,7 @@ const ActiveWash = () => {
 
       <h1 className="extra-bold">Følg din vask</h1>
 
-      <Timer totalTime={timerDuration ?? 0} onComplete={() => router.push("/reciept")} />
+      <Timer totalTime={timerDuration ?? 0} onComplete={handleTimerComplete} />
     </div>
   );
 };

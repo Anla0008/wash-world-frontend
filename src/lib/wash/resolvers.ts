@@ -165,6 +165,7 @@ export const useSubscriptionStatus = () => {
   return userSub;
 };
 
+// 1. definer ruten på abonnoment status
 // ===========================================================
 //           BESTEM RUTE EFTER SUBSCRIPTION
 // ===========================================================
@@ -172,6 +173,22 @@ export const resolveRoute = (userHasSub: boolean): WashRoute => {
   return userHasSub ? "/drive-in" : "/buy-wash";
 };
 
+// 2. definer error in distance hvis > 500 m
+// ===========================================================
+//           DEFINER BRUG AF VASK  EFTER DISTANCE
+// ===========================================================
+
+export const distanceFromWashhall = (distanceKm: number, userHasSub: boolean): WashRoute => {
+  // hvis distance er større end 500 m, så returner error route
+  if (distanceKm > 0.5) {
+    return "/error-in-distance";
+  } else {
+    // ellers returner rute baseret på abonnementstatus
+    return resolveRoute(userHasSub);
+  }
+};
+
+// 3. kombiner de to funktioner
 // ===========================================================
 //    Bestem rute baseret på både distance og abonnement
 // ===========================================================
@@ -186,20 +203,6 @@ export const resolveWashRouteFromDistance = (distanceKm: number, userHasSub: boo
 
   // ellers returner resolveRoute() baseret på subscription
   return resolveRoute(userHasSub);
-};
-
-// ===========================================================
-//           DEFINER BRUG AF VASK  EFTER DISTANCE
-// ===========================================================
-
-export const distanceFromWashhall = (distanceKm: number, userHasSub: boolean): WashRoute => {
-  // hvis distance er større end 500 m, så returner error route
-  if (distanceKm > 0.5) {
-    return "/error-in-distance";
-  } else {
-    // ellers returner rute baseret på abonnementstatus
-    return userHasSub ? "/drive-in" : "/buy-wash";
-  }
 };
 
 // ===========================================================

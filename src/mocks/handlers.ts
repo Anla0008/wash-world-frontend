@@ -2,7 +2,7 @@
 import { http, HttpResponse } from "msw";
 import { WashStepResponse } from "@/types/washType";
 import { washHallState, carInWashHall, washData } from "@/mockupData/washData";
-import { initializeHallState, updateHallState, resolveRoute } from "@/lib/wash/resolvers";
+import { initializeHallState, updateHallState } from "@/lib/wash/resolvers";
 
 const baseUrl = "http://127.0.0.1";
 

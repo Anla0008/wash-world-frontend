@@ -145,7 +145,7 @@ export function useWash() {
   const navigateBasedOnStatus = useCallback(async (): Promise<WashRoute> => {
     const userHasSub = await hasSub();
 
-    return userHasSub.hasSub ? "/drive-in" : "/buy-wash";
+    return userHasSub.hasSub ? "/waiting-line" : "/buy-wash";
   }, [hasSub]);
 
   // ===========================================================

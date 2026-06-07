@@ -388,9 +388,5 @@ export const WashHallProvider = ({ children }: { children: ReactNode }) => {
 export const useWashHall = () => {
   const ctx = useContext(WashHallContext);
 
-  if (!ctx) {
-    throw new Error("useWashHall must be used inside WashHallProvider");
-  }
-
   return ctx;
 };

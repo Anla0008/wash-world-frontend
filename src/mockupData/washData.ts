@@ -11,14 +11,36 @@ export const carInWashHall = {
 //              MOCKUP FOR VENTETID I HAL
 // ==========================================================
 
-export const waitTimeMockup = {
-  min_seconds: 30,
-  max_seconds: 480, // 8 minutter
-};
+// ===========================================================
+//         ENKELT KILDE TIL  VENTETID
+// ===========================================================
 
-export const createRandomWaitTimeSeconds = (): number => {
-  const { min_seconds, max_seconds } = waitTimeMockup;
-  return Math.floor(Math.random() * (max_seconds - min_seconds + 1)) + min_seconds;
+export const waitTimeData = {
+  // Grænser for ventetidskategorier (i sekunder)
+  short: {
+    max: 120,       // < 2 min
+    label: "Kort ventetid",
+  },
+  moderate: {
+    max: 420,       // 2–7 min
+    label: "Moderat ventetid",
+  },
+  long: {
+    label: "Lang ventetid", // alt over moderate.max
+  },
+
+  // Mock-intervallet skal matche short.max som minimum,
+  // så vi kan generere "kort" ventetider
+  mockup: {
+    min_seconds: 30,          // skal være mindre end short.max for at kunne generere "kort ventetid"
+    max_seconds: 600,         // 10 minutter
+  },
+} as const; // brug as const for at gøre objekterne immutable og bevare de specifikke typer for max og label
+
+
+export const waitTimeMockup = {
+  min_seconds: waitTimeData.mockup.min_seconds,
+  max_seconds: waitTimeData.mockup.max_seconds,
 };
 
 // ===========================================================

@@ -15,7 +15,6 @@ export function useAuth() {
       headers: {
         "Content-Type": "application/json",
         "Cache-Control": "no-store",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify(params),
     });
@@ -39,6 +38,7 @@ export function useAuth() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_email: email }),
     });
+    // Læser body én gang og gem i variabel
     const data = await response.json();
     return { ok: response.ok, data };
   }, []);
@@ -114,6 +114,7 @@ export function useAuth() {
 
     const data = await response.json();
 
+    // Logger hvad backenden svarer så vi kan se hvad der fejler, hvis noget fejler
     console.log("Status:", response.status);
     console.log("Body:", data);
 
@@ -139,6 +140,8 @@ export function useAuth() {
   }, []);
 
   const validateResetKey = useCallback(async (key: string) => {
+    // Denne route skal bare tjekke om reset key er valid, og returnere 200 hvis den er valid, og 400 hvis den ikke er valid.
+    // Vi har ikke brug for at sende noget body i denne request, da vi bare skal tjekke om key er valid.
     const response = await fetch(baseUrl + `/reset-password/${key}`);
     const data = await response.json();
     return { ok: response.ok, data };

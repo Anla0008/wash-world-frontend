@@ -281,6 +281,7 @@ export default function FindCarWashBottomSheet({ locations, selectedLocationPk, 
       return 0;
     }
 
+    // Beregner afstanden fra brugerens position til hver lokation.
     const distanceA = getDistanceKm(userCoords.lat, userCoords.lng, a.location_lat, a.location_lng);
 
     const distanceB = getDistanceKm(userCoords.lat, userCoords.lng, b.location_lat, b.location_lng);
@@ -301,7 +302,7 @@ export default function FindCarWashBottomSheet({ locations, selectedLocationPk, 
     // Ellers vises længst ventetid først.
     return waitValueB - waitValueA;
   }
-
+  //[...filteredLocations] er en let kopi af det filtrerede locations array, som vi kan sortere uden at ændre på det originale array i state.
   const sortedLocations = [...filteredLocations].sort((a, b) => {
     // Hvis ventetiderne ikke er klar endnu, beholder vi den filtrerede rækkefølge.
     if (!isWaitTimeReady) {

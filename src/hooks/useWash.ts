@@ -132,7 +132,8 @@ export function useWash() {
         
         return res.json() as Promise<SingleWashType>;
       },
-      
+
+    // STALE TIME
     // 20 min for at tage højde for den længst mulige vask og ventetid 
     staleTime: 2000000, // dataen betragtes som frisk i (20 minutter) før den skal hentes igen
   });
@@ -256,7 +257,7 @@ export function useWash() {
         locationID,
       });
 
-      const userHasSub = await hasSub();
+      const userSubscription = await hasSub();
 
       const response = await fetch(baseUrl + "/reciept", {
         method: "POST",
@@ -273,7 +274,7 @@ export function useWash() {
 
           car_wash_hall_fk: availibleWashHall,
 
-          car_wash_price: userHasSub ? wash.price_subscription : wash.price_single,
+          car_wash_price: userSubscription.hasSub ? wash.price_subscription : wash.price_single,
 
           car_wash_type: wash.name,
 

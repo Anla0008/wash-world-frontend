@@ -262,4 +262,3 @@ export function updateHallState(state: { occupied: boolean; updatedAt: number; e
     registeredAfterSeconds: state.registeredAfterSeconds,
   };
 }
-

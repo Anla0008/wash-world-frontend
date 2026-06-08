@@ -33,6 +33,10 @@ const Reciept = () => {
 
   const handleClick = async () => {
     if (!selectedWash) return;
+    
+    // trigger animation
+    setNextRoute("/dashboard");
+    setCheckAnimation(true);
 
     // post til backend
     await postAvailableWashHall({
@@ -43,9 +47,6 @@ const Reciept = () => {
       locationID,
     });
 
-    // trigger animation
-    setNextRoute("/dashboard");
-    setCheckAnimation(true);
   };
   //
   // ===========================================================

@@ -2,28 +2,23 @@
 
 import ProgressBar from "@/components/global/grafik/ProgressBar";
 import Timer from "@/components/wash/Timer";
-import { useWash } from "@/hooks/useWash";
 import AvailibleWashingHall from "@/components/wash/AvailibleWashingHall";
 import { useRouter } from "next/navigation";
 import { useWashHall } from "@/components/global/washHallContext";
 import { useWashStore } from "@/stores/useWashStore";
-import { useEffect } from "react";
 
 const WaitingLine = () => {
+
   const router = useRouter();
   const locationPk = useWashStore((state) => state.locationID);
-  const { waitTimeByLocationPk, ensureWaitTimesForLocations } = useWashHall();
-
-  useEffect(() => {
-    if (!locationPk || locationPk === "undefined") return;
-    ensureWaitTimesForLocations([locationPk]);
-  }, [locationPk, ensureWaitTimesForLocations]);
+  const { waitTimeByLocationPk } = useWashHall();
 
   const waitTime = locationPk && locationPk !== "undefined" ? waitTimeByLocationPk[locationPk] : null;
 
   if (waitTime == null) {
     return <p>Henter ventetid...</p>;
   }
+
 
   const handleTimerComplete = () => {
     router.push("/drive-in");

@@ -1,4 +1,5 @@
 import { Location } from "./locations";
+import { waitTimeData } from "@/mockupData/washData";
 
 // ===========================================================
 //               GET RUTE TIL STEP
@@ -45,6 +46,7 @@ export type WashingHalls = {
 // ==========================================================
 
 export type WashHallWaitTimeResponse = {
+  
   [hallNumber: string]: number;
 };
 
@@ -52,7 +54,10 @@ export type WaitForWashProps = {
   activeIndex: number;
 };
 
-export type WaitStatusLabel = "Kort ventetid" | "Moderat ventetid" | "Lang ventetid";
+export type WaitStatusLabel =
+  | typeof waitTimeData.short.label
+  | typeof waitTimeData.moderate.label
+  | typeof waitTimeData.long.label;
 
 export type WaitTimeHistoryByLocationPk = Record<string, Record<string, number>>;
 

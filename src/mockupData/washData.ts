@@ -4,21 +4,39 @@ import { GeoCoords } from "@/types/washType";
 // ==========================================================
 
 export const carInWashHall = {
-  registered_after_seconds: 25, // 25 sekunder
+  registered_after_seconds: 5, // 25 sekunder
 };
 
 // ===========================================================
-//              MOCKUP FOR VENTETID I HAL
-// ==========================================================
+//         ENKELT KILDE TIL  VENTETID
+// ===========================================================
+
+export const waitTimeData = {
+  // Grænser for ventetidskategorier (i sekunder)
+  short: {
+    max: 6,       // < 2 min
+    label: "Kort ventetid",
+  },
+  moderate: {
+    max: 10,       // 2–7 min
+    label: "Moderat ventetid",
+  },
+  long: {
+    label: "Lang ventetid", // alt over moderate.max
+  },
+
+  // Mock-intervallet skal matche short.max som minimum,
+  // så vi kan generere "kort" ventetider
+  mockup: {
+    min_seconds: 5,          // skal være mindre end short.max for at kunne generere "kort ventetid"
+    max_seconds: 15,         // 10 minutter
+  },
+} as const; // brug as const for at gøre objekterne immutable og bevare de specifikke typer for max og label
+
 
 export const waitTimeMockup = {
-  min_seconds: 30,
-  max_seconds: 480, // 8 minutter
-};
-
-export const createRandomWaitTimeSeconds = (): number => {
-  const { min_seconds, max_seconds } = waitTimeMockup;
-  return Math.floor(Math.random() * (max_seconds - min_seconds + 1)) + min_seconds;
+  min_seconds: waitTimeData.mockup.min_seconds,
+  max_seconds: waitTimeData.mockup.max_seconds,
 };
 
 // ===========================================================
@@ -34,7 +52,7 @@ export const washData = {
       price_single: 59,
       is_popular: false,
       price_subscription: 139,
-      duration: 300, // 5 minutter
+      duration: 5, // 5 minutter
       description: "God og hurtig bilvask som fjerner det meste løse snavs efterfulgt af en god tørring.",
       checkmarks: [
         "Skumforvask",
@@ -53,7 +71,7 @@ export const washData = {
       price_single: 89,
       price_subscription: 169,
       is_popular: true,
-      duration: 480, // 8 minutter
+      duration: 10, // 8 minutter
       description: "Særdeles god og grundig bilvask som fjerner alt løst snavs efterfulgt af en god tørring.",
       checkmarks: [
         "Skumforvask",
@@ -75,7 +93,7 @@ export const washData = {
       price_subscription: 199,
       is_popular: false,
       description: "Luksus bilvask med Brilliant som giver dig en skinnende ren bil med alt du behøver og mere til efterfulgt af ekstra tørring",
-      duration: 600, // 10 minutter
+      duration: 15, // 10 minutter
       checkmarks: [
         "Skumforvask",
         "Aktiv Shampoo",

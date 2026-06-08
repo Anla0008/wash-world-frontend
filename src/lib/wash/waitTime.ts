@@ -1,20 +1,20 @@
-import { waitTimeMockup } from "@/mockupData/washData";
-import { WaitStatusLabel } from "@/types/washType";
+import { waitTimeData } from "@/mockupData/washData";
+import type { WaitStatusLabel } from "@/types/washType";
 
 /////////////////////////////////////////////////////////
 // GENERATE LABEL FOR WAITTIME //
 /////////////////////////////////////////////////////////
-export const resolveWaitStatusLabel = (waitTimeSeconds: number): WaitStatusLabel => {
-  if (waitTimeSeconds > 300) return "Lang ventetid";
-  if (waitTimeSeconds > 120) return "Moderat ventetid";
-  return "Kort ventetid";
+export const resolveWaitStatusLabel = (seconds: number): WaitStatusLabel => {
+  if (seconds < waitTimeData.short.max) return waitTimeData.short.label;
+  if (seconds < waitTimeData.moderate.max) return waitTimeData.moderate.label;
+  return waitTimeData.long.label;
 };
 
 /////////////////////////////////////////////////////////
 // GENERATE RANDOM WAITTIME //
 /////////////////////////////////////////////////////////
 const createRandomInRange = (minSeconds: number, maxSeconds: number): number => {
-  // hent max og min sec fra waitTimeMockup, og generer et random tal i det interval
+  // hent max og min sec fra waitTimeData, og generer et random tal i det interval
   return Math.floor(Math.random() * (maxSeconds - minSeconds + 1)) + minSeconds;
 };
 
@@ -23,11 +23,11 @@ const createRandomInRange = (minSeconds: number, maxSeconds: number): number => 
 /////////////////////////////////////////////////////////
 const waitStatusSecondRanges = [
   // interval for "Kort ventetid" - fra min_seconds til 120 sekunder
-  { min: waitTimeMockup.min_seconds, max: 120 },
+  { min: waitTimeData.mockup.min_seconds, max: 120 },
   // interval for "Moderat ventetid" - fra 121 sekunder til 300 sekunder
   { min: 121, max: 300 },
   // interval for "Lang ventetid" - fra 301 sekunder til max_seconds
-  { min: 301, max: waitTimeMockup.max_seconds },
+  { min: 301, max: waitTimeData.mockup.max_seconds },
 ] as const; // returner som tuple, så vi bevarer de specifikke typer for min og max i hvert objekt
 
 // bruges til at reset ventetiderne for hver locationPk

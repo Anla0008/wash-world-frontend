@@ -85,6 +85,7 @@ export default function Signup() {
     const response = await signup(params);
     const fieldError = getBackendFieldError(response);
 
+    // Hvis en anden bruger opretter sig med den samme email eller nummerplade i tidsrummet fra step 1 til step 2
     if (fieldError === "email") {
       setEmailTaken(true);
       setStep(1);

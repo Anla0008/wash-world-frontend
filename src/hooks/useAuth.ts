@@ -32,15 +32,16 @@ export function useAuth() {
   // ===========================================================
   //        SIGNUP - tjek email + plate inden oprettelse
   // ===========================================================
+  // // Async = funktionen venter på et svar fra serveren
   const checkEmail = useCallback(async (email: string) => {
     const response = await fetch(baseUrl + "/check-email", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user_email: email }),
+      headers: { "Content-Type": "application/json" }, // fortæller serveren at vi sender JSON
+      body: JSON.stringify({ user_email: email }), // oversætter JavaScript-objekt til string som serveren kan læse
     });
-    // Læser body én gang og gem i variabel
-    const data = await response.json();
-    return { ok: response.ok, data };
+
+    const data = await response.json(); // Læser svaret fra serveren og oversætter det fra tekst tilbage til et JavaScript-objekt
+    return { ok: response.ok, data }; // data er selve svaret fra serveren
   }, []);
 
   const checkPlate = useCallback(async (plate: string) => {

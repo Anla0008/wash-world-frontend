@@ -17,11 +17,13 @@ import {
   validateEmail,
   validatePassword,
   errorMessages,
+  getBackendFieldError,
 } from "@/lib/form/validering";
 
 export default function Login() {
   const [params, setParams] = useState<User>({} as User);
   const [loginFailed, setLoginFailed] = useState(false);
+  const [fieldError, setFieldError] = useState<string | null>(null); // verify
   const { login } = useAuth();
   const router = useRouter();
   const emailValid = validateEmail(params.user_email ?? "");
@@ -31,9 +33,18 @@ export default function Login() {
     e.preventDefault();
 
     const response = await login(params);
+    const error = getBackendFieldError(response);
+
+    // vis emailNotVerified besked i stedet for loginFailed
+    if (error === "email_not_verified") {
+      setFieldError(error);
+      setLoginFailed(true);
+      return;
+    }
 
     // Hvis backend afviste login (forkert email eller kodeord)
     if (response?.error) {
+      setFieldError(null);
       setLoginFailed(true);
       return;
     }
@@ -70,11 +81,16 @@ export default function Login() {
             placeholder="navn@eksempel.com"
             value={params.user_email ?? ""}
             errorMessage={
-              loginFailed ? errorMessages.loginFailed : errorMessages.email
+              loginFailed
+                ? fieldError === "email_not_verified"
+                  ? errorMessages.emailNotVerified
+                  : errorMessages.loginFailed
+                : errorMessages.email
             }
             onChange={(e) => {
               setParams({ ...params, user_email: e.target.value });
               setLoginFailed(false);
+              setFieldError(null);
             }}
             isPassword={false}
           />

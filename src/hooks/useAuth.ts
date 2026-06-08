@@ -35,7 +35,7 @@ export function useAuth() {
   // // Async = funktionen venter på et svar fra serveren
   const checkEmail = useCallback(async (email: string) => {
     const response = await fetch(baseUrl + "/check-email", {
-      method: "POST",
+      method: "POST", // Fordi vi sender data til serveren
       headers: { "Content-Type": "application/json" }, // fortæller serveren at vi sender JSON
       body: JSON.stringify({ user_email: email }), // oversætter JavaScript-objekt til string som serveren kan læse
     });
@@ -89,12 +89,12 @@ export function useAuth() {
       body: JSON.stringify(params),
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      return { error: "Failed to login" };
+      return data;
     }
 
-    const data = await response.json();
-    console.log(data);
     localStorage.setItem("token", data.access_token); // Gemmer token i localStorage ved login
     localStorage.setItem("user_first_name", data.user_first_name); // Gemmer firstname som kan bruges på dashboard
     localStorage.setItem("user_email", data.user_email); // Gemmer email som kan bruges til skaderapportering

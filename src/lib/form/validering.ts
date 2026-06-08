@@ -18,6 +18,7 @@ export const errorMessages = {
   email: "Indtast en gyldig e-mail",
   emailTaken: "Denne e-mail er allerede i brug",
   emailNotFound: "Denne e-mail findes ikke i systemet",
+  emailNotVerified: "Du skal verificere din e-mail før du kan logge ind",
   // Navn
   firstName: "Fornavn skal være mellem 2 og 20 tegn",
   lastName: "Efternavn skal være mellem 2 og 20 tegn",
@@ -34,5 +35,7 @@ export const errorMessages = {
 export const getBackendFieldError = (response: any) => {
   if (response?.error_code === "email_taken") return "email";
   if (response?.error_code === "plate_taken") return "plate_number";
+  if (response?.error_code === "email_not_verified")
+    return "email_not_verified";
   return null;
 };

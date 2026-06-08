@@ -2,7 +2,7 @@
 import { http, HttpResponse } from "msw";
 import { WashStepResponse } from "@/types/washType";
 import { washHallState, carInWashHall, washData } from "@/mockupData/washData";
-import { initializeHallState, updateHallState, resolveRoute } from "@/lib/wash/resolvers";
+import { initializeHallState, updateHallState } from "@/lib/wash/resolvers";
 
 const baseUrl = "http://127.0.0.1";
 
@@ -55,12 +55,12 @@ http.get("/api/washhall/available", async ({ request }) => {
     // Initialiser wash hall state for alle vaskehaller ved lokationen
     const washHalls: { car_wash_hall_number: number }[] = data.wash_halls;
 
+    // Hent den aktuelle state for vaskehallen (state angivet i lib/wash/resolvers.ts)
     initializeHallState(washHalls);
 
     // map over alle vaskehaller
     const resolvedHalls = washHalls.map((hall) => {
 
-      // Hent den aktuelle state for vaskehallen (state angivet i lib/wash/resolvers.ts)
       const currentState = washHallState.get(String(hall.car_wash_hall_number));
 
       // hvis der ikke er en state for denne vaskehal, så returner null (den vil blive filtreret fra i næste step)

@@ -166,39 +166,18 @@ export const useSubscriptionStatus = () => {
 };
 
 // ===========================================================
-//           BESTEM RUTE EFTER SUBSCRIPTION
-// ===========================================================
-export const resolveRoute = (userHasSub: boolean): WashRoute => {
-  return userHasSub ? "/drive-in" : "/buy-wash";
-};
-
-// ===========================================================
-//    Bestem rute baseret på både distance og abonnement
-// ===========================================================
-
-export const resolveWashRouteFromDistance = (distanceKm: number, userHasSub: boolean): WashRoute => {
-  const distanceRoute = distanceFromWashhall(distanceKm, userHasSub);
-
-  // hvis distanceRuten er det samme som error route, så returner error route uanset abonnementstatus
-  if (distanceRoute === "/error-in-distance") {
-    return "/error-in-distance";
-  }
-
-  // ellers returner resolveRoute() baseret på subscription
-  return resolveRoute(userHasSub);
-};
-
-// ===========================================================
-//           DEFINER BRUG AF VASK  EFTER DISTANCE
+//      DEFINER BRUG AF VASK  EFTER DISTANCE  OG SUB 
 // ===========================================================
 
 export const distanceFromWashhall = (distanceKm: number, userHasSub: boolean): WashRoute => {
+  const route = userHasSub ? "/waiting-line" : "/buy-wash";
+
   // hvis distance er større end 500 m, så returner error route
   if (distanceKm > 0.5) {
     return "/error-in-distance";
   } else {
     // ellers returner rute baseret på abonnementstatus
-    return userHasSub ? "/drive-in" : "/buy-wash";
+    return route;
   }
 };
 
@@ -262,4 +241,3 @@ export function updateHallState(state: { occupied: boolean; updatedAt: number; e
     registeredAfterSeconds: state.registeredAfterSeconds,
   };
 }
-

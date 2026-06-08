@@ -240,6 +240,7 @@ export default function FindCarWashBottomSheet({ locations, selectedLocationPk, 
 
   const searchValue = searchTerm.toLowerCase().trim();
 
+  //filteredLocations returnere et array af lokationer, der matcher de aktive filtre og søgetermen.
   const filteredLocations = locations.filter((location) => {
     const city = location.location_city.toLowerCase();
     const address = location.location_address.toLowerCase();

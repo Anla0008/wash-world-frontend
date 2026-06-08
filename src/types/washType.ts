@@ -4,7 +4,7 @@ import { Location } from "./locations";
 //               GET RUTE TIL STEP
 // ==========================================================
 
-export type WashRoute = "/buy-wash" | "/drive-in" | "/error-in-distance";
+export type WashRoute = "/buy-wash" | "/waiting-line" | "/error-in-distance";
 
 // ===========================================================
 //               GET SUBSCRIPTION STATES

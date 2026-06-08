@@ -9,7 +9,7 @@ import { usePathname } from "next/navigation";
 import { getUser } from "@/hooks/useAuth";
 import { WashRoute } from "@/types/washType";
 import {
-  resolveWashRouteFromDistance,
+  distanceFromWashhall,
   useNearestWash,
 } from "@/lib/wash/resolvers";
 
@@ -34,7 +34,7 @@ const NavBar = () => {
   const user = getUserData();
   const washRoute: WashRoute =
     nearestDistanceKm !== null
-      ? resolveWashRouteFromDistance(nearestDistanceKm, user.has_sub)
+      ? distanceFromWashhall(nearestDistanceKm, user.has_sub)
       : "/error-in-distance";
 
   const li = [

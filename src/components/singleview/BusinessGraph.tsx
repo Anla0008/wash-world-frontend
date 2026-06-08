@@ -10,7 +10,7 @@ import ArrowRight from "../global/icons/navigation/ArrowRight";
 import Validated from "../global/icons/validation/Validated";
 import Error from "../global/icons/validation/Error";
 
-const GRAPH_MAX_BAR_HEIGHT = 100;
+const GRAPH_MAX_BAR_HEIGHT = 110;
 const DEFAULT_OPENING_HOURS = "07 - 22";
 type GraphStatus = "travl" | "moderat" | "rolig";
 
@@ -164,7 +164,7 @@ const BusinessGraph = ({ locationPk, openingHours = DEFAULT_OPENING_HOURS }: { l
   }, [bars.length, currentBarIndex, emblaApi]);
 
   return (
-    <div className="flex items-center border-b-2 border-(--gray-60) gap-4 w-full">
+    <div className="flex items-center max-h-50 border-b-2 border-(--gray-60) gap-4 w-full">
       {/* VENSTRE */}
       <button onClick={() => emblaApi?.scrollPrev()}>
         <ArrowLeft size={30} color={"var(--gray-60)"} />
@@ -172,14 +172,14 @@ const BusinessGraph = ({ locationPk, openingHours = DEFAULT_OPENING_HOURS }: { l
 
       {/* KARRUSEL */}
       <div className="overflow-hidden flex-1" ref={emblaRef}>
-        <div className="flex items-end gap-5 px-10">
+       <div className="flex items-end gap-5 px-10 h-50"> 
           {bars.map((bar, index) => {
             const isStatusBar = !!bar.status;
             const color = getColor(bar.status);
             const borderColor = color !== "transparent" ? `color-mix(in srgb, ${color} 70%, black)` : "var(--gray-60)";
 
             return (
-              <div key={index} className="flex-[0_0_auto] min-h-30 flex flex-col items-center justify-end">
+              <div key={index} className="flex-[0_0_auto] flex flex-col items-center justify-end">
                 {isStatusBar && (
                   <div className="flex gap-1 pb-1 items-center">
                     <span style={{ color }}>{bar.status}</span>
